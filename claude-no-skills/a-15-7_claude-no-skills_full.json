@@ -1,0 +1,205 @@
+{
+  "id": "a-15-7",
+  "question": "Use iClusterPlus to integrate RNA-seq, DNA variant, and copy number data for unsupervised clustering and to identify three molecular subtypes. Visualize the identified molecular subtypes using PCA.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-7/ref_answer/cluster.csv",
+      "eval_guideline": "Cluster assignments must match the reference partition at the record level, with at least 80% of samples agreeing after optimal label remapping; cluster label values and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-7/output/cluster.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate CSV tabular output, consistent with molecular subtype cluster assignments.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare sample-level cluster assignments after optimal cluster-label remapping, requiring at least 80% agreement; allow differing cluster label values and column order."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "Although unsupervised model fitting can be stochastic, the guideline explicitly requires record-level partition agreement rather than aggregate similarity. The approximate CSV strategy supports sample alignment and structural variation, while optimal label remapping and the 80% threshold should govern assignment equivalence.",
+      "strategy_error": null,
+      "similarity": 0.27380952380952384,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "sample_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sample_id",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same two columns with identical names and orientations, so no transpose or explicit column mapping is needed. Rows represent unordered sample-level cluster assignments and should be matched uniquely by sample_id rather than position. Sorting by sample_id provides deterministic comparison. Cluster values should subsequently be compared after optimal label remapping because unsupervised cluster labels are arbitrary.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "cluster",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Although stored as int64, cluster identifiers are nominal labels rather than quantitative measurements. Apply an optimal one-to-one label remapping between candidate and reference clusters, then compare assignments exactly for each aligned sample. Delimiter, Jaccard threshold, and numeric tolerance are not applicable."
+            }
+          ],
+          "overall_reasoning": "The sample_id column is used only for alignment and is excluded. The cluster column is the sole task-critical output because the evaluation requires record-level agreement of the three-subtype partition. Cluster numbers have no ordinal or metric meaning, so Pearson, Spearman, and relative-error comparisons would be inappropriate and could score equivalent partitions incorrectly. Candidate labels should first be optimally permuted to reference labels, after which exact per-sample equality measures the required agreement and can be checked against the 80% acceptance threshold.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "sample_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample_id"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "sample_id",
+              "cluster"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "sample_id": [
+                "str",
+                "str",
+                true
+              ],
+              "cluster": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sample_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['sample_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "cluster"
+          ],
+          "filtered_columns": [
+            "cluster"
+          ],
+          "overall_similarity": 0.27380952380952384,
+          "per_column_similarities": {
+            "cluster": {
+              "similarity": 0.27380952380952384,
+              "strategy": "exact",
+              "matching_count": 23,
+              "total_count": 84,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 84,
+            "alt_rows": 84,
+            "row_intersection": 84,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              84,
+              2
+            ],
+            "alt_shape": [
+              84,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "sample_id": true,
+              "cluster": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-7/ref_answer/cluster.png",
+      "eval_guideline": "Points colored by cluster membership; axis labels, color scheme, and point styling may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-7/output/cluster.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames and PNG image formats are identical, and the file corresponds to the requested PCA visualization of the identified molecular subtypes.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "iClusterPlus performs stochastic model fitting for unsupervised clustering, so summary comparison is required regardless of the PNG format. Evaluation should focus on the cluster structure and membership represented in the PCA visualization, allowing cosmetic differences in labels, colors, and point styling.",
+      "strategy_error": null,
+      "similarity": 0.48,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "partially equivalent",
+        "confidence": 0.94,
+        "explanation": "Both images present a PCA visualization of integrated molecular data with points colored into three iClusterPlus-derived subtypes, so they communicate the same broad scientific objective. However, the displayed PCA results differ substantially. The reference spans approximately PC1 = -60 to 60 and PC2 = -50 to 40, with one cluster concentrated at high PC2 values, another largely at low PC2 values, and a smaller intermediate cluster. The candidate uses explained-variance axis labels and spans roughly PC1 = -0.8 to 2.5 and PC2 = -1.0 to 2.6; most samples form a compact diagonal cloud, with several strong positive-PC1/PC2 outliers. Differences in PCA scaling, sign, cluster numbering, and colors are acceptable in isolation, but the cluster sizes, spatial distributions, separation patterns, and apparent outlier structure do not clearly correspond under a simple relabeling or axis transformation. The candidate also adds dashed cluster ellipses, which is a harmless stylistic addition. Thus it satisfies the requested visualization type and three-subtype message, but it does not appear to reproduce the same underlying PCA data and clustering pattern as the reference."
+      },
+      "comparison_error": null
+    }
+  ]
+}

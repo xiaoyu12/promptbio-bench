@@ -1,0 +1,592 @@
+{
+  "id": "a-6-5",
+  "question": "Using the provided 16S rRNA amplicon sequence variant (ASV) table, calculate alpha diversity between sample groups and identify differentially abundant ASVs.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-5/ref_answer/AlphaDiversity_results.csv",
+      "eval_guideline": "Shannon, Simpson, and Chao1 values must match the reference within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-6-5/output/AlphaDiversity_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Exact filename match and CSV format; both represent the task's alpha-diversity results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-sample Shannon, Simpson, and Chao1 alpha-diversity values, allowing row/column reordering and differing header labels; numeric values must agree within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level numeric agreement for three alpha-diversity metrics while explicitly allowing row order, column order, and header labels to differ. The CSV approximate strategy supports structural alignment and tolerance-aware numeric comparison.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999998,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "sample_id": "sample_id",
+            "group": "group",
+            "Shannon": "Shannon",
+            "Simpson": "Simpson",
+            "Chao1": "Chao1"
+          },
+          "id_columns": [
+            "sample_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The two tables have the same orientation: samples are rows and diversity metrics are columns, so no transpose is needed. The candidate contains all reference columns with exact name matches plus one extra column ('Observed'), so columns should be aligned by selecting the shared reference columns and ignoring the extra candidate-only column. Rows represent per-sample diversity results, and 'sample_id' is the clear unique identifier for matching samples across tables. Because the evaluation notes that column order, row order, and header ordering may differ, row order is not semantically important and column order is also not sensitive. No pre-sorting is required if alignment is performed by sample_id, but permutation checking should be enabled since the same rows may appear in a different order.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "group",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Group labels define the sample grouping used for alpha-diversity comparison, so they are task-relevant metadata and should match exactly. This is a simple string column with single labels per cell, so exact comparison is appropriate; no delimiter or overlap logic is needed."
+            },
+            {
+              "name": "Shannon",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Shannon is explicitly required by the evaluation guideline to match within 1% relative absolute error. It is a continuous numerical metric, so cell-by-cell RAE with tolerance 0.01 directly encodes the stated acceptance criterion."
+            },
+            {
+              "name": "Simpson",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Simpson is explicitly required by the evaluation guideline to match within 1% relative absolute error. It is a numerical diversity index on a bounded decimal scale, so RAE with a 0.01 tolerance is the most faithful implementation of the requirement."
+            },
+            {
+              "name": "Chao1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Chao1 is explicitly required by the evaluation guideline to match within 1% relative absolute error. Although stored as int64, it represents a numerical diversity estimate, so relative error is more appropriate than exact matching; tolerance 0.01 reflects the 1% RAE requirement."
+            }
+          ],
+          "overall_reasoning": "Compare only the task-critical non-ID columns from the reference: the grouping variable and the three alpha-diversity outputs. Exclude sample_id because it is designated for alignment only. Ignore the candidate-only 'Observed' column because it is not in the reference and is not part of the stated evaluation target. For the categorical 'group' column, exact matching is appropriate because group membership is discrete and directly affects the biological comparison between sample groups. For Shannon, Simpson, and Chao1, use numerical RAE because the task explicitly states these values must match the reference within 1% relative absolute error; setting cell_tolerance to 0.01 implements that requirement directly. Correlation-based strategies are not appropriate here because they could score highly even when absolute reported values differ materially, whereas the evaluation requires value-level agreement. No categorical overlap strategy is needed because there are no multi-valued categorical cells or delimiters in the relevant columns.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "sample_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "sample_id": "sample_id",
+              "group": "group",
+              "Shannon": "Shannon",
+              "Simpson": "Simpson",
+              "Chao1": "Chao1"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Observed"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample_id"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Simpson",
+              "Shannon",
+              "sample_id",
+              "group",
+              "Chao1"
+            ],
+            "converted_columns": [
+              "Chao1"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Simpson": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Shannon": [
+                "float64",
+                "float64",
+                true
+              ],
+              "sample_id": [
+                "str",
+                "str",
+                true
+              ],
+              "group": [
+                "str",
+                "str",
+                true
+              ],
+              "Chao1": [
+                "int64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Observed']",
+            "Converted 1 column(s) to match reference dtypes"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Chao1",
+            "Shannon",
+            "Simpson",
+            "group"
+          ],
+          "filtered_columns": [
+            "Chao1",
+            "Shannon",
+            "Simpson",
+            "group"
+          ],
+          "overall_similarity": 0.9999999999999998,
+          "per_column_similarities": {
+            "Chao1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Shannon": {
+              "similarity": 0.9999999999999994,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Simpson": {
+              "similarity": 0.9999999999999997,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "group": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8333333333333334,
+            "col_recall": 1.0,
+            "col_f1": 0.9090909090909091,
+            "col_jaccard": 0.8333333333333334,
+            "ref_rows": 25,
+            "alt_rows": 25,
+            "row_intersection": 25,
+            "ref_cols": 5,
+            "alt_cols": 6,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              25,
+              5
+            ],
+            "alt_shape": [
+              25,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Simpson": true,
+              "Shannon": true,
+              "sample_id": true,
+              "group": true,
+              "Chao1": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-5/ref_answer/differential_ASVs.csv",
+      "eval_guideline": "log2FoldChange must match the reference within +/-0.01 and padj within +/-0.001; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-6-5/output/differential_ASVs.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Exact filename match and CSV format; both represent the differentially abundant ASV results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare differential ASV results by aligning ASV records regardless of row or column order; require log2FoldChange within +/-0.01 and padj within +/-0.001."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level numeric agreement while allowing row and column reordering. The CSV approximate strategy supports structural alignment and tolerance-aware comparison of log2FoldChange and padj.",
+      "strategy_error": null,
+      "similarity": 0.21335507547101343,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "asv_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are differential abundance result tables with the same 7 columns and identical column names: asv_id, baseMean, log2FoldChange, lfcSE, stat, pvalue, and padj. No transpose is needed because both are already in the same orientation, with ASVs as rows and statistics as columns. Column alignment is unnecessary because names already match exactly, so column_mapping can be null. Rows should be aligned by asv_id, which is the natural unique identifier for each ASV and is required because the candidate has many more rows than the reference (6582 vs 380), indicating the reference is likely a subset of significant ASVs from the candidate. Row order should not matter because the evaluation explicitly says row and column order may differ; the comparison should therefore match rows by ASV identity rather than position or ranking. No pre-sort is strictly required if matching is key-based, and permutation checking should be enabled because differing order is acceptable.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FoldChange",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is explicitly called out in the evaluation guideline and must match within +/-0.01. Use cell-wise relative absolute error with a 0.01 tolerance to enforce near-exact agreement at the requested precision after alignment by asv_id."
+            },
+            {
+              "name": "padj",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Adjusted p-value is explicitly required by the evaluation guideline with tolerance +/-0.001. Use cell-wise relative absolute error with a strict 0.001 tolerance to reflect the required numeric agreement, while naturally handling NaN-vs-NaN cases common for non-significant ASVs."
+            },
+            {
+              "name": "baseMean",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.78,
+              "reasoning": "baseMean is part of the differential abundance result and helps verify the abundance model output beyond the two explicitly scored fields. As a continuous measurement, a cell-wise error comparison is appropriate; a modest 0.01 tolerance is reasonable for numeric consistency without being overly strict."
+            },
+            {
+              "name": "lfcSE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.76,
+              "reasoning": "lfcSE is a continuous DE result component tied to log2FoldChange estimation. Since exact per-ASV values matter more than rank or trend, RAE is more appropriate than correlation. A 0.01 tolerance is a reasonable strict numeric tolerance for this float output."
+            },
+            {
+              "name": "stat",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.76,
+              "reasoning": "The test statistic is a per-ASV numeric output of the DE workflow. Cell-wise error is more suitable than correlation because the goal is reproducibility of the result table, not just similar ordering. A 0.01 tolerance is an appropriate strict float tolerance."
+            },
+            {
+              "name": "pvalue",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Raw p-values are directly related to differential abundance calls and should closely agree if the statistical pipeline matches. Because p-values are on a probability scale, a stricter 0.001 tolerance is appropriate, similar to padj though slightly less central to the stated scoring."
+            }
+          ],
+          "overall_reasoning": "The task is to compare aligned ASV-level differential abundance outputs after excluding the alignment key asv_id. All remaining columns are numerical float outputs from the statistical model, so numerical comparison strategies are required. Because the evaluation focuses on per-ASV reproducibility of reported values, cell-wise comparison is more appropriate than Pearson or Spearman correlation, which could score highly even when individual values differ materially. Therefore, RAE is used for all included columns. The two columns explicitly named in the evaluation guideline, log2FoldChange and padj, are the highest-priority fields and receive tolerances matching the stated acceptance criteria: 0.01 and 0.001 respectively. The supporting DE result columns baseMean, lfcSE, stat, and pvalue are also important for validating that the same analysis was reproduced, so they are included with strict but reasonable float tolerances based on their scales: 0.01 for model-estimate/statistic columns and 0.001 for probability-scale pvalue. No categorical columns are present, so overlap/exact strategies and delimiters are not applicable. Row and column order are irrelevant because alignment is already handled by asv_id and reference column names.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "asv_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "asv_id"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 6202,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "lfcSE",
+              "baseMean",
+              "asv_id",
+              "padj",
+              "stat",
+              "pvalue",
+              "log2FoldChange"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "lfcSE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "baseMean": [
+                "float64",
+                "float64",
+                true
+              ],
+              "asv_id": [
+                "str",
+                "str",
+                true
+              ],
+              "padj": [
+                "float64",
+                "float64",
+                true
+              ],
+              "stat": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pvalue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "log2FoldChange": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate rows: 6202"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "baseMean",
+            "lfcSE",
+            "log2FoldChange",
+            "padj",
+            "pvalue",
+            "stat"
+          ],
+          "filtered_columns": [
+            "baseMean",
+            "lfcSE",
+            "log2FoldChange",
+            "padj",
+            "pvalue",
+            "stat"
+          ],
+          "overall_similarity": 0.21335507547101343,
+          "per_column_similarities": {
+            "baseMean": {
+              "similarity": 0.33614593335063253,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "lfcSE": {
+              "similarity": 0.8508717460662045,
+              "strategy": "rae",
+              "matching_count": 251,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "log2FoldChange": {
+              "similarity": 0.0017576745959324265,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "padj": {
+              "similarity": 0.04618552842213912,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 321,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "pvalue": {
+              "similarity": 0.04341021445090462,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "stat": {
+              "similarity": 0.0017593559402674789,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 6582,
+            "alt_rows": 6582,
+            "row_intersection": 6582,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              6582,
+              7
+            ],
+            "alt_shape": [
+              6582,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "lfcSE": true,
+              "baseMean": true,
+              "asv_id": true,
+              "padj": true,
+              "stat": true,
+              "pvalue": true,
+              "log2FoldChange": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.19525473513623012,
+            "ref_missing_rate": 0.9422667882102704,
+            "alt_missing_rate": 0.14050947027246025
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

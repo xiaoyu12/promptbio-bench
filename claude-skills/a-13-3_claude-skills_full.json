@@ -1,0 +1,230 @@
+{
+  "id": "a-13-3",
+  "question": "Assemble a synthetic plasmid from dna_parts.fasta using Golden Gate cloning with BsaI, and output a circular construct map with part positions. Assemble parts in the order they appear in the file (part1_promoter -> part2_gene -> part3_terminator -> part4_backbone), digesting with BsaI (recognition site GGTCTC, cuts 1 nt downstream on the sense strand) to generate compatible overhangs for ligation.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-3/ref_answer/assembled_plasmid.csv",
+      "eval_guideline": "The assembled sequence must match the reference exactly; case and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-3/output/assembled_plasmid.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Exact basename and CSV format match; both paths indicate the assembled plasmid sequence/position table for the same a-13-3 task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare assembled plasmid CSV tables for equivalence, requiring the assembled sequence to match exactly while allowing differences in sequence case and column order."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires exact sequence content but explicitly permits case and column-order differences. The CSV approximate strategy supports structural alignment and case-insensitive equivalence, whereas exact comparison would incorrectly reject allowed variations.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "Sequence": "Sequence",
+            "Length": "Length"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are single-row records describing an assembled construct. The key comparable fields in the reference are 'Sequence' and 'Length', which map directly to the candidate columns of the same names. The candidate has additional metadata columns ('Name', 'Topology', 'Num_Parts') that are not present in the reference and can be ignored for structural alignment. Because each dataframe contains only one row, row alignment is not meaningful beyond positional comparison, so no ID columns are needed and align_rows is false. Row order does not matter for a single-record comparison, and column order is not important because the evaluation notes that case and column order may differ. No sorting is needed.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Sequence",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The task explicitly states the assembled sequence must match the reference exactly, with case differences allowed only implicitly by treating the sequence as a string field whose content should be identical aside from any external normalization. Sequence is the primary output of the cloning task, and partial/token overlap would be inappropriate because any base-level difference makes the construct incorrect."
+            },
+            {
+              "name": "Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "Length is a critical consistency check for the assembled construct and should exactly match the reference length. As an integer-valued measurement, RAE with zero tolerance enforces exact equality while remaining appropriate for a numerical column."
+            }
+          ],
+          "overall_reasoning": "The task is focused on validating a Golden Gate assembly result, and the evaluation guideline says the assembled sequence must match the reference exactly, while case and column order may differ. Therefore, the critical reference columns are Sequence and Length, which are the only columns shared with the reference after alignment. Candidate-only metadata columns (Name, Topology, Num_Parts) should not be included because they are not reference comparison targets. For Sequence (str), exact comparison is the correct categorical strategy because the biological construct is only correct if the full assembled sequence matches exactly; overlap/Jaccard is not suitable for contiguous DNA sequences. For Length (int64), a numerical comparison is appropriate; RAE with cell_tolerance 0.0 enforces exact length agreement, which matches the strict evaluation requirement and the discrete integer nature of the field. No overlap delimiter is needed because no categorical field should be tokenized. Overall, the plan emphasizes exact biological correctness through exact sequence matching and exact length agreement.",
+          "overall_confidence": 0.99,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Sequence": "Sequence",
+              "Length": "Length"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Name",
+              "Topology",
+              "Num_Parts"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Sequence",
+              "Length"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "Length": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Name', 'Topology', 'Num_Parts']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Length",
+            "Sequence"
+          ],
+          "filtered_columns": [
+            "Length",
+            "Sequence"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Sequence": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 2,
+            "alt_cols": 5,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Sequence": true,
+              "Length": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-3/ref_answer/plasmid_map.txt",
+      "eval_guideline": "Total length and per-part positional intervals must match the reference; label formatting and whitespace may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-3/output/plasmid_map.txt",
+      "match_confidence": 1.0,
+      "match_reasoning": "Exact basename and plain-text format match; this is clearly the requested circular plasmid map with part positions for the same task.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.99; reasoning: The content is human-readable descriptive text summarizing a plasmid map, with headings and feature annotations, but it does not match a specific structured bioinformatics format such as FASTA, GFF, BED, or JSON."
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Verify that the reported circular plasmid has the same total length and per-part positional intervals as the reference. Allow differences in label formatting and whitespace."
+      },
+      "strategy_confidence": 0.97,
+      "strategy_reasoning": "The guideline requires exact agreement of specific map facts—total length and each part’s positional interval—while permitting textual formatting differences. Semantic comparison can validate those values despite variations in labels and whitespace.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.99,
+        "explanation": "The candidate contains all key plasmid-map information from the reference. Total length matches exactly at 440 bp (candidate/reference ratio 1.0). All four parts occur in the required order and have exactly matching 1-based inclusive intervals and lengths: part1_promoter 1–114 (114 bp), part2_gene 115–214 (100 bp), part3_terminator 215–325 (111 bp), and part4_backbone 326–440 (115 bp). The intervals are contiguous and their lengths sum to 440 bp. The candidate additionally reports circular topology, BsaI digestion details, overhangs, and sanity checks; these additions do not change the reference map’s required total length or positions. Although several junctions are labeled as having non-identical overhang strings, this does not create a discrepancy under the stated evaluation guideline, which prioritizes exact total length and per-part positional intervals.",
+        "ref_length": 192,
+        "alt_length": 1783
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+
+Task:    b-12-2
+Question: Using time-series glucose data (columns: Hour, Level), train a Random Forest multi-output regressor to predict glucose levels at +1, +2, and +3 hours ahead for each individual patient. Use the past 6 hours as the feature window (lookback=6). Use a random 80/20 train-test split (random_state=42). Use n_estimators=100 and random_state=42 for the Random Forest.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/b-12-2/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/b-12-2/output  (1 file(s))
+Matched files:
+  glucose_predictions.csv → glucose_predictions.csv  (conf=0.99)
+    Reasoning: The filenames and CSV formats match exactly, and the candidate is in the output directory for the same b-12-2 glucose forecasting task.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/1: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/b-12-2/ref_answer/glucose_predictions.csv
+    alt: promptbio-bench-claude-skills/tasks/b-12-2/output/glucose_predictions.csv
+
+  File 1/1: status=success, similarity=0.9254
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "PatientID": "PatientID",
+            "Start_Hour": "Start_Hour",
+            "Pred_Hour+1": "Pred_Hour+1",
+            "Pred_Hour+2": "Pred_Hour+2",
+            "Pred_Hour+3": "Pred_Hour+3"
+          },
+          "id_columns": [
+            "PatientID",
+            "Start_Hour"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "PatientID,Start_Hour",
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are standard row-wise prediction tables with patients/samples as rows and prediction variables as columns. The reference columns all exist exactly in the candidate, so align the candidate to the reference using the shared prediction subset and ignore extra candidate-only columns (Actual_* and Target_*), which are not part of the reference evaluation. Rows should be aligned because the candidate has 130 rows while the reference has 128, and the evaluation explicitly states that test-set rows are identified by PatientID and Start_Hour. Those two columns therefore form the natural composite key for matching rows across dataframes. Row order should not matter because evaluation is based on matching test-set identifiers rather than positional order; therefore permutation checking is appropriate. Pre-sorting by PatientID and Start_Hour is helpful to produce deterministic aligned comparisons after key-based matching. Column order is not semantically important because the guideline says column order and header labels may differ, so comparison should focus on mapped columns rather than original ordering.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Pred_Hour+1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a required prediction output column for the +1 hour horizon. The task explicitly says Pred_* values must match within 5% relative absolute error, so relative absolute error is the correct dtype-aware comparison strategy with tolerance set to 0.05."
+            },
+            {
+              "name": "Pred_Hour+2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a required prediction output column for the +2 hour horizon. It is float64 and should be compared by relative absolute error because the evaluation guideline explicitly requires matching within 5% RAE. Tolerance is therefore 0.05."
+            },
+            {
+              "name": "Pred_Hour+3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a required prediction output column for the +3 hour horizon. It is a numeric prediction target and the task specifies a 5% relative absolute error acceptance criterion, so RAE with cell_tolerance 0.05 is the appropriate strategy."
+            }
+          ],
+          "overall_reasoning": "The task is to compare aligned prediction outputs from a multi-output glucose forecasting model. Alignment is already governed by the ID columns PatientID and Start_Hour, which should be used only for row matching and excluded from value comparison. The only reference data columns that represent required deliverables are Pred_Hour+1, Pred_Hour+2, and Pred_Hour+3; extra candidate-only columns such as Actual_* and Target_* are not part of the required output and should not be compared. All three compared columns are float64 numerical prediction values, and the task explicitly states that Pred_* values must match within 5% relative absolute error, making the numerical strategy 'rae' the correct choice for each with cell_tolerance set to 0.05. No categorical columns are involved, so no overlap strategy, delimiters, or Jaccard thresholds are needed. NaN values may appear in both outputs due to differing train/test row handling, but the plan remains focused on the three prediction columns under the stated 5% RAE rule.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "PatientID",
+            "Start_Hour"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "PatientID": "PatientID",
+              "Start_Hour": "Start_Hour",
+              "Pred_Hour+1": "Pred_Hour+1",
+              "Pred_Hour+2": "Pred_Hour+2",
+              "Pred_Hour+3": "Pred_Hour+3"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Actual_Hour+1",
+              "Actual_Hour+2",
+              "Actual_Hour+3",
+              "Target_Hour+1",
+              "Target_Hour+2",
+              "Target_Hour+3"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "PatientID",
+              "Start_Hour"
+            ],
+            "unmapped_ref_rows": 110,
+            "unmapped_alt_rows": 112,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Start_Hour",
+              "Pred_Hour+1",
+              "PatientID",
+              "Pred_Hour+3",
+              "Pred_Hour+2"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Start_Hour": [
+                "str",
+                "str",
+                true
+              ],
+              "Pred_Hour+1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientID": [
+                "str",
+                "str",
+                true
+              ],
+              "Pred_Hour+3": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Pred_Hour+2": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "PatientID",
+              "Start_Hour"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Actual_Hour+1', 'Actual_Hour+2', 'Actual_Hour+3', 'Target_Hour+1', 'Target_Hour+2', 'Target_Hour+3']",
+            "Unmapped reference rows: 110",
+            "Unmapped candidate rows: 112",
+            "Sorted both dataframes by ['PatientID', 'Start_Hour']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Pred_Hour+1",
+            "Pred_Hour+2",
+            "Pred_Hour+3"
+          ],
+          "filtered_columns": [
+            "Pred_Hour+1",
+            "Pred_Hour+2",
+            "Pred_Hour+3"
+          ],
+          "overall_similarity": 0.9254437661726529,
+          "per_column_similarities": {
+            "Pred_Hour+1": {
+              "similarity": 0.9331689523187349,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 18,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Pred_Hour+2": {
+              "similarity": 0.938984744338569,
+              "strategy": "rae",
+              "matching_count": 9,
+              "total_count": 18,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Pred_Hour+3": {
+              "similarity": 0.9041776018606549,
+              "strategy": "rae",
+              "matching_count": 7,
+              "total_count": 18,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.45454545454545453,
+            "col_recall": 1.0,
+            "col_f1": 0.625,
+            "col_jaccard": 0.45454545454545453,
+            "ref_rows": 240,
+            "alt_rows": 240,
+            "row_intersection": 240,
+            "ref_cols": 5,
+            "alt_cols": 11,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              240,
+              5
+            ],
+            "alt_shape": [
+              240,
+              11
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Start_Hour": true,
+              "Pred_Hour+1": true,
+              "PatientID": true,
+              "Pred_Hour+3": true,
+              "Pred_Hour+2": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.075,
+            "ref_missing_rate": 0.4666666666666667,
+            "alt_missing_rate": 0.4583333333333333
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: b-12-2  |  Agent: claude-skills
+Avg similarity: 0.9254
+============================================================
+
+✅ Results saved → results/b-12-2_claude-skills.json
+✅ Full states saved → results/b-12-2_claude-skills_full.json
+
+
+
+

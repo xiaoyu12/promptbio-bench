@@ -1,0 +1,542 @@
+
+Task:    a-3-6
+Question: Identify candidate fusion gene junctions from RNA-Seq data. Align reads with STAR using chimeric detection parameters to produce a chimeric junction file, then extract candidate fusion junctions into a CSV.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-3-6/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-3-6/output  (2 file(s))
+Matched files:
+  K562_Chimeric.out.junction → K562_Chimeric.out.junction  (conf=1.00)
+    Reasoning: Exact filename match, and both paths indicate STAR chimeric junction output files generated from the K562 paired-end RNA-Seq inputs.
+  K562_candidate_fusions.csv → K562_candidate_fusions.csv  (conf=1.00)
+    Reasoning: Exact filename and .csv format match; both represent the extracted K562 candidate fusion junction table.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-6/ref_answer/K562_Chimeric.out.junction
+    alt: promptbio-bench-claude-skills/tasks/a-3-6/output/K562_Chimeric.out.junction
+
+  File 2/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-6/ref_answer/K562_candidate_fusions.csv
+    alt: promptbio-bench-claude-skills/tasks/a-3-6/output/K562_candidate_fusions.csv
+
+  File 1/2: status=success, similarity=0.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "0": "chr_donorA",
+            "1": "brkpt_donorA",
+            "2": "strand_donorA",
+            "3": "chr_acceptorB",
+            "4": "brkpt_acceptorB",
+            "5": "strand_acceptorB",
+            "6": "junction_type",
+            "7": "repeat_left_lenA",
+            "8": "repeat_right_lenB",
+            "9": "read_name",
+            "10": "start_alnA",
+            "11": "cigar_alnA",
+            "12": "start_alnB",
+            "13": "cigar_alnB"
+          },
+          "id_columns": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "0,1,2,3,4,5",
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are row-wise junction records, with the reference using unnamed positional columns and the candidate using descriptive STAR chimeric output column names. The first 14 reference columns map directly and in order to the first 14 semantic candidate fields: donor chromosome/breakpoint/strand, acceptor chromosome/breakpoint/strand, junction metadata, read name, and alignment start/CIGAR fields. The candidate has 7 additional scoring/annotation columns that are not present in the reference, which is consistent with the evaluation note that read-level annotation columns may differ. Row matching should be based on the biologically relevant fusion junction identity fields required by evaluation: donor chromosome, donor position, donor strand, acceptor chromosome, acceptor position, and acceptor strand, corresponding to reference columns 0-5. Because the task is to identify candidate junction records rather than preserve ranked output order, row order is not meaningful; the candidate also has more rows than the reference, so sorting by the composite junction key will support stable comparison and permutation checking.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "6",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Column 6 is a numeric read-level annotation/support field. The task guideline explicitly says read-level annotation columns may differ, so this should not affect evaluation."
+            },
+            {
+              "name": "7",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Column 7 appears to be a numeric read-level annotation/support field rather than a junction-defining coordinate. Since read-level annotation columns may differ, ignore it."
+            },
+            {
+              "name": "8",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Column 8 is another numeric read-level/support annotation field. It is not part of donor/acceptor chromosome, position, or strand matching, so it should be ignored."
+            },
+            {
+              "name": "9",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Column 9 contains read identifiers. These are explicitly read-level annotations and may differ even when the junction call is correct."
+            },
+            {
+              "name": "10",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Column 10 is a numeric per-read alignment position/annotation field, not one of the junction-defining columns called out in the evaluation guideline. Ignore it."
+            },
+            {
+              "name": "11",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Column 11 contains CIGAR/alignment-pattern strings for reads. This is read-level alignment detail and may differ without changing the called fusion junction."
+            },
+            {
+              "name": "12",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Column 12 is another read-level numeric alignment position/annotation field. It is not required by the evaluation criterion, so ignore it."
+            },
+            {
+              "name": "13",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Column 13 contains read-level alignment/CIGAR-like annotation text. The task says these annotation columns may differ, so this column should be ignored."
+            }
+          ],
+          "overall_reasoning": "The evaluation rule is explicit: junction records must match on donor and acceptor chromosome, position, and strand, while read-level annotation columns may differ. The alignment already used ID columns 0-5, which correspond to the critical junction-defining fields, so they must be excluded from comparison per instruction even though they are the biologically important keys. Among the remaining columns 6-13, the previews show they are read-support counts/flags, read names, per-read breakpoint positions, and CIGAR/alignment strings. These are annotation/details attached to junction evidence rather than the junction identity itself. Therefore, the correct dtype-aware plan is to ignore all non-ID data columns. No numerical RAE tolerances or categorical overlap thresholds are needed because none of the compared columns should contribute to scoring for this task. Extra candidate-only columns beyond 13 are also naturally excluded because they are not part of the aligned reference comparison set and are annotation/metadata fields.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "0": "chr_donorA",
+              "1": "brkpt_donorA",
+              "2": "strand_donorA",
+              "3": "chr_acceptorB",
+              "4": "brkpt_acceptorB",
+              "5": "strand_acceptorB",
+              "6": "junction_type",
+              "7": "repeat_left_lenA",
+              "8": "repeat_right_lenB",
+              "9": "read_name",
+              "10": "start_alnA",
+              "11": "cigar_alnA",
+              "12": "start_alnB",
+              "13": "cigar_alnB"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "num_chim_aln",
+              "max_poss_aln_score",
+              "non_chim_aln_score",
+              "this_chim_aln_score",
+              "bestall_chim_aln_score",
+              "PEmerged_bool",
+              "readgrp"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "unmapped_ref_rows": 434,
+            "unmapped_alt_rows": 796,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "8",
+              "1",
+              "6",
+              "10",
+              "9",
+              "4",
+              "2",
+              "13",
+              "11",
+              "5",
+              "7",
+              "0",
+              "3",
+              "12"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "8": [
+                "float64",
+                "float64",
+                true
+              ],
+              "1": [
+                "str",
+                "str",
+                true
+              ],
+              "6": [
+                "float64",
+                "float64",
+                true
+              ],
+              "10": [
+                "float64",
+                "float64",
+                true
+              ],
+              "9": [
+                "str",
+                "str",
+                true
+              ],
+              "4": [
+                "str",
+                "str",
+                true
+              ],
+              "2": [
+                "str",
+                "str",
+                true
+              ],
+              "13": [
+                "str",
+                "str",
+                true
+              ],
+              "11": [
+                "str",
+                "str",
+                true
+              ],
+              "5": [
+                "str",
+                "str",
+                true
+              ],
+              "7": [
+                "float64",
+                "float64",
+                true
+              ],
+              "0": [
+                "str",
+                "str",
+                true
+              ],
+              "3": [
+                "str",
+                "str",
+                true
+              ],
+              "12": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['num_chim_aln', 'max_poss_aln_score', 'non_chim_aln_score', 'this_chim_aln_score', 'bestall_chim_aln_score', 'PEmerged_bool', 'readgrp']",
+            "Unmapped reference rows: 434",
+            "Unmapped candidate rows: 796",
+            "Sorted both dataframes by ['0', '1', '2', '3', '4', '5']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "10",
+            "11",
+            "12",
+            "13",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "overall_similarity": 0.0,
+          "notes": [
+            "All columns marked as 'ignore'"
+          ]
+        }
+      }
+
+  File 2/2: status=success, similarity=0.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "chr1": "chr1",
+            "base1": "base1",
+            "strand1": "strand1",
+            "chr2": "chr2",
+            "base2": "base2",
+            "strand2": "strand2",
+            "junction_type": "junction_type",
+            "read_name": "read_name"
+          },
+          "id_columns": [
+            "chr1",
+            "base1",
+            "strand1",
+            "chr2",
+            "base2",
+            "strand2",
+            "junction_type"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "chr1,base1,strand1,chr2,base2,strand2,junction_type",
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are standard row-wise records of fusion/chimeric junction events. The reference has 8 columns, while the candidate has the same 8 key fields plus many extra annotation columns, so column alignment is needed to restrict comparison to the shared evaluation fields. All reference columns have exact-name matches in the candidate, including read_name, but the task guideline says records must match specifically on chr1, base1, strand1, chr2, base2, strand2, and junction_type; therefore those seven fields form the primary composite row identifier for structural alignment. Row order does not matter because the evaluation describes matching fusion records as a set and explicitly allows row and column order to differ. Because order is irrelevant and the candidate contains more rows than the reference, sorting by the composite junction key before comparison will make alignment deterministic and facilitate permutation/set-style matching. Column order is also not semantically important because fields can be matched by name.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "read_name",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The task defines correctness entirely by matching fusion junction identity fields (chr1, base1, strand1, chr2, base2, strand2, junction_type), which are ID columns already used for alignment and excluded from comparison. The remaining shared column, read_name, is not part of the evaluation criterion. It is also semantically inconsistent between reference and candidate preview: the reference contains placeholder-like numeric values (mostly 1.0/NaN) while the candidate contains original read identifiers encoded as strings despite being labeled float64. Because it is non-essential and likely not comparable in a meaningful way, it should be ignored."
+            }
+          ],
+          "overall_reasoning": "The task is to identify candidate fusion gene junctions, and the evaluation guideline explicitly states that records must match on chr1, base1, strand1, chr2, base2, strand2, and junction_type. Those fields are designated as ID columns and have already been used for alignment, so they must be excluded from column-wise comparison. After excluding ID columns, the only shared data column is read_name. Although its declared dtype is numerical, the preview shows it is not a reliable quantitative measurement for this task: in the reference it appears as 1.0/NaN, while in the candidate it appears to contain detailed read IDs. This indicates a representation mismatch and also confirms that read_name is not central to the task outcome. Therefore the appropriate plan is to ignore read_name rather than force an unsuitable numerical comparison such as RAE, Pearson, or Spearman. No overlap delimiter or numerical tolerance is needed because no non-ID column should be actively compared. This plan focuses evaluation on the task-critical fusion junction keys via alignment, avoiding false penalties from irrelevant metadata.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "chr1",
+            "base1",
+            "strand1",
+            "chr2",
+            "base2",
+            "strand2",
+            "junction_type"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "chr1": "chr1",
+              "base1": "base1",
+              "strand1": "strand1",
+              "chr2": "chr2",
+              "base2": "base2",
+              "strand2": "strand2",
+              "junction_type": "junction_type",
+              "read_name": "read_name"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "repeat_left",
+              "repeat_right",
+              "start1",
+              "cigar1",
+              "start2",
+              "cigar2",
+              "num_chim_aln",
+              "max_poss_aln_score",
+              "non_chim_aln_score",
+              "this_chim_aln_score",
+              "bestall_chim_aln_score",
+              "PEmerged_bool",
+              "readgrp",
+              "read_class",
+              "inter_chromosomal",
+              "dist",
+              "involves_chrM",
+              "junction_split_read_support"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "chr1",
+              "base1",
+              "strand1",
+              "chr2",
+              "base2",
+              "strand2",
+              "junction_type"
+            ],
+            "unmapped_ref_rows": 36,
+            "unmapped_alt_rows": 350,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "chr1",
+              "junction_type",
+              "strand2",
+              "base2",
+              "chr2",
+              "read_name",
+              "strand1",
+              "base1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [
+              "read_name"
+            ],
+            "conversion_details": {
+              "chr1": [
+                "str",
+                "str",
+                true
+              ],
+              "junction_type": [
+                "str",
+                "str",
+                true
+              ],
+              "strand2": [
+                "str",
+                "str",
+                true
+              ],
+              "base2": [
+                "str",
+                "str",
+                true
+              ],
+              "chr2": [
+                "str",
+                "str",
+                true
+              ],
+              "read_name": [
+                "float64",
+                "str",
+                false
+              ],
+              "strand1": [
+                "str",
+                "str",
+                true
+              ],
+              "base1": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "chr1",
+              "base1",
+              "strand1",
+              "chr2",
+              "base2",
+              "strand2",
+              "junction_type"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['repeat_left', 'repeat_right', 'start1', 'cigar1', 'start2', 'cigar2', 'num_chim_aln', 'max_poss_aln_score', 'non_chim_aln_score', 'this_chim_aln_score', 'bestall_chim_aln_score', 'PEmerged_bool', 'readgrp', 'read_class', 'inter_chromosomal', 'dist', 'involves_chrM', 'junction_split_read_support']",
+            "Unmapped reference rows: 36",
+            "Unmapped candidate rows: 350",
+            "Failed to convert 1 column(s)",
+            "Sorted both dataframes by ['chr1', 'base1', 'strand1', 'chr2', 'base2', 'strand2', 'junction_type']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "read_name"
+          ],
+          "overall_similarity": 0.0,
+          "notes": [
+            "All columns marked as 'ignore'"
+          ]
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-3-6  |  Agent: claude-skills
+Avg similarity: 0.0000
+============================================================
+
+✅ Results saved → results/a-3-6_claude-skills.json
+✅ Full states saved → results/a-3-6_claude-skills_full.json
+
+
+
+

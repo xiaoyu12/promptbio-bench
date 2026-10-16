@@ -1,0 +1,215 @@
+{
+  "id": "a-13-3",
+  "question": "Assemble a synthetic plasmid from dna_parts.fasta using Golden Gate cloning with BsaI, and output a circular construct map with part positions. Assemble parts in the order they appear in the file (part1_promoter -> part2_gene -> part3_terminator -> part4_backbone), digesting with BsaI (recognition site GGTCTC, cuts 1 nt downstream on the sense strand) to generate compatible overhangs for ligation.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-3/ref_answer/assembled_plasmid.csv",
+      "eval_guideline": "The assembled sequence must match the reference exactly; case and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-13-3/output/assembled_plasmid.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate CSV format. The file clearly corresponds to the assembled plasmid output requested by the task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare assembled plasmid construct maps for exact sequence and part-position equivalence, allowing case and column order differences."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The deterministic assembly must match at the record level, but the guideline explicitly permits case and column-order differences. The CSV approximate strategy preserves strict value comparison while accommodating those acceptable structural variations.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both dataframes already have the same 1-row by 2-column structure, with exact column-name matches for Sequence and Length. No transpose, column mapping, row matching, or sorting is needed. Positional comparison is appropriate for the single assembled construct, and row order is semantically significant because the task specifies an exact assembly order.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Sequence",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The task explicitly requires the assembled plasmid sequence to match the reference exactly. The DNA sequence is a single atomic string, so whole-cell exact equality is required; delimiter-based overlap would incorrectly permit reordered, missing, or extra bases."
+            },
+            {
+              "name": "Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Construct length is an integer consistency check and must match exactly because any nonzero difference indicates missing or extra nucleotides. RAE with zero tolerance enforces exact numerical equality and is suitable for the single aligned row, unlike correlation strategies."
+            }
+          ],
+          "overall_reasoning": "Both non-ID columns are critical: Sequence verifies the exact Golden Gate assembly product, while Length independently checks construct size. Sequence uses exact categorical comparison without tokenization, and Length uses cell-wise RAE with zero tolerance because nucleotide counts admit no acceptable deviation. Column order and display case do not affect selection of the aligned reference columns; sequence values themselves are compared exactly as required.",
+          "overall_confidence": 1.0,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Sequence",
+              "Length"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "Length": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Length",
+            "Sequence"
+          ],
+          "filtered_columns": [
+            "Length",
+            "Sequence"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Sequence": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Sequence": true,
+              "Length": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-3/ref_answer/plasmid_map.txt",
+      "eval_guideline": "Total length and per-part positional intervals must match the reference; label formatting and whitespace may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-13-3/output/plasmid_map.txt",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate plain-text format. The file directly corresponds to the requested circular construct map with part positions.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "txt",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Verify that the total plasmid length and every labeled part's positional interval match the reference, while allowing differences in label formatting and whitespace."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline requires exact agreement on specific facts—total length and per-part intervals—but explicitly allows textual formatting variation. Semantic comparison is therefore best suited to extracting and checking those values without requiring line-by-line identity.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 1.0,
+        "explanation": "The candidate contains all key information required by the reference and evaluation guideline. Both report a total circular construct length of 440 bp (candidate/reference ratio 1.0). Every part name, order, and 1-based inclusive positional interval matches exactly: part1_promoter 1-114 (114 bp), part2_gene 115-214 (100 bp), part3_terminator 215-325 (111 bp), and part4_backbone 326-440 (115 bp); all corresponding length ratios are 1.0. The intervals are contiguous, cover positions 1 through 440 without gaps or overlaps, and preserve the required assembly order. The candidate additionally supplies BsaI digestion details, overhangs, topology, GC content, junction order, and the full sequence. These additions do not conflict with the reference or alter the required map information.",
+        "ref_length": 192,
+        "alt_length": 1873
+      },
+      "comparison_error": null
+    }
+  ]
+}

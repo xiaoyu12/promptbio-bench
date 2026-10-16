@@ -1,0 +1,512 @@
+{
+  "id": "a-4-10",
+  "question": "Given ChIP-seq peak locations for a transcription factor and a gene annotation file in GTF format, identify the nearest gene for each ChIP-seq peak using HOMER.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-4-10/ref_answer/SPT5_T0_REP1_peaks.annotatePeaks.txt",
+      "eval_guideline": "Each peak's genomic coordinates, distance to TSS, and nearest gene name must match the reference; row order and extra HOMER annotation columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-4-10/output/SPT5_T0_REP1_peaks.annotatePeaks.txt",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the exact same basename and .txt format as the reference. Its annotatePeaks naming also directly corresponds to the HOMER nearest-gene annotation output for the supplied SPT5 peak file.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "txt",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare peak annotation tables by matching records using peak genomic coordinates, then require distance to TSS and nearest gene name to match; allow row and column reordering and ignore extra HOMER annotation columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level matching of selected TSV fields while explicitly allowing row-order differences and extra columns. The approximate strategy supports key-based row alignment and structural variation without relaxing the required coordinates, TSS distance, and nearest-gene values.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)": "PeakID (cmd=annotatePeaks.pl data/SPT5_T0_REP1_peaks.broadPeak data/genome.fa -gid -gtf data/genes.gtf -cpu 6)",
+            "Chr": "Chr",
+            "Start": "Start",
+            "End": "End",
+            "Strand": "Strand",
+            "Peak Score": "Peak Score",
+            "Focus Ratio/Region Size": "Focus Ratio/Region Size",
+            "Annotation": "Annotation",
+            "Detailed Annotation": "Detailed Annotation",
+            "Distance to TSS": "Distance to TSS",
+            "Nearest PromoterID": "Nearest PromoterID",
+            "Entrez ID": "Entrez ID",
+            "Nearest Unigene": "Nearest Unigene",
+            "Nearest Refseq": "Nearest Refseq",
+            "Nearest Ensembl": "Nearest Ensembl",
+            "Gene Name": "Gene Name",
+            "Gene Alias": "Gene Alias",
+            "Gene Description": "Gene Description",
+            "Gene Type": "Gene Type"
+          },
+          "id_columns": [
+            "Chr",
+            "Start",
+            "End"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Chr,Start,End",
+          "check_permutation": true,
+          "reasoning": "The tables have the same orientation and nearly identical schema, so no transpose is needed. Column alignment is still required because the first PeakID header differs due to command/path/CPU metadata in the column name, while all other columns match directly. Rows should be aligned because evaluation is based on matching each peak's genomic coordinates, distance to TSS, and nearest gene regardless of row order. The most reliable row key is the genomic interval composite key (Chr, Start, End), which directly identifies each peak and is more stable than the PeakID header whose column name differs and whose values may be secondary to genomic location in the task. Because row order may differ and extra annotation content can vary, sorting by Chr, Start, End before comparison will normalize ordering and support permutation checking. Column order is not semantically important.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Distance to TSS",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Explicitly required by the task. This is an integer genomic distance that must match the reference exactly, so use RAE with zero tolerance to enforce exact equality."
+            },
+            {
+              "name": "Gene Name",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Explicitly required by the task as the nearest gene name. Gene symbols/names are single categorical values and should match exactly."
+            },
+            {
+              "name": "Annotation",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Genomic peak annotation helps verify that the nearest-feature assignment is biologically and computationally consistent with the reference. Values are single strings and should match exactly."
+            },
+            {
+              "name": "Nearest PromoterID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "This is a key nearest-feature identifier from HOMER and strongly supports whether the correct nearest gene was found. It is a single identifier and should match exactly."
+            },
+            {
+              "name": "Entrez ID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.86,
+              "reasoning": "Although typed as string, this field functions as a gene identifier and should agree when nearest-gene assignment is correct. Exact comparison is appropriate for single-value IDs."
+            },
+            {
+              "name": "Strand",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Strand is part of the reported annotation context and should be identical for the aligned peak annotations. It is a single categorical symbol (+/-) so exact comparison is appropriate."
+            },
+            {
+              "name": "Gene Type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Gene biotype provides additional confirmation that the same annotated feature was selected. It is a single categorical label and should match exactly."
+            },
+            {
+              "name": "Peak Score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.72,
+              "reasoning": "Peak score is not central to the nearest-gene task, but if retained after alignment it should remain unchanged from the source peak file. As an integer field, exact equality via zero-tolerance RAE is appropriate."
+            },
+            {
+              "name": "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Not part of the scientific success criterion, but useful as a consistency check that the same peak labels were preserved after annotation. Single string values should match exactly."
+            }
+          ],
+          "overall_reasoning": "The task focuses on identifying the nearest gene for each ChIP-seq peak using HOMER, with evaluation explicitly requiring agreement on peak genomic coordinates, distance to TSS, and nearest gene name; coordinates are ID columns used only for alignment and are therefore excluded from comparison configs. I prioritized columns that directly encode the required outputs or strongly validate the same nearest-gene assignment: Distance to TSS and Gene Name are mandatory, while Nearest PromoterID, Annotation, Entrez ID, Strand, and Gene Type provide supporting evidence that the same genomic feature was annotated. PeakID and Peak Score are included as secondary consistency checks because they should be preserved for aligned peaks, though they are less central to task success. Strategies were chosen by dtype and semantics: categorical identifier/label columns use exact matching because they contain single values rather than multi-valued sets; no overlap strategy is needed because there are no delimiter-separated lists to compare. Numerical columns relevant here are discrete/int-like fields where exact agreement matters, so RAE with cell_tolerance 0.0 is used to enforce exact matching. Columns such as Detailed Annotation, Focus Ratio/Region Size, Gene Alias, Gene Description, Nearest Refseq, Nearest Ensembl, and Nearest Unigene were not included because the guideline says extra HOMER annotation columns may differ, and the preview already shows Detailed Annotation differs systematically despite the core nearest-gene outputs matching; several of those other columns are also largely NaN or ancillary to the stated evaluation target.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Chr",
+            "Start",
+            "End"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)": "PeakID (cmd=annotatePeaks.pl data/SPT5_T0_REP1_peaks.broadPeak data/genome.fa -gid -gtf data/genes.gtf -cpu 6)",
+              "Chr": "Chr",
+              "Start": "Start",
+              "End": "End",
+              "Strand": "Strand",
+              "Peak Score": "Peak Score",
+              "Focus Ratio/Region Size": "Focus Ratio/Region Size",
+              "Annotation": "Annotation",
+              "Detailed Annotation": "Detailed Annotation",
+              "Distance to TSS": "Distance to TSS",
+              "Nearest PromoterID": "Nearest PromoterID",
+              "Entrez ID": "Entrez ID",
+              "Nearest Unigene": "Nearest Unigene",
+              "Nearest Refseq": "Nearest Refseq",
+              "Nearest Ensembl": "Nearest Ensembl",
+              "Gene Name": "Gene Name",
+              "Gene Alias": "Gene Alias",
+              "Gene Description": "Gene Description",
+              "Gene Type": "Gene Type"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Chr",
+              "Start",
+              "End"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "End",
+              "Distance to TSS",
+              "Nearest PromoterID",
+              "Gene Description",
+              "Strand",
+              "Focus Ratio/Region Size",
+              "Gene Name",
+              "Nearest Refseq",
+              "Peak Score",
+              "Entrez ID",
+              "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)",
+              "Gene Alias",
+              "Chr",
+              "Start",
+              "Nearest Unigene",
+              "Gene Type",
+              "Annotation",
+              "Detailed Annotation",
+              "Nearest Ensembl"
+            ],
+            "converted_columns": [
+              "Detailed Annotation"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "End": [
+                "str",
+                "str",
+                true
+              ],
+              "Distance to TSS": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Nearest PromoterID": [
+                "str",
+                "str",
+                true
+              ],
+              "Gene Description": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Strand": [
+                "str",
+                "str",
+                true
+              ],
+              "Focus Ratio/Region Size": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene Name": [
+                "str",
+                "str",
+                true
+              ],
+              "Nearest Refseq": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Peak Score": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Entrez ID": [
+                "str",
+                "str",
+                true
+              ],
+              "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)": [
+                "str",
+                "str",
+                true
+              ],
+              "Gene Alias": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Chr": [
+                "str",
+                "str",
+                true
+              ],
+              "Start": [
+                "str",
+                "str",
+                true
+              ],
+              "Nearest Unigene": [
+                "str",
+                "str",
+                true
+              ],
+              "Gene Type": [
+                "str",
+                "str",
+                true
+              ],
+              "Annotation": [
+                "str",
+                "str",
+                true
+              ],
+              "Detailed Annotation": [
+                "str",
+                "float64",
+                true
+              ],
+              "Nearest Ensembl": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Chr",
+              "Start",
+              "End"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Converted 1 column(s) to match reference dtypes",
+            "Sorted both dataframes by ['Chr', 'Start', 'End']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Annotation",
+            "Distance to TSS",
+            "Entrez ID",
+            "Gene Name",
+            "Gene Type",
+            "Nearest PromoterID",
+            "Peak Score",
+            "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)",
+            "Strand"
+          ],
+          "filtered_columns": [
+            "Annotation",
+            "Distance to TSS",
+            "Entrez ID",
+            "Gene Name",
+            "Gene Type",
+            "Nearest PromoterID",
+            "Peak Score",
+            "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)",
+            "Strand"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Annotation": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            },
+            "Distance to TSS": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Entrez ID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            },
+            "Gene Name": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            },
+            "Gene Type": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            },
+            "Nearest PromoterID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            },
+            "Peak Score": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            },
+            "Strand": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 18,
+              "total_count": 18,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 18,
+            "alt_rows": 18,
+            "row_intersection": 18,
+            "ref_cols": 19,
+            "alt_cols": 19,
+            "col_intersection": 19
+          },
+          "shape": {
+            "ref_shape": [
+              18,
+              19
+            ],
+            "alt_shape": [
+              18,
+              19
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "End": true,
+              "Distance to TSS": true,
+              "Nearest PromoterID": true,
+              "Gene Description": true,
+              "Strand": true,
+              "Focus Ratio/Region Size": true,
+              "Gene Name": true,
+              "Nearest Refseq": true,
+              "Peak Score": true,
+              "Entrez ID": true,
+              "PeakID (cmd=annotatePeaks.pl SPT5_T0_REP1_peaks.broadPeak genome.fa -gid -gtf genes.gtf -cpu 2)": true,
+              "Gene Alias": true,
+              "Chr": true,
+              "Start": true,
+              "Nearest Unigene": true,
+              "Gene Type": true,
+              "Annotation": true,
+              "Detailed Annotation": true,
+              "Nearest Ensembl": true
+            },
+            "common_columns": 19
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

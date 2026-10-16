@@ -1,0 +1,38 @@
+{
+  "id": "b-5-10",
+  "question": "Use Similarity Network Fusion (SNF) to integrate gene expression and copy number variation profiles from tumor samples. Construct similarity (affinity) matrices for each view, then fuse them into a single multi-view similarity matrix. Apply spectral clustering with 3 clusters to the fused matrix and obtain the final cluster assignments.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-10/ref_answer/snf_cluster_assignments.tsv",
+      "eval_guideline": "3 clusters should be present. SNF results vary with implementation-specific hyperparameters (neighborhood size, fusion iterations), so exact agreement is not required. Under the best label permutation, at least 60% of samples should be assigned to the same cluster as in the reference. Column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-5-10/output/snf_cluster_assignments.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and .tsv format, and both correspond to the requested final SNF spectral-clustering assignments.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Verify that exactly 3 clusters are present and, under the best permutation of cluster labels, at least 60% of samples match the reference assignments; allow differing column order and header labels."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline requires record-level sample assignment comparison with label-permutation invariance and a 60% agreement threshold, which needs semantic handling beyond ordinary tabular alignment. Exact agreement is explicitly unnecessary because SNF and spectral clustering can vary with implementation-specific hyperparameters.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 1.0,
+        "explanation": "Both files have 90 rows and two semantically identical columns: Sample and Cluster. Rows align one-to-one after normalizing candidate identifiers from 'Sample_N' to integer N. The candidate uses cluster labels {1,2,3}, while the reference uses {0,1,2}; applying the label permutation candidate 1→reference 1, candidate 2→reference 2, and candidate 3→reference 0 produces exact agreement for all 90 samples (100%). There are exactly three clusters in each file, and there are no missing, additional, duplicated, or conflicting rows or columns. Because clustering labels are arbitrary, this relabeling does not represent a substantive difference."
+      },
+      "comparison_error": null
+    }
+  ]
+}

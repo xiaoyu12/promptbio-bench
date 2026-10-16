@@ -1,0 +1,361 @@
+{
+  "id": "a-15-4",
+  "question": "Integrate WES and RNA-Seq data to annotate all pathogenic variants with an expression status. For each pathogenic variant, report whether its gene is expressed (TPM > 1.0 in any sample).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-4/ref_answer/expressed_pathogenic_variants.csv",
+      "eval_guideline": "All pathogenic variants must be present with the correct Expressed flag per the reference; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-4/output/expressed_pathogenic_variants.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both are CSV files. The candidate is in the corresponding task output directory and directly matches the requested integration result containing pathogenic variants with gene-expression status.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare pathogenic-variant records and verify that every reference variant is present with the correct Expressed flag (gene TPM > 1.0 in any RNA-seq sample); allow differing row order, column order, and header labels."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level matching while explicitly allowing structural differences in column order and labels. The CSV approximate strategy is therefore appropriate for aligning variant records and checking each Expressed flag.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "Chrom": "Chrom",
+            "Pos": "Pos",
+            "VariantID": "VariantID",
+            "REF": "REF",
+            "ALT": "ALT",
+            "ClinSig": "ClinSig",
+            "Expressed": "Expressed"
+          },
+          "id_columns": [
+            "VariantID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The tables have the same row-oriented structure and are not transposed. The candidate contains all reference columns with exact name matches, plus one extra column (MaxTPM) that is not needed for comparison. Column alignment is still needed conceptually because the candidate has an extra column, so the comparison should project onto the reference schema using exact one-to-one mappings for all reference columns. Rows should be aligned by a stable variant identifier; VariantID is a clear unique key for each pathogenic variant and is sufficient for matching. A composite key such as Gene, Chrom, Pos, REF, ALT would also work, but VariantID is the simplest and most explicit. Row order does not matter because the task requires that all pathogenic variants be present with the correct Expressed flag, regardless of ordering. No pre-sorting is necessary if matching is done by VariantID, but permutation checking should be enabled since the same rows may appear in different orders.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Gene",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Gene identity is central to annotating each pathogenic variant with expression status. Values are single gene symbols, so exact categorical matching is appropriate; no delimiter-based parsing is needed."
+            },
+            {
+              "name": "Chrom",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "Chromosome is part of the variant definition and should match exactly for the aligned pathogenic variants. Although numeric, this is an identifier-like genomic coordinate field, so cell-wise RAE with zero tolerance enforces exact equality."
+            },
+            {
+              "name": "Pos",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Genomic position is critical to the exact variant identity. As an integer coordinate, any difference is biologically meaningful here, so use numerical cell-wise comparison with zero tolerance to require an exact match."
+            },
+            {
+              "name": "REF",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Reference allele is part of the exact variant specification. Values are single-base allele strings, so exact categorical matching is the correct strategy."
+            },
+            {
+              "name": "ALT",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Alternate allele is part of the exact variant specification. Values are simple allele strings, so exact matching is required."
+            },
+            {
+              "name": "ClinSig",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "The task specifically concerns pathogenic variants, so the clinical significance label should match exactly to ensure the candidate reports the correct pathogenic calls."
+            },
+            {
+              "name": "Expressed",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "This is the primary evaluation target: whether each pathogenic variant's gene is expressed (TPM > 1.0 in any sample). Boolean values should be compared by exact match."
+            }
+          ],
+          "overall_reasoning": "The task is to verify that all pathogenic variants are present and that each has the correct Expressed flag. Because alignment is already based on VariantID, that ID column is excluded from comparison. I included all remaining reference data columns because they either define the variant identity and pathogenic context (Gene, Chrom, Pos, REF, ALT, ClinSig) or are the main output to evaluate (Expressed). String and boolean-like fields are treated as categorical and compared with exact matching because these are single-valued labels, not token sets, so overlap parsing is unnecessary. Integer genomic coordinate fields (Chrom, Pos) are numerically typed but function as exact identity attributes rather than continuous measurements, so RAE with zero tolerance is used to enforce exact equality. No overlap strategy or delimiters are needed because none of the compared categorical columns contain multi-valued list-like entries. Candidate-only MaxTPM is excluded because the evaluation guideline explicitly focuses on the correctness of the final Expressed flag rather than matching an intermediate numeric expression summary column absent from the reference.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "VariantID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "Chrom": "Chrom",
+              "Pos": "Pos",
+              "VariantID": "VariantID",
+              "REF": "REF",
+              "ALT": "ALT",
+              "ClinSig": "ClinSig",
+              "Expressed": "Expressed"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "MaxTPM"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "VariantID"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "REF",
+              "Pos",
+              "ClinSig",
+              "Expressed",
+              "Chrom",
+              "VariantID",
+              "Gene",
+              "ALT"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "REF": [
+                "str",
+                "str",
+                true
+              ],
+              "Pos": [
+                "int64",
+                "int64",
+                true
+              ],
+              "ClinSig": [
+                "str",
+                "str",
+                true
+              ],
+              "Expressed": [
+                "bool",
+                "bool",
+                true
+              ],
+              "Chrom": [
+                "int64",
+                "int64",
+                true
+              ],
+              "VariantID": [
+                "str",
+                "str",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "ALT": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['MaxTPM']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ALT",
+            "Chrom",
+            "ClinSig",
+            "Expressed",
+            "Gene",
+            "Pos",
+            "REF"
+          ],
+          "filtered_columns": [
+            "ALT",
+            "Chrom",
+            "ClinSig",
+            "Expressed",
+            "Gene",
+            "Pos",
+            "REF"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "ALT": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            },
+            "Chrom": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "ClinSig": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            },
+            "Expressed": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            },
+            "Gene": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            },
+            "Pos": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "REF": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8888888888888888,
+            "col_recall": 1.0,
+            "col_f1": 0.9411764705882353,
+            "col_jaccard": 0.8888888888888888,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 8,
+            "alt_cols": 9,
+            "col_intersection": 8
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              8
+            ],
+            "alt_shape": [
+              2,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "REF": true,
+              "Pos": true,
+              "ClinSig": true,
+              "Expressed": true,
+              "Chrom": true,
+              "VariantID": true,
+              "Gene": true,
+              "ALT": true
+            },
+            "common_columns": 8
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

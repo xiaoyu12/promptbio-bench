@@ -1,0 +1,216 @@
+{
+  "id": "a-11-5",
+  "question": "Perform one-way ANOVA on log-transformed expression data across sample types. Report the feature, F-statistic, and p-value for all features.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-5/ref_answer/anova_results.csv",
+      "eval_guideline": "F-statistic and p-value must match the reference within 0.1% relative absolute error per feature; column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-11-5/output/anova_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and CSV format, and the candidate directly corresponds to the requested one-way ANOVA results containing feature, F-statistic, and p-value outputs.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-feature one-way ANOVA results, aligning rows by feature and requiring F-statistics and p-values to match within 0.1% relative absolute error; column order may differ."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level numeric agreement for every feature while explicitly allowing column reordering. The CSV approximate strategy supports structural alignment and tolerance-aware comparison better than exact or aggregate summary comparison.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999962,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "feature": "feature",
+            "f_stat": "f_stat",
+            "p_value": "p_value"
+          },
+          "id_columns": [
+            "feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are feature-level result tables with features as rows and statistics as columns. The candidate contains all reference columns with exact name matches for feature, f_stat, and p_value, plus one extra column p_adj that is not needed for evaluation. Column alignment is therefore straightforward by exact name mapping. Rows should be aligned by the feature column because each row represents a feature-level ANOVA result, and feature is the natural identifier for matching results across tables. Row order should not matter because the task asks to report ANOVA results for all features rather than a ranked/top-N list, and the evaluation explicitly allows column order to differ. No pre-sorting is necessary if matching is done by feature, but permutation checking is appropriate in case the same rows appear in a different order.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "f_stat",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "F-statistic is explicitly required by the task, and evaluation specifies matching within 0.1% relative absolute error per feature. Since this is a numeric output where per-row absolute agreement matters more than correlation, RAE is the appropriate strategy with tolerance set to 0.001 to encode the 0.1% relative error criterion."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "P-value is explicitly required by the task, and the evaluation requires per-feature agreement within 0.1% relative absolute error. A cell-wise numerical comparison using RAE directly captures this requirement better than correlation-based strategies. The tolerance is set to 0.001 to reflect the stated 0.1% relative error threshold."
+            }
+          ],
+          "overall_reasoning": "The task asks to report, for every feature, the ANOVA F-statistic and p-value. The ID column 'feature' is used only for alignment and should not be compared. Among candidate columns, 'f_stat' and 'p_value' are the critical outputs because they are explicitly named in the task and in the evaluation rule; candidate-only column 'p_adj' is not part of the reference target and should be excluded. Both target columns are float64 numerical measurements, and the evaluation focuses on per-feature numeric agreement rather than rank or association, so 'rae' is the most appropriate strategy. The tolerance for both columns is set to 0.001 because the prompt specifies a 0.1% relative absolute error requirement. No categorical overlap settings are needed because there are no categorical comparison columns in scope.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "feature": "feature",
+              "f_stat": "f_stat",
+              "p_value": "p_value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "p_adj"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "feature"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "f_stat",
+              "feature",
+              "p_value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "f_stat": [
+                "float64",
+                "float64",
+                true
+              ],
+              "feature": [
+                "str",
+                "str",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['p_adj']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "f_stat",
+            "p_value"
+          ],
+          "filtered_columns": [
+            "f_stat",
+            "p_value"
+          ],
+          "overall_similarity": 0.9999999999999962,
+          "per_column_similarities": {
+            "f_stat": {
+              "similarity": 0.9999999999999982,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "p_value": {
+              "similarity": 0.9999999999999943,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.75,
+            "col_recall": 1.0,
+            "col_f1": 0.8571428571428571,
+            "col_jaccard": 0.75,
+            "ref_rows": 500,
+            "alt_rows": 500,
+            "row_intersection": 500,
+            "ref_cols": 3,
+            "alt_cols": 4,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              500,
+              3
+            ],
+            "alt_shape": [
+              500,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "f_stat": true,
+              "feature": true,
+              "p_value": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "id": "a-15-3",
+  "question": "I have provided ChIP-seq results for the transcription factor SPT5 and RNA-seq TPM data for wild-type and knock-out samples. Integrate the ChIP-seq and RNA-seq data to identify the transcription factor's target genes and compute log2 fold-change (KO vs WT) for each target gene.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-3/ref_answer/SPT5_target_log2FC.csv",
+      "eval_guideline": "Exact set of target genes must match the reference; log2FC values must match within +/-0.05; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-3/output/SPT5_target_log2FC.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the exact same basename and .csv format as the reference, and its name directly describes the requested SPT5 target-gene log2 fold-change output. The Markdown file is likely a narrative answer rather than the reference data table.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare target-gene tables by requiring the exact same gene set and matching log2 fold-change (KO vs WT) values within an absolute tolerance of 0.05; ignore row/column order and extra columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level agreement for a deterministic CSV while allowing reordered rows/columns, extra columns, and small numeric variation. The approximate strategy supports structural alignment and tolerance-aware comparison, unlike bit-identical exact matching.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "log2FC": "log2FC_no_pseudocount"
+          },
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use genes as rows, so no transpose is needed. Match rows by the unique reference column Gene because the same four target genes appear in a different order. Map Gene directly and map reference log2FC to candidate log2FC_no_pseudocount, whose values match the reference after rounding; the candidate log2FC column uses a pseudocount and does not match as closely. Target genes form an unordered set, so row order is not significant and permutation checking is appropriate. Extra candidate columns are ignored.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "log2FC is the sole reference data column and the task explicitly requires accurate KO-versus-WT fold changes. Cell-wise RAE is appropriate because absolute agreement for each aligned target gene matters more than correlation. A 0.01 relative-error tolerance accommodates the reference's two-decimal rounding while distinguishing materially different fold changes; the exact zero is expected to match zero."
+            }
+          ],
+          "overall_reasoning": "Target-gene membership must be checked through exact alignment on the Gene ID set, but Gene is excluded from column_configs as instructed. After alignment, only log2FC is task-critical and present in the reference; candidate-only supporting and annotation columns are not compared. The observed candidate log2FC values differ from the rounded reference values by less than 0.005 and comfortably satisfy the requested ±0.05 accuracy.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "log2FC": "log2FC_no_pseudocount"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "log2FC",
+              "mean_TPM_KO",
+              "mean_TPM_WT",
+              "TPM_SPT5_knock_out_rep_1",
+              "TPM_SPT5_knock_out_rep_2",
+              "TPM_SPT5_wild_type_rep_1",
+              "TPM_SPT5_wild_type_rep_2",
+              "PeakID",
+              "Chr",
+              "Start",
+              "End",
+              "PeakScore",
+              "Annotation",
+              "DistanceToTSS",
+              "GeneType"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene",
+              "log2FC"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "log2FC": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['log2FC', 'mean_TPM_KO', 'mean_TPM_WT', 'TPM_SPT5_knock_out_rep_1', 'TPM_SPT5_knock_out_rep_2', 'TPM_SPT5_wild_type_rep_1', 'TPM_SPT5_wild_type_rep_2', 'PeakID', 'Chr', 'Start', 'End', 'PeakScore', 'Annotation', 'DistanceToTSS', 'GeneType']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "log2FC"
+          ],
+          "filtered_columns": [
+            "log2FC"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "log2FC": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.11764705882352941,
+            "col_recall": 1.0,
+            "col_f1": 0.21052631578947367,
+            "col_jaccard": 0.11764705882352941,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 2,
+            "alt_cols": 17,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              2
+            ],
+            "alt_shape": [
+              4,
+              17
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -15
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene": true,
+              "log2FC": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

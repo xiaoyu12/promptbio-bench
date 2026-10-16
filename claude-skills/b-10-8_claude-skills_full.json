@@ -1,0 +1,179 @@
+{
+  "id": "b-10-8",
+  "question": "Given a predicted set of the top 50 differentially expressed genes from a cancer versus normal RNA-seq analysis and a reference set of 30 known oncogenes from the COSMIC database, compute and report the intersection size and Jaccard score between the two gene sets.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-8/ref_answer/jaccard_score.csv",
+      "eval_guideline": "Intersection count must match the reference exactly; Jaccard score must match within +/-0.001; row order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-10-8/output/jaccard_score.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both paths indicate CSV format, and the candidate is the expected output for the same intersection-size and Jaccard-score task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the reported intersection size and Jaccard score between the predicted DEG and COSMIC oncogene sets; require the intersection count to match exactly and the Jaccard score within ±0.001, while allowing different row order and header labels."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The output is a deterministic CSV with two specific numeric results, and the guideline allows structural differences plus a small numeric tolerance. Approximate comparison supports label/order alignment and rounding tolerance without imposing bit-identical formatting.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use the same two-column metric/value structure, so no transpose is needed and column names already match exactly. The meaningful row identifier is the Metric column, since comparison should match metrics such as Intersection and Jaccard_Score regardless of row order. Row order should not matter because the evaluation focuses on whether the reported intersection count and Jaccard score match the reference, and the prompt explicitly says row order and header labels may differ. The candidate includes extra metrics (DEG_Set_Size, Oncogene_Set_Size, Union_Size), but alignment by Metric allows direct matching of the overlapping reference metrics. No pre-sorting is necessary because permutation-insensitive matching by Metric is sufficient.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "The only non-ID column is a numeric result field. The task explicitly requires exact agreement for intersection count and agreement within +/-0.001 for Jaccard score. Since the aligned rows are keyed by the ID column 'Metric', comparing the numeric Value cell-by-cell is appropriate. RAE is chosen because absolute per-metric correctness matters more than overall correlation. A tight tolerance of 0.001 reflects the stated Jaccard requirement and is also strict enough to enforce exact matching for the integer-valued intersection row; rows with missing reference values will not be task-critical."
+            }
+          ],
+          "overall_reasoning": "The dataframe is already aligned by the ID column 'Metric', which should be excluded from comparison. The task cares specifically about two metric rows: 'intersection' and 'jaccard_score', both stored in the single numeric column 'Value'. Therefore the comparison should focus on that column only. Because the evaluation is based on whether each reported metric value matches the reference target rather than on trend similarity across rows, a numerical cell-wise error strategy ('rae') is the best fit instead of Pearson or Spearman correlation. The tolerance is set to 0.001 to match the explicit Jaccard acceptance criterion; this is also sufficiently strict for the integer intersection count, which must match exactly. No categorical overlap logic or delimiters are needed because there are no categorical data columns being compared.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 3,
+            "fuzzy_matched_ids": {
+              "intersection_size": "intersection"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Only 'intersection_size' clearly matches 'intersection' as the same concept with an added size/count suffix. The other candidates refer to different concepts ('deg set size', 'oncogene set size', 'union size') and do not confidently match the sole reference identifier.",
+              "confidence": 0.98
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Value",
+              "Metric"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Metric": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate rows: 3"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              2
+            ],
+            "alt_shape": [
+              5,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Value": true,
+              "Metric": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.4,
+            "ref_missing_rate": 0.6,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

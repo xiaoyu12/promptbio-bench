@@ -341,12 +341,41 @@ class FASTQHandler(FormatHandler):
     # Private Comparison Implementation Methods
     # ============================================================================
     
+    @staticmethod
+    def _pair_reads(ref_reads: Dict[str, Dict[str, Any]], alt_reads: Dict[str, Dict[str, Any]]) -> Tuple[list, int]:
+        """Pair reference and candidate reads: by read ID first, then by identical content.
+
+        Read names are often rewritten by the tool that produced the file (e.g. a "_clip1"
+        suffix, or "/1" plus alignment info), so a reference read whose ID has no
+        counterpart is paired with a remaining candidate read that has the same sequence
+        and quality string. Returns (pairs of (ref_data, alt_data), number paired by content).
+        """
+        pairs = []
+        common_ids = set(ref_reads) & set(alt_reads)
+        for read_id in common_ids:
+            pairs.append((ref_reads[read_id], alt_reads[read_id]))
+
+        by_content: Dict[tuple, list] = {}
+        for read_id, data in alt_reads.items():
+            if read_id not in common_ids:
+                by_content.setdefault((data["seq"], data["qual"].tobytes()), []).append(data)
+        content_paired = 0
+        for read_id, data in ref_reads.items():
+            if read_id in common_ids:
+                continue
+            candidates = by_content.get((data["seq"], data["qual"].tobytes()))
+            if candidates:
+                pairs.append((data, candidates.pop()))
+                content_paired += 1
+        return pairs, content_paired
+
     def _compare_exact(self, ref_validation: ValidationResult, alt_validation: ValidationResult, **kwargs):
-        """Exact match: Read ID, sequence, and quality scores identical.
-        
-        Matches reads by ID and requires exact match of sequences and quality scores.
+        """Exact match: sequence and quality scores identical.
+
+        Pairs reads by ID, falling back to identical content for reads whose IDs differ
+        (see _pair_reads), and requires exact match of sequences and quality scores.
         Must be 100% identical for similarity score of 1.0.
-        
+
         Args:
             **kwargs: Strategy-specific parameters (unused for exact strategy)
         """
@@ -354,17 +383,14 @@ class FASTQHandler(FormatHandler):
             # Load files
             ref_reads = self._load_file(ref_validation.file_path)
             alt_reads = self._load_file(alt_validation.file_path)
-            
+
             total_ref_reads = len(ref_reads)
             total_alt_reads = len(alt_reads)
             matching_count = 0
-            
-            common_keys = set(ref_reads.keys()) & set(alt_reads.keys())
 
-            for read_id in common_keys:
-                ref_data = ref_reads[read_id]
-                alt_data = alt_reads[read_id]
+            pairs, content_paired = self._pair_reads(ref_reads, alt_reads)
 
+            for ref_data, alt_data in pairs:
                 seq_match = ref_data["seq"] == alt_data["seq"]
                 qual_match = np.array_equal(ref_data["qual"], alt_data["qual"])
 
@@ -378,6 +404,7 @@ class FASTQHandler(FormatHandler):
                 "total_ref_reads": total_ref_reads,
                 "total_alt_reads": total_alt_reads,
                 "matching_count": matching_count,
+                "content_paired_count": content_paired,
                 "missing_count": total_ref_reads - matching_count,
                 "extra_count": total_alt_reads - matching_count,
             })
@@ -390,7 +417,8 @@ class FASTQHandler(FormatHandler):
         """Approximate comparison: Sequence and quality score comparison allowing for variations.
         
         Similar to exact comparison but allows for trimming differences and quality score variations.
-        Matches reads by ID and compares sequences and quality scores with tolerance.
+        Pairs reads by ID (falling back to identical content, see _pair_reads) and compares
+        sequences and quality scores with tolerance.
         
         Args:
             **kwargs: Strategy-specific parameters
@@ -407,13 +435,11 @@ class FASTQHandler(FormatHandler):
             
             total_ref_reads = len(ref_reads)
             total_alt_reads = len(alt_reads)
-            common_keys = set(ref_reads.keys()) & set(alt_reads.keys())
+            pairs, content_paired = self._pair_reads(ref_reads, alt_reads)
             matching_count_seq = 0
             matching_count_qual = 0
             matching_count = 0
-            for read_id in common_keys:
-                ref_data = ref_reads[read_id]
-                alt_data = alt_reads[read_id]
+            for ref_data, alt_data in pairs:
                 seq_match, _, _ = self._compare_sequence(ref_data["seq"], alt_data["seq"], trim_tolerance)
                 qual_match = self._compare_quality(ref_data["qual"], alt_data["qual"], quality_tolerance)
                 matching_count_seq += int(seq_match)
@@ -429,6 +455,7 @@ class FASTQHandler(FormatHandler):
                 "matching_count": matching_count,
                 "matching_count_seq": matching_count_seq,
                 "matching_count_qual": matching_count_qual,
+                "content_paired_count": content_paired,
                 "missing_count": total_ref_reads - matching_count,
                 "extra_count": total_alt_reads - matching_count,
                 "trim_tolerance": trim_tolerance,

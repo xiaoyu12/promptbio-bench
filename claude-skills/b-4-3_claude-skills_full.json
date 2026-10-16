@@ -1,0 +1,404 @@
+{
+  "id": "b-4-3",
+  "question": "Identify genes with significantly different mutation frequencies between tumor and matched normal samples using Fisher's exact test and return top 10 hits.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-4-3/ref_answer/top_10_differential_mutations.csv",
+      "eval_guideline": "The 10 gene records must match the reference; frequencies and odds ratio must match within 1% relative absolute error; p-value must match within +/-0.001; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-4-3/output/top_10_differential_mutations.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both paths indicate CSV format, and the candidate is the expected top-10 differential mutation output for the same task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the top 10 gene records despite row, column, and header-label differences; require matching genes, frequencies and odds ratios within 1% relative absolute error, and p-values within an absolute tolerance of 0.001."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The task is deterministic and the guideline requires record-level agreement with explicit numeric tolerances while allowing structural differences. The CSV approximate strategy supports flexible row and column alignment plus minor numeric variation.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "The tables have the same row-oriented structure, and all 10 reference columns have exact-name matches in the candidate, so no transpose or explicit column mapping is needed; the candidate-only FDR_BH column should be ignored. Gene uniquely identifies each record and should be used for row matching. Row order is significant because the task requests ranked top-10 hits, and both previews are already sorted by ascending P_Value, so no pre-sort is necessary.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Tumor_Mutated",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This integer count directly defines the tumor arm of each Fisher contingency table and should match exactly."
+            },
+            {
+              "name": "Tumor_Total",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This integer denominator is required to reproduce tumor frequencies and Fisher test results, so exact numerical agreement is required."
+            },
+            {
+              "name": "Tumor_Frequency",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Tumor frequency is a critical reported proportion. A 0.01 RAE tolerance implements the stated 1% relative-error requirement."
+            },
+            {
+              "name": "Normal_Mutated",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This integer count directly defines the normal arm of each Fisher contingency table and should match exactly."
+            },
+            {
+              "name": "Normal_Total",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This integer denominator is required to reproduce normal frequencies and Fisher test results, so exact numerical agreement is required."
+            },
+            {
+              "name": "Normal_Frequency",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Normal frequency is a critical reported proportion. A 0.01 RAE tolerance implements the stated 1% relative-error requirement."
+            },
+            {
+              "name": "Frequency_Difference",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "This derived effect-size column is central to identifying differential mutation frequency; a 1% relative tolerance accommodates harmless floating-point variation."
+            },
+            {
+              "name": "Odds_Ratio",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The odds ratio is a required Fisher-test effect estimate, and the 0.01 RAE tolerance matches the stated 1% relative-error criterion."
+            },
+            {
+              "name": "P_Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The p-value determines statistical significance and hit ranking. RAE is the available cellwise numerical strategy; a 1% relative tolerance is conservative for the displayed small p-values and therefore also keeps errors well within the stated absolute tolerance of 0.001."
+            }
+          ],
+          "overall_reasoning": "Gene is used only to align the ten records and is excluded from comparison. All nine shared numerical result columns are critical because the mutation counts and totals define the Fisher exact tests, the frequencies and frequency difference report the observed effects, and the odds ratio and p-value are required evaluation outputs. Integer counts and totals use zero RAE tolerance for exact agreement; frequencies, frequency difference, and odds ratio use 0.01 to enforce the specified 1% relative-error bound. P_Value also uses a conservative 0.01 relative tolerance, which is stricter than the allowed 0.001 absolute error at the observed scales. Pearson and Spearman are unsuitable because high correlation could conceal incorrect individual gene results. The candidate-only FDR_BH column is omitted because it is absent from the reference and is not requested by the task.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Tumor_Mutated",
+              "Normal_Frequency",
+              "Odds_Ratio",
+              "Tumor_Total",
+              "Normal_Mutated",
+              "Normal_Total",
+              "Tumor_Frequency",
+              "Gene",
+              "Frequency_Difference",
+              "P_Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Tumor_Mutated": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Normal_Frequency": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Odds_Ratio": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Tumor_Total": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Normal_Mutated": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Normal_Total": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Tumor_Frequency": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "Frequency_Difference": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P_Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Frequency_Difference",
+            "Normal_Frequency",
+            "Normal_Mutated",
+            "Normal_Total",
+            "Odds_Ratio",
+            "P_Value",
+            "Tumor_Frequency",
+            "Tumor_Mutated",
+            "Tumor_Total"
+          ],
+          "filtered_columns": [
+            "Frequency_Difference",
+            "Normal_Frequency",
+            "Normal_Mutated",
+            "Normal_Total",
+            "Odds_Ratio",
+            "P_Value",
+            "Tumor_Frequency",
+            "Tumor_Mutated",
+            "Tumor_Total"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Frequency_Difference": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Normal_Frequency": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Normal_Mutated": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Normal_Total": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Odds_Ratio": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "P_Value": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Tumor_Frequency": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Tumor_Mutated": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Tumor_Total": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.9090909090909091,
+            "col_recall": 1.0,
+            "col_f1": 0.9523809523809523,
+            "col_jaccard": 0.9090909090909091,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 10,
+            "alt_cols": 11,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              10
+            ],
+            "alt_shape": [
+              10,
+              11
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Tumor_Mutated": true,
+              "Normal_Frequency": true,
+              "Odds_Ratio": true,
+              "Tumor_Total": true,
+              "Normal_Mutated": true,
+              "Normal_Total": true,
+              "Tumor_Frequency": true,
+              "Gene": true,
+              "Frequency_Difference": true,
+              "P_Value": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

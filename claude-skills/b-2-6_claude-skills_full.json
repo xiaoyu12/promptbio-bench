@@ -1,0 +1,288 @@
+{
+  "id": "b-2-6",
+  "question": "Create a pivot table showing average 'Expression' values for each 'Gene' across different 'Tissue' types.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-6/ref_answer/gene_tissue_pivot.csv",
+      "eval_guideline": "Mean expression values must match the reference within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-6/output/gene_tissue_pivot.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical base names and CSV formats, and both belong to task b-2-6. The name directly describes the requested gene-by-tissue expression pivot table.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare pivot tables of mean Expression by Gene and Tissue, allowing row/column reordering and requiring numeric values within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The task is deterministic tabular aggregation, and the guideline explicitly permits row and column reordering plus minor numeric variation. The CSV approximate strategy supports structural alignment and tolerance-aware comparison.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables already have the same pivoted structure and exact column names, so no transpose or column mapping is needed. The candidate contains the same gene-level values in a different row order. 'Gene' uniquely identifies each row and should be used for row matching. Row and column order are not semantically important for this pivot-table comparison.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Brain",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Brain contains mean expression measurements. Cell-wise RAE directly tests the required agreement within 1% relative absolute error."
+            },
+            {
+              "name": "Heart",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Heart contains mean expression measurements. A 0.01 RAE tolerance implements the stated 1% relative-error requirement."
+            },
+            {
+              "name": "Kidney",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Kidney contains mean expression measurements. Cell-wise RAE with a 1% tolerance evaluates absolute numerical accuracy rather than correlation alone."
+            },
+            {
+              "name": "Liver",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Liver contains mean expression measurements. The 0.01 tolerance matches the evaluation guideline's permitted relative absolute error."
+            },
+            {
+              "name": "Lung",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Lung contains mean expression measurements. Cell-wise RAE with a 0.01 threshold verifies each pivoted mean within 1%."
+            }
+          ],
+          "overall_reasoning": "Gene is used only to align rows and is excluded. All five tissue columns are critical because the task requires the average Expression for every Gene across all Tissue types. Each is float64 and requires accurate magnitudes, so cell-wise relative absolute error is more appropriate than Pearson or Spearman correlation, which could accept systematically incorrect values. A cell_tolerance of 0.01 directly represents the allowed 1% relative absolute error. No categorical overlap comparison or delimiter is applicable.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene",
+              "Heart",
+              "Kidney",
+              "Lung",
+              "Liver",
+              "Brain"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "Heart": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Kidney": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Lung": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Liver": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Brain": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Brain",
+            "Heart",
+            "Kidney",
+            "Liver",
+            "Lung"
+          ],
+          "filtered_columns": [
+            "Brain",
+            "Heart",
+            "Kidney",
+            "Liver",
+            "Lung"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Brain": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Heart": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Kidney": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Liver": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Lung": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 6,
+            "alt_cols": 6,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              6
+            ],
+            "alt_shape": [
+              5,
+              6
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene": true,
+              "Heart": true,
+              "Kidney": true,
+              "Lung": true,
+              "Liver": true,
+              "Brain": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

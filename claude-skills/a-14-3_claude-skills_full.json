@@ -1,0 +1,165 @@
+{
+  "id": "a-14-3",
+  "question": "Analyze the binding interface between a protein and DNA molecules in a PDB structure. List protein residues within 4.0 Angstroms of any DNA atom, and DNA nucleotides within 4.0 Angstroms of any protein atom.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-14-3/ref_answer/protein_dna_interface.csv",
+      "eval_guideline": "Exact set of (type, chain, ID, name) records must match the reference for both protein residues and DNA nucleotides; type-label case and column names may differ; row order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-14-3/output/protein_dna_interface.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical CSV filename and corresponds to the same protein–DNA interface analysis task using 4kpy.pdb; both path and inferred tabular format match exactly.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare exact sets of protein–DNA interface records by (type, chain, ID, name), allowing row/column reordering, different column names, and case differences in type labels."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires exact record-level set equivalence but explicitly permits row-order, column-name, and type-label case differences. The CSV approximate strategy supports this structural alignment without imposing bit-identical formatting.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Type": "Type",
+            "Chain": "Chain",
+            "ID": "ID",
+            "Name": "Name"
+          },
+          "id_columns": [
+            "Type",
+            "Chain",
+            "ID",
+            "Name"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are row-wise lists of interface records with residues/nucleotides as rows. The reference has 4 columns and the candidate has the same 4 core identity columns plus two extra metrics (Min_Distance, N_Atom_Contacts). The required evaluation is based on exact matching of the set of (Type, Chain, ID, Name) records, and the prompt explicitly says column names may differ slightly and row order may differ. Here, the shared identity columns match exactly by name, so map each reference column directly to the same-named candidate column. Rows should be aligned using the composite key (Type, Chain, ID, Name), which uniquely represents each protein residue or DNA nucleotide entry. Because evaluation is set-based and row order may differ, row order is not sensitive, no presort is required, and permutation checking should be enabled. Column order is also not meaningful because only the mapped identity fields need comparison and the candidate contains extra non-evaluation columns.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Min_Distance",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "The task evaluates only whether the exact set of interface residues/nucleotides matches the reference, using (Type, Chain, ID, Name) as the defining records. Min_Distance is auxiliary candidate-only metadata and is not part of the reference output columns or evaluation target, so it should be excluded from comparison."
+            },
+            {
+              "name": "N_Atom_Contacts",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "N_Atom_Contacts is also auxiliary candidate-only metadata. The evaluation guideline requires exact matching of the aligned identity records only, not contact counts, so this column should not affect scoring."
+            }
+          ],
+          "overall_reasoning": "The task is a set-membership/interface-identification task: correctness is defined entirely by the presence of the correct (Type, Chain, ID, Name) records for protein residues and DNA nucleotides within 4.0 Å. Those four columns are explicitly designated as ID/alignment columns and must be excluded from column-wise comparison. After excluding them, there are no reference data columns left to compare; the extra candidate columns Min_Distance and N_Atom_Contacts are not part of the stated evaluation target and should be ignored. Therefore the comparison plan ignores all non-ID columns and relies on aligned record identity for evaluation. No numerical tolerance is needed because no numerical field is part of the required comparison, and no categorical overlap strategy is needed because there are no non-ID categorical data columns to compare.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Type",
+            "Chain",
+            "ID",
+            "Name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Type": "Type",
+              "Chain": "Chain",
+              "ID": "ID",
+              "Name": "Name"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Min_Distance",
+              "N_Atom_Contacts"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Type",
+              "Chain",
+              "ID",
+              "Name"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Type",
+              "Chain",
+              "Name",
+              "ID"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Type": [
+                "str",
+                "str",
+                true
+              ],
+              "Chain": [
+                "str",
+                "str",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "ID": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Min_Distance', 'N_Atom_Contacts']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [],
+          "overall_similarity": 0.0,
+          "notes": [
+            "No columns available for comparison"
+          ]
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "id": "a-1-13",
+  "question": "I have the gene TP53. Could you calculate, for each transcript, the total non-overlapping exon length, ensuring that only exact gene name matches are used (no fuzzy matching).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-1-13/ref_answer/TP53_transcript_exon_lengths.tsv",
+      "eval_guideline": "Each transcript row's total non-overlapping exon length must match the reference within +/-1 bp; column order and ID versioning may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-1-13/output/TP53_transcript_exon_lengths.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical basename and .tsv tabular format as the reference, and its name precisely describes the requested TP53 transcript-level non-overlapping exon lengths. The Markdown file is likely a narrative response rather than the requested result table.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-transcript TP53 total non-overlapping exon lengths, allowing row/column reordering, transcript ID version differences, and numeric differences of at most +/-1 bp."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level matching while permitting column reordering, ID versioning differences, and a +/-1 bp numeric tolerance. The TSV approximate strategy is designed to align these structural variations and compare each transcript's value appropriately.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Transcript_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Transcript_ID",
+          "check_permutation": true,
+          "reasoning": "Both tables already use the same two relevant column names, Transcript_ID and Total_Exon_Length, so no transpose or explicit column mapping is needed; candidate-only metadata columns should be ignored. Match rows by the unique Transcript_ID using exact identifiers. Transcript results are an unordered set rather than a ranking, so row order is not significant; sorting by Transcript_ID provides deterministic comparison and permutation checking handles differing input order. The candidate Gene column should be filtered by exact equality to TP53 before comparison, consistent with the no-fuzzy-matching requirement.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Total_Exon_Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0005,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is the sole non-ID reference output and directly represents the requested total non-overlapping exon length. Cell-wise RAE is appropriate because absolute agreement per transcript matters; correlation could hide incorrect lengths. A tolerance of 0.0005 corresponds to approximately 1 bp for the observed 2,000–2,645 bp values and does not admit a 2 bp error. Transcript_ID is used only for alignment. Candidate-only metadata columns are excluded because they are not reference outputs; the exact TP53 match requirement governs source-row selection rather than comparison of the resulting aligned values."
+            }
+          ],
+          "overall_reasoning": "Compare only Total_Exon_Length after aligning rows by Transcript_ID, allowing transcript ID versioning or column-order differences to be handled by alignment. The integer-valued result requires cell-level agreement within approximately 1 bp, so RAE with a 0.0005 tolerance is used. Gene and other candidate-only metadata are not compared because they have no aligned reference columns, although generation of the candidate result must have filtered Gene by exact equality to TP53 with no fuzzy matching.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Transcript_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Transcript_ID"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Transcript_ID",
+              "Total_Exon_Length"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Transcript_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "Total_Exon_Length": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Transcript_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Transcript_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Total_Exon_Length"
+          ],
+          "filtered_columns": [
+            "Total_Exon_Length"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Total_Exon_Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 26,
+              "total_count": 26,
+              "error": null,
+              "details": {
+                "tolerance": 0.0005
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2222222222222222,
+            "col_recall": 1.0,
+            "col_f1": 0.3636363636363636,
+            "col_jaccard": 0.2222222222222222,
+            "ref_rows": 26,
+            "alt_rows": 26,
+            "row_intersection": 26,
+            "ref_cols": 2,
+            "alt_cols": 9,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              26,
+              2
+            ],
+            "alt_shape": [
+              26,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Transcript_ID": true,
+              "Total_Exon_Length": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

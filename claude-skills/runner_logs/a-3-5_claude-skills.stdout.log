@@ -1,0 +1,1565 @@
+CSV/TSV file contains no data rows: promptbio-bench-data/tasks/a-3-5/ref_answer/A3SS.MATS.JC.txt
+CSV/TSV file contains no data rows: promptbio-bench-claude-skills/tasks/a-3-5/output/A3SS.MATS.JC.txt
+fuzzy_id_match only supports a single ID column; ignoring for composite key ['chr', 'strand']
+ID column alignment failed: cannot construct ChunkedArray from empty vector and omitted type, falling back to index-based alignment
+Length mismatch: columns (2) vs ascending (1), adjusting to match columns
+Length mismatch: columns (2) vs ascending (1), adjusting to match columns
+CSV/TSV file contains no data rows: promptbio-bench-data/tasks/a-3-5/ref_answer/A5SS.MATS.JC.txt
+CSV/TSV file contains no data rows: promptbio-bench-claude-skills/tasks/a-3-5/output/A5SS.MATS.JC.txt
+✅ API key found
+Output directory: results
+Agents (1):
+  [claude-skills]  promptbio-bench-claude-skills/tasks/a-3-5/output
+
+Task:    a-3-5
+Question: Predict alternative splicing events from RNA-Seq data using rMATS.
+Reference files:
+  A3SS.MATS.JC.txt
+    guideline: Records must match the reference in chromosome, position, strand, and per-sample junction counts; PSI values must match within +/-0.01; p-value and FDR must match within +/-0.01; column order may differ.
+  A5SS.MATS.JC.txt
+  SE.MATS.JC.txt
+Input files: ['annotation.gtf', 'sample_1.bam', 'sample_2.bam']
+
+============================================================
+Step 2/4: Detecting file formats...  [shared — runs once]
+  A3SS.MATS.JC.txt:
+    format:      tsv
+    compression: none
+    is_text:     True
+    method:      llm
+    note:        llm: confidence: 0.99; reasoning: The content is a single header row with fields separated by tab characters (e.g., ID, GeneID, geneSymbol, chr, strand, numeric columns), which matches tab-separated tabular data.
+  A5SS.MATS.JC.txt:
+    format:      tsv
+    compression: none
+    is_text:     True
+    method:      llm
+    note:        llm: confidence: 0.99; reasoning: The content is a single header row with fields separated by tab characters (e.g., ID, GeneID, geneSymbol, chr, strand, numeric columns), which matches tab-separated tabular data.
+  SE.MATS.JC.txt:
+    format:      tsv
+    compression: none
+    is_text:     True
+    method:      content
+
+============================================================
+Step 3/4: Recommending comparison strategies...  [shared — runs once]
+Requesting strategy recommendation for 3 eval file(s).
+  tsv (promptbio-bench-data/tasks/a-3-5/ref_answer/A3SS.MATS.JC.txt): approximate (confidence=0.99)
+  tsv (promptbio-bench-data/tasks/a-3-5/ref_answer/A5SS.MATS.JC.txt): summary (confidence=0.78)
+  tsv (promptbio-bench-data/tasks/a-3-5/ref_answer/SE.MATS.JC.txt): approximate (confidence=0.86)
+    parameters: {'question': 'Compare rMATS A3SS event tables by aligning records on chromosome, splice-site positions, and strand regardless of row or column order. Require per-sample junction counts to match, and allow absolute differences up to 0.01 for PSI, p-value, and FDR.'}
+    reasoning:  The guideline requires record-level matching with exact event coordinates, strand, and junction counts, while allowing column reordering and ±0.01 numeric variation for PSI, p-value, and FDR. The TSV approximate strategy is designed for this structural alignment and numeric tolerance.
+    parameters: {}
+    reasoning:  rMATS performs statistical model fitting to identify differential alternative-splicing events, so the stochastic/model-fitting override favors summary comparison. This assesses agreement in event counts and statistical distributions without requiring record-level numeric identity across runs or software environments.
+    parameters: {'question': 'Compare rMATS skipped-exon event tables for record-level equivalence, allowing row/column reordering and minor numeric rounding differences.'}
+    reasoning:  No eval guideline indicates aggregate-only or bit-identical matching, so the TSV format default applies. Approximate comparison is appropriate for aligning alternative-splicing event records while tolerating harmless ordering and numeric-format differences.
+
+############################################################
+Agent: claude-skills
+  Result dir: promptbio-bench-claude-skills/tasks/a-3-5/output
+  Log:        results/a-3-5_claude-skills.log
+  Results:    results/a-3-5_claude-skills.json
+
+Task:    a-3-5
+Question: Predict alternative splicing events from RNA-Seq data using rMATS.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-3-5/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-3-5/output  (5 file(s))
+Matched files:
+  A3SS.MATS.JC.txt → A3SS.MATS.JC.txt  (conf=1.00)
+    Reasoning: Exact filename match and identical rMATS junction-count text output type for alternative 3′ splice-site events.
+  A5SS.MATS.JC.txt → A5SS.MATS.JC.txt  (conf=1.00)
+    Reasoning: Exact filename match and identical rMATS junction-count text output type for alternative 5′ splice-site events.
+  SE.MATS.JC.txt → SE.MATS.JC.txt  (conf=1.00)
+    Reasoning: Exact filename match and identical rMATS junction-count text output type for skipped-exon events.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/3: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-5/ref_answer/A3SS.MATS.JC.txt
+    alt: promptbio-bench-claude-skills/tasks/a-3-5/output/A3SS.MATS.JC.txt
+
+  File 2/3: tsv, strategy=summary
+    ref: promptbio-bench-data/tasks/a-3-5/ref_answer/A5SS.MATS.JC.txt
+    alt: promptbio-bench-claude-skills/tasks/a-3-5/output/A5SS.MATS.JC.txt
+
+  File 3/3: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-5/ref_answer/SE.MATS.JC.txt
+    alt: promptbio-bench-claude-skills/tasks/a-3-5/output/SE.MATS.JC.txt
+
+  File 1/3: status=invalid, similarity=0.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "chr",
+            "position",
+            "strand"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "chr,position,strand",
+          "check_permutation": true,
+          "reasoning": "Both dataframes are empty but have the same shape (0 rows x 23 columns), and there is no evidence they are transposed. Because the task evaluates alternative splicing event records by genomic location and strand, rows should be aligned by genomic identifiers. The guideline explicitly emphasizes chromosome, position, and strand as key matching fields, so these are the best available composite row identifiers from the task description. Column order may differ, so column order is not sensitive. Since both tables appear structurally identical from the preview and no differing column names are shown, no explicit column mapping is needed. Row order should not matter because this is a set of event records rather than a ranked output, so permutation checking is appropriate. Pre-sorting by genomic keys would provide stable alignment if rows were present.",
+          "confidence": 0.61
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "GeneID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Gene identifier metadata should match exactly when present; object dtype and no indication of multi-valued cells, so exact categorical comparison is appropriate."
+            },
+            {
+              "name": "ID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "Event ID is a key event descriptor in rMATS output and should match exactly; stored as object and appears to be a single token per cell."
+            },
+            {
+              "name": "ID.1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Secondary ID-style field should match exactly if included in the output; object dtype and likely a single identifier string."
+            },
+            {
+              "name": "IJC_SAMPLE_1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "Task explicitly requires per-sample junction counts to match. Although typed as object, these rMATS count fields are commonly comma-separated replicate count strings and should match exactly as reported, not approximately."
+            },
+            {
+              "name": "IJC_SAMPLE_2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "Task explicitly requires per-sample junction counts to match. Exact string equality is appropriate for this object-typed count field."
+            },
+            {
+              "name": "IncFormLen",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "Inclusion form length is an event annotation/output value that should match exactly in a correct rMATS result. Dtype is object, so use categorical exact comparison."
+            },
+            {
+              "name": "IncLevel1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.81,
+              "reasoning": "This column contains PSI-like values for sample group 1 and the task states PSI values must match within +/-0.01. However, dtype is object and in rMATS this field is often a comma-separated list of replicate PSI values. Without explicit numeric parsing support in the schema, exact categorical comparison is the safest conservative plan, though true evaluation would ideally compare parsed numeric elements with 0.01 tolerance."
+            },
+            {
+              "name": "IncLevel2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.81,
+              "reasoning": "This column contains PSI-like values for sample group 2; same rationale as IncLevel1. Ideally parsed numerically with 0.01 tolerance, but given object dtype and allowed strategy set, exact categorical comparison is the most reliable schema-compliant choice."
+            },
+            {
+              "name": "IncLevelDifference",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.78,
+              "reasoning": "PSI difference is task-relevant, but column is object-typed. Since only categorical strategies are available for object dtype in this planning task, exact match is used; in a richer evaluator this would preferably be numeric with 0.01 tolerance."
+            },
+            {
+              "name": "PValue",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.76,
+              "reasoning": "Task requires p-value match within +/-0.01, but explicit dtype is object. Under the dtype-aware rules, categorical exact comparison is selected; practical evaluation would ideally coerce to numeric and use tolerance 0.01."
+            },
+            {
+              "name": "SJC_SAMPLE_1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "Skipping junction counts are explicitly part of the required per-sample junction count match; exact string equality is appropriate for this object field."
+            },
+            {
+              "name": "SJC_SAMPLE_2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "Skipping junction counts are explicitly required to match; exact comparison fits the object-typed output field."
+            },
+            {
+              "name": "SkipFormLen",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "Skip form length is an event annotation/output field expected to match exactly; object dtype suggests categorical exact comparison."
+            },
+            {
+              "name": "flankingEE",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Event boundary coordinate annotation should match exactly; object dtype and single-value semantics make exact comparison appropriate."
+            },
+            {
+              "name": "flankingES",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Event boundary coordinate annotation should match exactly; exact categorical comparison is appropriate."
+            },
+            {
+              "name": "geneSymbol",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Gene symbol metadata should match exactly when present; object dtype and likely single token per cell."
+            },
+            {
+              "name": "longExonEnd",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "Exon coordinate annotation should match exactly; despite object dtype, this is effectively a categorical/identifier-like field in this schema."
+            },
+            {
+              "name": "longExonStart_0base",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "Exon coordinate annotation should match exactly; object dtype leads to exact categorical comparison."
+            },
+            {
+              "name": "shortEE",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "Short exon end coordinate annotation should match exactly; no evidence of multi-valued content."
+            },
+            {
+              "name": "shortES",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "Short exon start coordinate annotation should match exactly; object dtype and coordinate semantics favor exact comparison."
+            },
+            {
+              "name": "FDR",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.76,
+              "reasoning": "Task requires FDR match within +/-0.01, but explicit dtype is object. Following the provided dtype-aware rule set, exact categorical comparison is used; ideally this would be coerced to numeric and compared with tolerance 0.01."
+            }
+          ],
+          "overall_reasoning": "I excluded the alignment keys chr, position, and strand as instructed. The task emphasizes correctness of alternative splicing event outputs, especially per-sample junction counts plus PSI, p-value, and FDR, while column order is irrelevant after alignment. However, every non-ID column is explicitly typed as object and the allowed strategy selection is dtype-aware: object/string/category columns should use categorical strategies rather than numerical ones. Because the aligned previews are empty (0 rows), there is no empirical basis to infer safe numeric coercions or delimiters beyond domain assumptions. Therefore, I included all non-ID columns that contribute either core event identity/annotation or required quantitative outputs, and assigned exact comparison throughout. This is especially appropriate for identifiers, gene labels, exon coordinates, form lengths, and per-sample junction count fields, which the task says must match. I did not use overlap because no column is clearly a set-valued annotation where Jaccard similarity would be meaningful for evaluation, and the count/PSI list-like columns in rMATS should usually preserve exact ordered content if represented as strings. I did not assign RAE tolerances because no column is provided with a numeric dtype; although PSI, p-value, and FDR would ideally be compared numerically with tolerance 0.01, the explicit dtype guidance and available schema make exact categorical comparison the safest compliant plan here. If preprocessing were allowed, the best enhancement would be to coerce FDR, PValue, and PSI-related fields to numeric or parsed replicate vectors before applying 0.01 tolerances.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "chr",
+            "position",
+            "strand"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "none",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "SJC_SAMPLE_1",
+              "SJC_SAMPLE_2",
+              "strand",
+              "IJC_SAMPLE_2",
+              "IJC_SAMPLE_1",
+              "shortES",
+              "GeneID",
+              "longExonStart_0base",
+              "SkipFormLen",
+              "IncLevel2",
+              "ID",
+              "IncFormLen",
+              "geneSymbol",
+              "longExonEnd",
+              "flankingEE",
+              "flankingES",
+              "PValue",
+              "FDR",
+              "IncLevelDifference",
+              "ID.1",
+              "chr",
+              "shortEE",
+              "IncLevel1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "SJC_SAMPLE_1": [
+                "object",
+                "object",
+                true
+              ],
+              "SJC_SAMPLE_2": [
+                "object",
+                "object",
+                true
+              ],
+              "strand": [
+                "object",
+                "object",
+                true
+              ],
+              "IJC_SAMPLE_2": [
+                "object",
+                "object",
+                true
+              ],
+              "IJC_SAMPLE_1": [
+                "object",
+                "object",
+                true
+              ],
+              "shortES": [
+                "object",
+                "object",
+                true
+              ],
+              "GeneID": [
+                "object",
+                "object",
+                true
+              ],
+              "longExonStart_0base": [
+                "object",
+                "object",
+                true
+              ],
+              "SkipFormLen": [
+                "object",
+                "object",
+                true
+              ],
+              "IncLevel2": [
+                "object",
+                "object",
+                true
+              ],
+              "ID": [
+                "object",
+                "object",
+                true
+              ],
+              "IncFormLen": [
+                "object",
+                "object",
+                true
+              ],
+              "geneSymbol": [
+                "object",
+                "object",
+                true
+              ],
+              "longExonEnd": [
+                "object",
+                "object",
+                true
+              ],
+              "flankingEE": [
+                "object",
+                "object",
+                true
+              ],
+              "flankingES": [
+                "object",
+                "object",
+                true
+              ],
+              "PValue": [
+                "object",
+                "object",
+                true
+              ],
+              "FDR": [
+                "object",
+                "object",
+                true
+              ],
+              "IncLevelDifference": [
+                "object",
+                "object",
+                true
+              ],
+              "ID.1": [
+                "object",
+                "object",
+                true
+              ],
+              "chr": [
+                "object",
+                "object",
+                true
+              ],
+              "shortEE": [
+                "object",
+                "object",
+                true
+              ],
+              "IncLevel1": [
+                "object",
+                "object",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "chr",
+              "strand"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['chr', 'strand']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "FDR",
+            "GeneID",
+            "ID",
+            "ID.1",
+            "IJC_SAMPLE_1",
+            "IJC_SAMPLE_2",
+            "IncFormLen",
+            "IncLevel1",
+            "IncLevel2",
+            "IncLevelDifference",
+            "PValue",
+            "SJC_SAMPLE_1",
+            "SJC_SAMPLE_2",
+            "SkipFormLen",
+            "flankingEE",
+            "flankingES",
+            "geneSymbol",
+            "longExonEnd",
+            "longExonStart_0base",
+            "shortEE",
+            "shortES"
+          ],
+          "filtered_columns": [
+            "FDR",
+            "GeneID",
+            "ID",
+            "ID.1",
+            "IJC_SAMPLE_1",
+            "IJC_SAMPLE_2",
+            "IncFormLen",
+            "IncLevel1",
+            "IncLevel2",
+            "IncLevelDifference",
+            "PValue",
+            "SJC_SAMPLE_1",
+            "SJC_SAMPLE_2",
+            "SkipFormLen",
+            "flankingEE",
+            "flankingES",
+            "geneSymbol",
+            "longExonEnd",
+            "longExonStart_0base",
+            "shortEE",
+            "shortES"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "FDR": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "GeneID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "ID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "ID.1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "IJC_SAMPLE_1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "IJC_SAMPLE_2": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "IncFormLen": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "IncLevel1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "IncLevel2": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "IncLevelDifference": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "PValue": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "SJC_SAMPLE_1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "SJC_SAMPLE_2": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "SkipFormLen": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "flankingEE": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "flankingES": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "geneSymbol": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "longExonEnd": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "longExonStart_0base": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "shortEE": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            },
+            "shortES": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Both empty",
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 0.0,
+            "row_recall": 0.0,
+            "row_f1": 0.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 0,
+            "alt_rows": 0,
+            "row_intersection": 0,
+            "ref_cols": 23,
+            "alt_cols": 23,
+            "col_intersection": 23
+          },
+          "shape": {
+            "ref_shape": [
+              0,
+              23
+            ],
+            "alt_shape": [
+              0,
+              23
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "SJC_SAMPLE_1": true,
+              "SJC_SAMPLE_2": true,
+              "strand": true,
+              "IJC_SAMPLE_2": true,
+              "IJC_SAMPLE_1": true,
+              "shortES": true,
+              "GeneID": true,
+              "longExonStart_0base": true,
+              "SkipFormLen": true,
+              "IncLevel2": true,
+              "ID": true,
+              "IncFormLen": true,
+              "geneSymbol": true,
+              "longExonEnd": true,
+              "flankingEE": true,
+              "flankingES": true,
+              "PValue": true,
+              "FDR": true,
+              "IncLevelDifference": true,
+              "ID.1": true,
+              "chr": true,
+              "shortEE": true,
+              "IncLevel1": true
+            },
+            "common_columns": 23
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.0
+          }
+        }
+      }
+    error: Candidate file has no data: promptbio-bench-claude-skills/tasks/a-3-5/output/A3SS.MATS.JC.txt
+
+  File 2/3: status=invalid, similarity=0.0000
+    details:
+      {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              0,
+              23
+            ],
+            "alt_shape": [
+              0,
+              23
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "row_sim": 1.0,
+          "col_sim": 1.0,
+          "col_jaccard": 1.0,
+          "score": 1.0
+        },
+        "missing": {
+          "ref_missing_rate": 0.0,
+          "alt_missing_rate": 0.0,
+          "score": 1.0
+        },
+        "numeric_distribution": null,
+        "categorical_distribution": null,
+        "component_scores": {
+          "structural": 1.0,
+          "missing": 1.0,
+          "numeric": null,
+          "categorical": null
+        }
+      }
+    error: Candidate file has no data: promptbio-bench-claude-skills/tasks/a-3-5/output/A5SS.MATS.JC.txt
+
+  File 3/3: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The reference and candidate tables have identical shapes (1x23), identical column names in the same order, and the previewed values are the same, so no transpose or column remapping is needed. Column alignment can be skipped because names already match exactly. Row alignment is still conceptually appropriate; for rMATS alternative splicing event output, rows represent events, and the explicit event identifier column 'ID' is the clearest primary key available in the reference schema. If needed, event-defining genomic fields such as chr, strand, exonStart_0base, exonEnd, upstreamES, upstreamEE, downstreamES, and downstreamEE could also describe the event, but 'ID' is sufficient here. Row order is not semantically meaningful for this kind of event table, so treat rows as unordered and enable permutation checking. No pre-sorting is necessary because there is only one row and matching can be done directly by ID.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "GeneID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Gene identifier should match exactly for the same aligned splicing event; this is a single-token string field, not a multi-valued set."
+            },
+            {
+              "name": "geneSymbol",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "Gene symbol is a categorical annotation and should be identical for the same event after alignment."
+            },
+            {
+              "name": "chr",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Chromosome is a core genomic location field and should match exactly."
+            },
+            {
+              "name": "strand",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Strand is a discrete genomic annotation with exact expected agreement."
+            },
+            {
+              "name": "exonStart_0base",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Exon start coordinate defines the event structure and should match exactly; using RAE with zero tolerance enforces exact equality for this integer coordinate."
+            },
+            {
+              "name": "exonEnd",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Exon end coordinate is structural and should be identical for aligned events; zero tolerance is appropriate."
+            },
+            {
+              "name": "upstreamES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Upstream exon start coordinate is part of the splice-event definition and should match exactly."
+            },
+            {
+              "name": "upstreamEE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Upstream exon end coordinate is part of the splice-event definition and should match exactly."
+            },
+            {
+              "name": "downstreamES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Downstream exon start coordinate is a core structural field for alternative splicing events and should match exactly."
+            },
+            {
+              "name": "downstreamEE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Downstream exon end coordinate is a core structural field and should match exactly."
+            },
+            {
+              "name": "ID.1",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "This appears to be a secondary index-like numeric field rather than a biological measurement; since ID is already excluded as the alignment key, this auxiliary identifier is not important for biological comparison."
+            },
+            {
+              "name": "IJC_SAMPLE_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Inclusion junction count for sample group 1 is an observed count output from rMATS. For deterministic reproduction of the event output, exact agreement is preferred; zero tolerance is appropriate for integer counts."
+            },
+            {
+              "name": "SJC_SAMPLE_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Skipping junction count for sample group 1 is an observed integer count and should match exactly in aligned outputs."
+            },
+            {
+              "name": "IJC_SAMPLE_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Inclusion junction count for sample group 2 is a core observed count in rMATS output; exact count equality is preferred."
+            },
+            {
+              "name": "SJC_SAMPLE_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Skipping junction count for sample group 2 is a core observed count and should match exactly for the same result."
+            },
+            {
+              "name": "IncFormLen",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Inclusion form length is a deterministic structural quantity derived from event definition and should match exactly."
+            },
+            {
+              "name": "SkipFormLen",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Skipping form length is a deterministic structural quantity and should match exactly."
+            },
+            {
+              "name": "PValue",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "PValue is a key statistical output for splicing significance. Small floating-point differences may occur, so a very tight tolerance is appropriate rather than requiring bitwise identity."
+            },
+            {
+              "name": "FDR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "FDR is a primary significance metric for rMATS results. A strict but nonzero tolerance accounts for floating-point rounding while preserving practical equality."
+            },
+            {
+              "name": "IncLevel1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Inclusion level for group 1 is a proportion/percent-like value on a 0-1 scale. A tolerance of 0.01 is appropriate for comparing percentage-scale quantities."
+            },
+            {
+              "name": "IncLevel2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Inclusion level for group 2 is a proportion on a 0-1 scale, so a 0.01 tolerance captures practically equivalent values."
+            },
+            {
+              "name": "IncLevelDifference",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "Difference in inclusion levels is a central effect-size measure for alternative splicing and is naturally compared with a small tolerance on the proportion scale."
+            }
+          ],
+          "overall_reasoning": "For rMATS alternative splicing event outputs, the most important comparisons are: genomic event identity/structure, gene annotations, observed junction counts, deterministic event lengths, and statistical/effect-size outputs. I excluded the alignment ID column as instructed and treated the remaining biologically meaningful columns as important, with the exception of ID.1, which appears to be a secondary internal/index field and is therefore ignored. Categorical string fields (GeneID, geneSymbol, chr, strand) are single-valued annotations, so exact comparison is appropriate; overlap is unnecessary because no multi-token delimiter-based cells are shown. Numerical fields are better compared with cell-wise relative absolute error rather than correlation because the aligned preview contains only one row and these fields represent absolute event-specific values, not distributions where Pearson or Spearman would be meaningful. For integer genomic coordinates, lengths, and junction counts, I used RAE with zero tolerance to enforce exact agreement because these are deterministic or count outputs where any difference is usually meaningful. For floating-point significance metrics (PValue, FDR), I used a very small tolerance of 1e-6 to allow negligible rounding differences. For inclusion levels and inclusion-level difference, which are proportion-scale quantities on roughly a 0-1 range, I used a tolerance of 0.01 as a standard practical threshold for percentage-like values. No categorical overlap strategy or delimiter is needed because none of the categorical columns contain apparent list-like values.",
+          "overall_confidence": 0.96,
+          "id_columns": [
+            "ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "ID"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "exonEnd",
+              "SJC_SAMPLE_1",
+              "SJC_SAMPLE_2",
+              "strand",
+              "IJC_SAMPLE_2",
+              "IJC_SAMPLE_1",
+              "GeneID",
+              "upstreamES",
+              "SkipFormLen",
+              "IncLevel2",
+              "ID",
+              "IncFormLen",
+              "geneSymbol",
+              "PValue",
+              "FDR",
+              "exonStart_0base",
+              "IncLevelDifference",
+              "ID.1",
+              "chr",
+              "downstreamEE",
+              "downstreamES",
+              "upstreamEE",
+              "IncLevel1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "exonEnd": [
+                "int64",
+                "int64",
+                true
+              ],
+              "SJC_SAMPLE_1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "SJC_SAMPLE_2": [
+                "int64",
+                "int64",
+                true
+              ],
+              "strand": [
+                "str",
+                "str",
+                true
+              ],
+              "IJC_SAMPLE_2": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IJC_SAMPLE_1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "GeneID": [
+                "str",
+                "str",
+                true
+              ],
+              "upstreamES": [
+                "int64",
+                "int64",
+                true
+              ],
+              "SkipFormLen": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IncLevel2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ID": [
+                "str",
+                "str",
+                true
+              ],
+              "IncFormLen": [
+                "int64",
+                "int64",
+                true
+              ],
+              "geneSymbol": [
+                "str",
+                "str",
+                true
+              ],
+              "PValue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "exonStart_0base": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IncLevelDifference": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ID.1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "chr": [
+                "str",
+                "str",
+                true
+              ],
+              "downstreamEE": [
+                "int64",
+                "int64",
+                true
+              ],
+              "downstreamES": [
+                "int64",
+                "int64",
+                true
+              ],
+              "upstreamEE": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IncLevel1": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "FDR",
+            "GeneID",
+            "ID.1",
+            "IJC_SAMPLE_1",
+            "IJC_SAMPLE_2",
+            "IncFormLen",
+            "IncLevel1",
+            "IncLevel2",
+            "IncLevelDifference",
+            "PValue",
+            "SJC_SAMPLE_1",
+            "SJC_SAMPLE_2",
+            "SkipFormLen",
+            "chr",
+            "downstreamEE",
+            "downstreamES",
+            "exonEnd",
+            "exonStart_0base",
+            "geneSymbol",
+            "strand",
+            "upstreamEE",
+            "upstreamES"
+          ],
+          "filtered_columns": [
+            "FDR",
+            "GeneID",
+            "IJC_SAMPLE_1",
+            "IJC_SAMPLE_2",
+            "IncFormLen",
+            "IncLevel1",
+            "IncLevel2",
+            "IncLevelDifference",
+            "PValue",
+            "SJC_SAMPLE_1",
+            "SJC_SAMPLE_2",
+            "SkipFormLen",
+            "chr",
+            "downstreamEE",
+            "downstreamES",
+            "exonEnd",
+            "exonStart_0base",
+            "geneSymbol",
+            "strand",
+            "upstreamEE",
+            "upstreamES"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "FDR": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "GeneID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "IJC_SAMPLE_1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "IJC_SAMPLE_2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "IncFormLen": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "IncLevel1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "IncLevel2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "IncLevelDifference": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "PValue": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "SJC_SAMPLE_1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "SJC_SAMPLE_2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "SkipFormLen": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "chr": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "downstreamEE": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "downstreamES": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "exonEnd": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "exonStart_0base": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "geneSymbol": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "strand": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "upstreamEE": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "upstreamES": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 23,
+            "alt_cols": 23,
+            "col_intersection": 23
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              23
+            ],
+            "alt_shape": [
+              1,
+              23
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "exonEnd": true,
+              "SJC_SAMPLE_1": true,
+              "SJC_SAMPLE_2": true,
+              "strand": true,
+              "IJC_SAMPLE_2": true,
+              "IJC_SAMPLE_1": true,
+              "GeneID": true,
+              "upstreamES": true,
+              "SkipFormLen": true,
+              "IncLevel2": true,
+              "ID": true,
+              "IncFormLen": true,
+              "geneSymbol": true,
+              "PValue": true,
+              "FDR": true,
+              "exonStart_0base": true,
+              "IncLevelDifference": true,
+              "ID.1": true,
+              "chr": true,
+              "downstreamEE": true,
+              "downstreamES": true,
+              "upstreamEE": true,
+              "IncLevel1": true
+            },
+            "common_columns": 23
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-3-5  |  Agent: claude-skills
+Avg similarity: 0.3333
+============================================================
+
+✅ Results saved → results/a-3-5_claude-skills.json
+✅ Full states saved → results/a-3-5_claude-skills_full.json
+
+
+
+

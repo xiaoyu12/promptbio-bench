@@ -19,6 +19,8 @@ import pandas as pd
 from typing import Optional, Dict, List, Tuple, Any
 from pandas import Series, DataFrame
 from pydantic import BaseModel, Field
+from scipy.optimize import linear_sum_assignment
+from sklearn.metrics import adjusted_rand_score
 
 from utils.agents import create_llm_agent, invoke_structured_agent
 from utils.format import detect_file_signature, FileSignature
@@ -29,6 +31,55 @@ from tools.results import ValidationResult, ComparisonResult, EquivalenceResult
 from tools.table_models import RowIDColumns, ColumnMappingDict, ColumnMapping, AlignPlan, ComparisonPlan, TableMeta, ColumnSimilarity, IndexMapping
 
 logger = logging.getLogger(__name__)
+
+# The 'summary' strategy compares pooled value distributions; below this many reference
+# cells there is no distribution to speak of, so 'approximate' is used instead.
+SUMMARY_MIN_REF_CELLS = 100
+
+_TRUE_STRINGS = {"true", "t", "yes", "y", "1"}
+_FALSE_STRINGS = {"false", "f", "no", "n", "0"}
+
+
+def _to_bool_series(series: Series) -> Series:
+    """Map true/false-like values ("Yes", "no", "TRUE", 0, 1) to booleans.
+
+    Raises ValueError on any value that is not recognisably boolean, so the caller can
+    leave the column unconverted instead of `astype(bool)` turning every non-empty
+    string (including "No") into True.
+    """
+    def convert(val):
+        if pd.isna(val):
+            return val
+        if isinstance(val, (bool, np.bool_)):
+            return bool(val)
+        key = str(val).strip().lower()
+        if key in _TRUE_STRINGS:
+            return True
+        if key in _FALSE_STRINGS:
+            return False
+        raise ValueError(f"Not a boolean value: {val!r}")
+
+    return series.map(convert)
+
+
+def _reverse_mapping_without_collisions(mapping: Dict[str, str], alt_cols: List[str]) -> Dict[str, str]:
+    """Invert ref->alt mapping into an alt->ref rename map.
+
+    An unmapped alt column can share its name with a ref column that some other alt
+    column is renamed to (e.g. ref "score" <- alt "bitscore" while alt also has its own
+    "score"), which would leave duplicate column labels. Such unmapped columns get a
+    suffix instead.
+    """
+    rename = {alt_col: ref_col for ref_col, alt_col in mapping.items()}
+    taken = set(rename.values())
+    for col in alt_cols:
+        if col not in rename and col in taken:
+            new = f"{col}_alt"
+            while new in taken or new in alt_cols:
+                new += "_"
+            rename[col] = new
+            taken.add(new)
+    return rename
 
 
 class TableHandler(FormatHandler):
@@ -142,12 +193,15 @@ class TableHandler(FormatHandler):
         """
         self.result = ComparisonResult(reference_path=reference_path, candidate_path=candidate_path,
                                        strategy=strategy, similarity=np.nan, details={}, error=None)
+        if kwargs.get("model"):
+            self.model = kwargs["model"]
         # Validate reference and candidate files
         ref_validation = self.validate(reference_path, **kwargs)
         alt_validation = self.validate(candidate_path, **kwargs)
 
         try:
-            if ref_validation.is_valid and alt_validation.is_valid:
+            # Two empty tables need no comparison (_finalize_output scores them as a match)
+            if ref_validation.is_valid and alt_validation.is_valid and (ref_validation.non_empty or alt_validation.non_empty):
                 # Load dataframes (reuse metadata from validation if available)
                 ref_meta_dict = ref_validation.details.get("meta")
                 alt_meta_dict = alt_validation.details.get("meta")
@@ -158,6 +212,15 @@ class TableHandler(FormatHandler):
                 task_desc = kwargs.get("question", "Compare two tabular data files for equivalence")
                 eval_guideline = kwargs.get("eval_guideline", None)
                 fuzzy_id_match = kwargs.get("fuzzy_id_match", True)
+
+                if strategy == "summary" and ref_df.size <= SUMMARY_MIN_REF_CELLS:
+                    # Distribution statistics are meaningless on a handful of values (a metrics
+                    # table, a single AIC): compare the values themselves instead.
+                    strategy = "approximate"
+                    self.result.strategy = strategy
+                    self.result.details["strategy_override"] = (
+                        f"summary -> approximate: reference has only {ref_df.size} cell(s)"
+                    )
 
                 if strategy == "exact":
                     self._compare_exact(ref_df, alt_df)
@@ -650,7 +713,7 @@ Since columns are already aligned, identify the minimal ID columns from the comm
             }
             
             if valid_mapping:
-                reverse_mapping = {alt_col: ref_col for ref_col, alt_col in valid_mapping.items()}
+                reverse_mapping = _reverse_mapping_without_collisions(valid_mapping, alt_cols)
                 ref_mapped_cols = list(valid_mapping.keys())
                 ref_unmapped_cols = [c for c in ref_cols if c not in valid_mapping]
                 alt_mapped_cols = list(valid_mapping.values())
@@ -663,8 +726,8 @@ Since columns are already aligned, identify the minimal ID columns from the comm
                 ref_aligned_df = ref_df[ref_cols_order]
                 alt_aligned_df = alt_df[alt_cols_order].rename(columns=reverse_mapping)
                 # Ensure alt_aligned_df has same column order as ref_aligned_df for mapped columns
-                alt_aligned_df = alt_aligned_df[ref_mapped_cols + alt_unmapped_cols]
-                
+                alt_aligned_df = alt_aligned_df[ref_mapped_cols + [reverse_mapping.get(c, c) for c in alt_unmapped_cols]]
+
                 metadata.update({
                     "alignment_method": "plan_mapping",
                     "column_mapping": valid_mapping,
@@ -680,7 +743,7 @@ Since columns are already aligned, identify the minimal ID columns from the comm
                 valid_mapping = {ref_col: entry["alt_column"]
                                  for ref_col, entry in llm_mapping.items()
                                  if entry["alt_column"] and entry["alt_column"] in alt_df.columns}
-                reverse_mapping = {alt_col: ref_col for ref_col, alt_col in valid_mapping.items()}
+                reverse_mapping = _reverse_mapping_without_collisions(valid_mapping, alt_cols)
                 ref_cols_order = list(valid_mapping.keys()) + [c for c in ref_cols if c not in valid_mapping]
                 alt_cols_order = list(valid_mapping.values()) + [c for c in alt_cols if c not in valid_mapping.values()]
                 ref_aligned_df = ref_df[ref_cols_order]
@@ -862,10 +925,12 @@ Provide a mapping from EACH candidate identifier to its matching reference ident
                 # Count unmatched rows using merge indicator
                 unmapped_ref = int((merged['_merge'] == 'left_only').sum())
                 unmapped_alt = int((merged['_merge'] == 'right_only').sum())
-                
+                matched = int((merged['_merge'] == 'both').sum())
+
                 return ref_aligned_df, alt_aligned_df, {
                     "alignment_method": "id_column_merge",
                     "id_columns": id_cols,
+                    "matched_rows": matched,
                     "unmapped_ref_rows": unmapped_ref,
                     "unmapped_alt_rows": unmapped_alt,
                     "fuzzy_matched_ids": fuzzy_matched_ids,
@@ -943,7 +1008,10 @@ Provide a mapping from EACH candidate identifier to its matching reference ident
                 continue
             
             try:
-                alt_aligned_df[col] = alt_aligned_df[col].astype(ref_type)
+                if pd.api.types.is_bool_dtype(ref_type):
+                    alt_aligned_df[col] = _to_bool_series(alt_aligned_df[col])
+                else:
+                    alt_aligned_df[col] = alt_aligned_df[col].astype(ref_type)
                 converted_columns.append(col)
                 conversion_details[col] = (str(ref_type), str(alt_type), True)
             except (ValueError, TypeError) as e:
@@ -1026,7 +1094,11 @@ PROVIDE ALL OF THE FOLLOWING:
    - id_columns: Which column(s) uniquely identify rows for matching between tables?
      * Use REFERENCE column names
      * Examples: ["gene_id"] for single key, ["chr", "start", "end"] for composite key
-     * Use [] (empty list) if no suitable ID columns exist (will use positional alignment)
+     * Prefer a composite key whenever a combination of columns identifies a row — e.g. both ID
+       columns of a pair/match/merge output (["id_dataset1", "id_dataset2"]), or every column when
+       the table is just a set of identifiers. Positional alignment pairs unrelated rows as soon as
+       the candidate sorts differently or has extra rows.
+     * Use [] (empty list) only if rows have no identifying columns at all (will use positional alignment)
      * Use null to let the system auto-detect
    - row_order_sensitive: Does row order matter?
      * True: ranked lists (top N genes by expression)
@@ -1250,6 +1322,9 @@ PROVIDE ALL OF THE FOLLOWING:
      * For CATEGORICAL columns:
        - "exact": Whole cell exact equality (e.g., "gene1" == "gene1")
        - "overlap": Parse cell by delimiter, then calculate Jaccard similarity (e.g., "gene1,gene2" vs "gene2,gene3")
+       - "partition": Arbitrary group labels whose names carry no meaning (cluster IDs, WGCNA module colours,
+         subtype numbers) — scored after the best one-to-one relabelling. Use it for such columns even when
+         the labels are integers.
        - "ignore": Skip this column
      * For NUMERICAL columns:
        - "pearson": Pearson correlation (for linear relationships, e.g., expression values)
@@ -1388,6 +1463,45 @@ Based on the task description, column dtypes, and aligned data previews, provide
             logger.error(f"Overlap calculation failed: {e}")
             return ColumnSimilarity(similarity=None, strategy="overlap", error=f"Overlap calculation failed: {e}")
 
+    def _get_col_partition(self, ref_series: Series, alt_series: Series) -> ColumnSimilarity:
+        """Agreement of two labelings (e.g. cluster assignments) up to relabelling.
+
+        Candidate labels are mapped one-to-one onto reference labels so as to maximise the
+        number of agreeing rows (Hungarian algorithm on the contingency table); the
+        similarity is that number over the reference rows that have a label. Rows with no
+        candidate label count as disagreeing. The adjusted Rand index is reported alongside.
+        """
+        if ref_series.empty and alt_series.empty:
+            return ColumnSimilarity(similarity=1.0, strategy="partition", error="Both empty")
+        if ref_series.empty or alt_series.empty:
+            return ColumnSimilarity(similarity=0.0, strategy="partition", error="One empty")
+
+        try:
+            ref_mask = ref_series.notna().to_numpy()
+            if not ref_mask.any():
+                return ColumnSimilarity(similarity=0.0, strategy="partition", error="Reference has no labels")
+            both = ref_mask & alt_series.notna().to_numpy()
+            ref_labels = ref_series[both].astype(str).to_numpy()
+            alt_labels = alt_series[both].astype(str).to_numpy()
+
+            matched, mapping, ari = 0, {}, None
+            if both.any():
+                table = pd.crosstab(ref_labels, alt_labels)
+                rows, cols = linear_sum_assignment(table.to_numpy(), maximize=True)
+                matched = int(table.to_numpy()[rows, cols].sum())
+                mapping = {str(table.columns[c]): str(table.index[r]) for r, c in zip(rows, cols)}
+                ari = float(adjusted_rand_score(ref_labels, alt_labels))
+
+            total = int(ref_mask.sum())
+            return ColumnSimilarity(similarity=matched / total, strategy="partition",
+                                    matching_count=matched, total_count=total,
+                                    details={"label_mapping": mapping, "adjusted_rand_index": ari,
+                                             "ref_groups": int(ref_series.nunique()),
+                                             "alt_groups": int(alt_series.nunique())})
+        except Exception as e:
+            logger.error(f"Partition comparison failed: {e}")
+            return ColumnSimilarity(similarity=None, strategy="partition", error=f"Partition comparison failed: {e}")
+
     def _get_col_rae(self, ref_series: Series, alt_series: Series, tolerance: float) -> ColumnSimilarity:
         """Calculate relative absolute error (RAE) similarity for numerical columns.
         
@@ -1491,6 +1605,8 @@ Based on the task description, column dtypes, and aligned data previews, provide
             delimiter = kwargs.get("delimiter")
             threshold = kwargs.get("threshold", 1.0)
             return self._get_col_overlap(ref_series, alt_series, delimiter, threshold)
+        elif strategy == "partition":
+            return self._get_col_partition(ref_series, alt_series)
         # Numerical strategies
         elif strategy == "pearson":
             return self._get_col_correlation(ref_series, alt_series, method="pearson")
@@ -1503,25 +1619,54 @@ Based on the task description, column dtypes, and aligned data previews, provide
             logger.warning(f"Unknown comparison strategy '{strategy}', falling back to exact")
             return self._get_col_equal(ref_series, alt_series)
     
-    def _calculate_similarities(self, ref_aligned: DataFrame, alt_aligned: DataFrame, plan: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def _get_key_overlap(row_alignment: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """Precision/recall/F1 of row keys matched by an ID-column merge, or None if rows were not merged on IDs."""
+        if not row_alignment or row_alignment.get("alignment_method") != "id_column_merge":
+            return None
+        matched = row_alignment.get("matched_rows")
+        if matched is None:
+            return None
+        n_ref = matched + row_alignment.get("unmapped_ref_rows", 0)
+        n_alt = matched + row_alignment.get("unmapped_alt_rows", 0)
+        precision = matched / n_alt if n_alt else 0.0
+        recall = matched / n_ref if n_ref else 0.0
+        f1 = 2 * matched / (n_ref + n_alt) if (n_ref + n_alt) else 1.0
+        return {"matched_rows": matched, "ref_rows": n_ref, "alt_rows": n_alt,
+                "precision": precision, "recall": recall, "f1": f1}
+
+    def _calculate_similarities(self, ref_aligned: DataFrame, alt_aligned: DataFrame, plan: Dict[str, Any],
+                                row_alignment: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Calculate similarity metrics based on comparison plan.
-        
+
         Orchestrates per-column similarity calculation using plan's focus and
         per-column strategies, plus structural metrics (overlap, shape, dtypes,
         missing patterns, permutation detection).
-        
+
         Args:
             ref_aligned: Reference dataframe (already aligned)
             alt_aligned: Candidate dataframe (already aligned)
             plan: Comparison plan with focus, tolerance, and per-column strategies
-            
+            row_alignment: Row alignment metadata from _align_rows. When rows were merged on
+                ID columns and no value column is left to compare (every column is an ID column,
+                or the rest are ignored), the ID keys are the answer, so the score is the F1 of
+                matched keys instead of 0.
+
         Returns:
             Dict with overall_similarity and detailed per-column and structural metrics
         """
+        def no_value_columns(note: str, compared_columns: List[str]) -> Dict[str, Any]:
+            key_overlap = self._get_key_overlap(row_alignment)
+            if key_overlap is None:
+                return {"compared_columns": compared_columns, "overall_similarity": 0.0, "notes": [note]}
+            return {"compared_columns": compared_columns, "overall_similarity": key_overlap["f1"],
+                    "row_key_overlap": key_overlap,
+                    "notes": [note, "Scored by overlap of row keys (F1)"]}
+
         # Get columns to compare: common columns, excluding ID columns, optionally filtered by column_configs
         common_cols = sorted(set(ref_aligned.columns) & set(alt_aligned.columns))
         if not common_cols:
-            return {"compared_columns": [], "overall_similarity": 0.0, "notes": ["No columns available for comparison"]}
+            return no_value_columns("No columns available for comparison", [])
         
         # Exclude ID columns
         id_columns = plan.get("id_columns") or []
@@ -1536,7 +1681,7 @@ Based on the task description, column dtypes, and aligned data previews, provide
         compared_columns = sorted(compare_cols & set(data_cols)) or data_cols
         
         if not compared_columns:
-            return {"compared_columns": [], "overall_similarity": 0.0, "notes": ["No columns available for comparison"]}
+            return no_value_columns("No columns available for comparison", [])
         
         # Filter out columns marked as "ignore" and calculate similarities
         column_similarities = {}
@@ -1561,7 +1706,7 @@ Based on the task description, column dtypes, and aligned data previews, provide
             )
         
         if not column_similarities:
-            return {"compared_columns": compared_columns, "overall_similarity": 0.0, "notes": ["All columns marked as 'ignore'"]}
+            return no_value_columns("All columns marked as 'ignore'", compared_columns)
         
         # Get filtered columns for metrics (guard against columns dropped during alignment)
         filtered_columns = [
@@ -1573,7 +1718,12 @@ Based on the task description, column dtypes, and aligned data previews, provide
         
         # Calculate overall similarity
         valid_sims = [s.similarity for s in column_similarities.values() if s.similarity is not None]
-        overall_similarity = float(np.mean(valid_sims)) if valid_sims else 0.0
+        if not valid_sims:
+            # e.g. the only value column was given a numeric strategy but holds strings
+            fallback = no_value_columns("No column similarity could be computed", compared_columns)
+            fallback["per_column_similarities"] = {col: sim.model_dump() for col, sim in column_similarities.items()}
+            return fallback
+        overall_similarity = float(np.mean(valid_sims))
         
         # Build metrics
         return {"compared_columns": compared_columns, "filtered_columns": filtered_columns, "overall_similarity": overall_similarity,
@@ -1910,7 +2060,8 @@ Determine:
             comparison_plan["id_columns"] = id_columns
             
             # Calculate similarities using per-column strategies on aligned dataframes
-            metrics = self._calculate_similarities(ref_aligned, alt_aligned, comparison_plan)
+            metrics = self._calculate_similarities(ref_aligned, alt_aligned, comparison_plan,
+                                                   row_alignment=row_alignment)
             similarity = metrics.get("overall_similarity", 0.0)
             
             logger.info(f"Approximate comparison completed: similarity={similarity:.2%}")

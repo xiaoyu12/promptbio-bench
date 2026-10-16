@@ -1,0 +1,207 @@
+{
+  "id": "b-10-3",
+  "question": "Train a Random Forest classifier (n_estimators=100, random_state=42) on the dataset to predict disease status. Use a 70/30 stratified train-test split (random_state=42). Generate the confusion matrix on the test set.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-3/ref_answer/confusion_matrix.csv",
+      "eval_guideline": "Cell counts must match the reference exactly; column label naming and order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-10-3/output/confusion_matrix.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both paths indicate CSV format, and the candidate is the expected confusion-matrix output for the same task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare confusion matrices by aligning equivalent class labels regardless of column naming or order; require all cell counts to match exactly."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Both the train-test split and Random Forest use fixed random states, and the guideline requires exact cell counts. Approximate table comparison is appropriate because it can align differing column labels and order while checking the counts.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "true_label"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 2x3 confusion-matrix layout and identical column names, so no transpose or column remapping is needed. The only visible difference is in the row label values within true_label: reference uses 'Actual_Normal'/'Actual_Tumor' while candidate uses 'Normal'/'Tumor'. Structurally, true_label is still the row identifier because each row represents one actual class in the confusion matrix. Since the evaluation guideline says cell counts must match exactly while label naming and order may differ, row order is not semantically important as long as rows are matched by class meaning; therefore permutation checking is appropriate and no pre-sort is required.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Predicted_Normal",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is an integer confusion-matrix cell count. The evaluation requires exact matching of cell counts, so a numerical absolute-error style comparison is appropriate with zero tolerance, effectively enforcing exact equality for each aligned cell."
+            },
+            {
+              "name": "Predicted_Tumor",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is an integer confusion-matrix cell count. The evaluation requires exact matching of cell counts, so a numerical absolute-error style comparison is appropriate with zero tolerance, effectively enforcing exact equality for each aligned cell."
+            }
+          ],
+          "overall_reasoning": "The task is to compare confusion-matrix outputs from a classifier. After alignment by the ID column true_label, the only task-critical outputs are the two confusion-matrix count columns: Predicted_Normal and Predicted_Tumor. The evaluation explicitly states that cell counts must match the reference exactly, while label naming/order may differ; since alignment has already handled row correspondence, comparison should focus on exact equality of the numeric count cells. Both compared columns are int64 numerical count columns, so 'rae' is the most suitable numerical strategy because it evaluates cell-level error directly rather than overall correlation. A cell_tolerance of 0.0 is chosen to enforce exact count matching. No categorical overlap strategy or delimiter is needed because there are no categorical data columns to compare beyond the excluded ID column.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "true_label"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "true_label"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {
+              "normal": "actual_normal",
+              "tumor": "actual_tumor"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Direct semantic matches: 'normal' corresponds to 'actual_normal' and 'tumor' corresponds to 'actual_tumor'. The 'actual_' prefix does not change the underlying entity.",
+              "confidence": 0.99
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Predicted_Normal",
+              "Predicted_Tumor",
+              "true_label"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Predicted_Normal": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Predicted_Tumor": [
+                "int64",
+                "int64",
+                true
+              ],
+              "true_label": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Predicted_Normal",
+            "Predicted_Tumor"
+          ],
+          "filtered_columns": [
+            "Predicted_Normal",
+            "Predicted_Tumor"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Predicted_Normal": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Predicted_Tumor": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              3
+            ],
+            "alt_shape": [
+              2,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Predicted_Normal": true,
+              "Predicted_Tumor": true,
+              "true_label": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

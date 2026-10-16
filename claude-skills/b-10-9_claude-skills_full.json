@@ -1,0 +1,213 @@
+{
+  "id": "b-10-9",
+  "question": "Use forward selection with AIC as the selection criterion to build a logistic regression model (max_iter=1000, random_state=42) predicting tumor vs. normal status from gene expression data. Start with no features and add one feature at a time, stopping when AIC no longer decreases.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-9/ref_answer/selected_features.csv",
+      "eval_guideline": "The first 10 features must appear in the same order as the reference; the full selected feature set must match the reference exactly; header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-10-9/output/selected_features.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, both are CSV files, and both represent the features selected by the forward-selection procedure.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the selected feature lists: the full selected feature set must match exactly, and the first 10 features must occur in the same order. Header labels may differ."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline explicitly requires record-level feature matching despite model fitting: the complete set must agree and the first 10 entries are order-sensitive. Approximate CSV comparison is appropriate because it can align differing header labels, whereas exact comparison would incorrectly reject them.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "The reference is a single-column ordered feature list, while the candidate contains the same feature list plus auxiliary metadata columns (Step and AIC). No transpose is needed because both tables are row-oriented lists of selected features. The only reference column, 'Feature', maps directly to the candidate 'Feature' column. Rows should be aligned by the feature name because it is the natural identifier for selected genes and allows exact matching of the selected set. Row order is sensitive because the task explicitly requires the first 10 features to appear in the same order as the reference, indicating a ranked/stepwise forward-selection sequence. No pre-sorting should be applied, since the existing order in the candidate likely reflects the forward-selection steps and should be preserved for comparison.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "selected_features",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "The task evaluates the selected feature set against the reference, with exact membership required and the first 10 features required in the same order. Since the aligned reference contains the feature names as the substantive output, compare the feature sequence exactly row-by-row after excluding the ID/alignment column label itself. Exact matching is appropriate because near-matches or token overlap are not acceptable for gene identifiers."
+            },
+            {
+              "name": "Step",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Step numbers appear only in the candidate output and are not part of the stated evaluation criterion. The task cares about ordered selected features and exact final feature set; step labels/header structure may differ. Therefore this column should be ignored."
+            },
+            {
+              "name": "AIC",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "AIC values document the forward-selection path but are not part of the explicit grading rule. Since the reference output shown contains only the selected features and the instruction says header labels may differ, comparing AIC would incorrectly penalize otherwise correct feature selection output. Ignore this column."
+            }
+          ],
+          "overall_reasoning": "The key deliverable in this task is the ordered list of selected genes from forward selection. The evaluation explicitly states that the first 10 features must be in the same order as the reference and that the full selected feature set must match exactly, while header labels may differ. Therefore the substantive comparison should focus on the ordered feature names, treated as categorical identifiers requiring exact row-wise equality rather than overlap. No delimiter-based overlap is needed because each cell contains a single gene name, not a multi-valued set. The candidate-only metadata columns Step and AIC are auxiliary diagnostics, not target outputs under the stated evaluation rule, so they should be ignored. Because no explicit non-ID shared data columns are named beyond the feature list itself, the plan maps the reference feature output to a conceptual compared column representing the selected feature sequence and ignores extra candidate columns.",
+          "overall_confidence": 0.96,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Step",
+              "AIC"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Step', 'AIC']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [],
+          "overall_similarity": 0.0,
+          "notes": [
+            "No columns available for comparison"
+          ]
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-9/ref_answer/final_aic.csv",
+      "eval_guideline": "The FINAL_AIC value must match the reference within +/-2; header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-10-9/output/final_aic.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames and CSV formats match exactly, and the file corresponds directly to the final AIC output from the selected logistic regression model.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The output is a statistical summary (FINAL_AIC) from model fitting, and the guideline requires only that this aggregate value fall within ±2 of the reference. Summary comparison is therefore more appropriate than record-level table alignment.",
+      "strategy_error": null,
+      "similarity": 0.5,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "row_sim": 1.0,
+          "col_sim": 1.0,
+          "col_jaccard": 1.0,
+          "score": 1.0
+        },
+        "missing": {
+          "ref_missing_rate": 0.0,
+          "alt_missing_rate": 0.0,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 0.0,
+          "hellinger_distance": 1.0,
+          "ref_count": 1,
+          "alt_count": 1
+        },
+        "categorical_distribution": {
+          "score": 0.0,
+          "hellinger_distance": 1.0,
+          "ref_count": 1,
+          "alt_count": 1,
+          "ref_unique": 1,
+          "alt_unique": 1
+        },
+        "component_scores": {
+          "structural": 1.0,
+          "missing": 1.0,
+          "numeric": 0.0,
+          "categorical": 0.0
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

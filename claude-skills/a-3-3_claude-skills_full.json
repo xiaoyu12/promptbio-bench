@@ -1,0 +1,415 @@
+{
+  "id": "a-3-3",
+  "question": "Perform differential analysis using limma to identify the top 20 markers for each pairwise comparison among the three grades.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-3/ref_answer/Grade2vsGrade1_DE_results.csv",
+      "eval_guideline": "Probe records must match the reference in identity; logFC and adj.P.Val must match within +/-0.001; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-3/output/Grade2_vs_Grade1.csv",
+      "match_confidence": 0.99,
+      "match_reasoning": "Both are CSV differential-expression result files for the Grade 2 versus Grade 1 comparison; the only naming differences are underscores and the omitted '_DE_results' suffix.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare differential-expression result tables by probe identity, allowing row and column reordering; require logFC and adj.P.Val to agree within +/-0.001."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level matching by probe identity with numeric tolerance and permits row and column reordering. The CSV approximate strategy supports keyed structural alignment and minor numeric differences, unlike exact comparison.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999953,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "probe_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same shape (20x7), identical column names, and matching preview values, so no transpose is needed and no explicit column mapping is required. The natural row identifier is 'probe_id', which represents probe identity and is explicitly important per the evaluation guideline. Although the task refers to 'top 20 markers', the evaluation states that row and column order may differ, so comparison should be based on matching probe_id rather than position. Column order is also not semantically important because the same named statistics are present in both tables. Since order may differ, permutation checking is appropriate; explicit pre-sorting is unnecessary if rows are aligned by probe_id.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "logFC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Task explicitly requires logFC to match within +/-0.001. Since absolute agreement at the cell level matters after alignment by probe_id and row order may differ, use cell-by-cell numerical comparison with a strict tolerance matching the evaluation rule."
+            },
+            {
+              "name": "adj.P.Val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Task explicitly requires adj.P.Val to match within +/-0.001. Use cell-by-cell numerical comparison with tolerance 0.001 to reflect the stated acceptance criterion exactly."
+            },
+            {
+              "name": "AveExpr",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "AveExpr is produced in limma output but is not mentioned in the evaluation guideline. Since the task focuses on marker identity plus logFC and adjusted p-value agreement, this column is not critical for scoring and can be skipped."
+            },
+            {
+              "name": "B",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "B-statistic is auxiliary limma output and not part of the stated evaluation criteria. Ignore to avoid over-penalizing irrelevant numerical differences."
+            },
+            {
+              "name": "P.Value",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Raw P.Value is not required by the evaluation guideline, which specifically names adj.P.Val instead. Ignore this column and rely on adj.P.Val for significance agreement."
+            },
+            {
+              "name": "t",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "The moderated t-statistic is not part of the stated evaluation target. Because scoring is based on probe identity and agreement of logFC and adj.P.Val, this column can be excluded from comparison."
+            }
+          ],
+          "overall_reasoning": "The dataframes are already aligned by probe_id, which is an ID-only column and should not be compared as a data field. The task description says differential analysis with limma should identify top 20 markers, and the evaluation guideline narrows success to two substantive numeric outputs: probe identity must match the reference, and logFC plus adj.P.Val must match within +/-0.001; row and column order may differ. Therefore, the comparison plan should focus on the non-ID columns that directly determine evaluation: logFC and adj.P.Val. Both are float64 numerical columns, and the requirement is explicit per-cell tolerance rather than overall trend similarity, so RAE is the appropriate dtype-aware strategy among the available numerical options. I set cell_tolerance to 0.001 for both columns to mirror the stated rule exactly. The remaining float64 columns (AveExpr, B, P.Value, t) are valid limma outputs but are not part of the evaluation target, so they are marked ignore to keep the comparison faithful to the rubric and avoid introducing irrelevant mismatches. No categorical columns are present, so no overlap strategy, delimiter, or Jaccard threshold is needed.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "probe_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "probe_id"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "P.Value",
+              "adj.P.Val",
+              "AveExpr",
+              "logFC",
+              "t",
+              "probe_id",
+              "B"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "P.Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "adj.P.Val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AveExpr": [
+                "float64",
+                "float64",
+                true
+              ],
+              "logFC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "t": [
+                "float64",
+                "float64",
+                true
+              ],
+              "probe_id": [
+                "str",
+                "str",
+                true
+              ],
+              "B": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "AveExpr",
+            "B",
+            "P.Value",
+            "adj.P.Val",
+            "logFC",
+            "t"
+          ],
+          "filtered_columns": [
+            "adj.P.Val",
+            "logFC"
+          ],
+          "overall_similarity": 0.9999999999999953,
+          "per_column_similarities": {
+            "adj.P.Val": {
+              "similarity": 0.9999999999999936,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "logFC": {
+              "similarity": 0.9999999999999971,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              7
+            ],
+            "alt_shape": [
+              20,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "P.Value": true,
+              "adj.P.Val": true,
+              "AveExpr": true,
+              "logFC": true,
+              "t": true,
+              "probe_id": true,
+              "B": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-3/ref_answer/Grade3vsGrade1_DE_results.csv",
+      "eval_guideline": null,
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-3/output/Grade3_vs_Grade1.csv",
+      "match_confidence": 0.99,
+      "match_reasoning": "Both CSV paths identify the Grade 3 versus Grade 1 limma comparison, with directly corresponding grade labels and compatible output format.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.84,
+      "strategy_reasoning": "The task performs statistical model fitting with limma, so the stochastic/model-fitting override takes precedence over the CSV approximate default. Summary comparison is appropriate for checking the resulting differential-expression characteristics without requiring record-level identity.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              20,
+              7
+            ],
+            "alt_shape": [
+              20,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "row_sim": 1.0,
+          "col_sim": 1.0,
+          "col_jaccard": 1.0,
+          "score": 1.0
+        },
+        "missing": {
+          "ref_missing_rate": 0.0,
+          "alt_missing_rate": 0.0,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 120,
+          "alt_count": 120
+        },
+        "categorical_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 20,
+          "alt_count": 20,
+          "ref_unique": 20,
+          "alt_unique": 20
+        },
+        "component_scores": {
+          "structural": 1.0,
+          "missing": 1.0,
+          "numeric": 1.0,
+          "categorical": 1.0
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-3/ref_answer/Grade3vsGrade2_DE_results.csv",
+      "eval_guideline": null,
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-3/output/Grade3_vs_Grade2.csv",
+      "match_confidence": 0.99,
+      "match_reasoning": "Both are CSV result files for the Grade 3 versus Grade 2 comparison; the filename variation is purely stylistic.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.84,
+      "strategy_reasoning": "The task involves statistical model fitting with limma, so the stochasticity rule favors aggregate comparison rather than strict record-level matching. This accommodates plausible variation in ranked top-marker lists and differential-expression statistics across implementations.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              20,
+              7
+            ],
+            "alt_shape": [
+              20,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "row_sim": 1.0,
+          "col_sim": 1.0,
+          "col_jaccard": 1.0,
+          "score": 1.0
+        },
+        "missing": {
+          "ref_missing_rate": 0.0,
+          "alt_missing_rate": 0.0,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 120,
+          "alt_count": 120
+        },
+        "categorical_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 20,
+          "alt_count": 20,
+          "ref_unique": 20,
+          "alt_unique": 20
+        },
+        "component_scores": {
+          "structural": 1.0,
+          "missing": 1.0,
+          "numeric": 1.0,
+          "categorical": 1.0
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

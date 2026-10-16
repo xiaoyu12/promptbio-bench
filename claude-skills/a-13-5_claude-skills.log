@@ -1,0 +1,233 @@
+
+Task:    a-13-5
+Question: Using the grand average of hydropathicity (GRAVY) score and the formula solubility = 1 / (1 + exp(2 * GRAVY)), predict the solubility of the protein sequence below. Suggest the top 3 single-point mutations that most improve solubility by substituting hydrophobic residues with hydrophilic ones. Report the original solubility, the top 3 mutations with solubility gain, and the best mutant sequence and solubility. Sequence: MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-13-5/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-13-5/output  (2 file(s))
+Matched files:
+  summary.txt → summary.txt  (conf=1.00)
+    Reasoning: Exact filename and .txt format match; both paths correspond to the same task and the expected narrative solubility summary.
+  mutations.tsv → mutations.tsv  (conf=1.00)
+    Reasoning: Exact filename and tab-separated .tsv format match; both represent the mutation results for the same task.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: text, strategy=semantic
+    ref: promptbio-bench-data/tasks/a-13-5/ref_answer/summary.txt
+    alt: promptbio-bench-claude-skills/tasks/a-13-5/output/summary.txt
+
+  File 2/2: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-13-5/ref_answer/mutations.tsv
+    alt: promptbio-bench-claude-skills/tasks/a-13-5/output/mutations.tsv
+
+  File 1/2: status=success, similarity=1.0000
+    details:
+      {
+        "recommendation": "equivalent",
+        "confidence": 0.99,
+        "explanation": "The candidate contains every key item reported by the reference. The original sequence matches exactly. The candidate's original solubility is 0.726899 versus 0.7269 in the reference, an absolute difference of 0.000001 and a ratio essentially equal to 1. The best mutation is I3R in the candidate, and its resulting sequence exactly matches the reference best-mutant sequence. The candidate's best-mutant solubility is 0.771322 versus 0.7713 in the reference, an absolute difference of 0.000022, well within the required \u00b10.005 tolerance. The candidate additionally supplies the requested top-three mutations, gains, GRAVY values, a combined mutant analysis, and methodology. These additions do not contradict the reference or alter the matching conclusions.",
+        "ref_length": 254,
+        "alt_length": 1269
+      }
+
+  File 2/2: status=success, similarity=0.9995
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "position": "position",
+            "original": "original",
+            "mutant": "mutant",
+            "solubility_gain": "solubility_gain"
+          },
+          "id_columns": [
+            "position",
+            "original",
+            "mutant"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "position",
+          "check_permutation": false,
+          "reasoning": "The tables are not transposed: both are standard row-wise records of mutation results. The candidate contains all reference columns with exact name matches and additional extra columns (rank, mutation, mutant_gravy, mutant_solubility), so column alignment should map each reference column directly to the identically named candidate column. Rows represent the top 3 ranked mutations from the task, so row order is meaningful; however, using mutation identity is more robust than pure positional matching. A composite key of position, original, and mutant uniquely identifies each mutation and aligns rows safely. Pre-sorting by position is reasonable to stabilize comparison if ranking/order differs slightly, while still preserving the same matched mutation set.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "solubility_gain",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.005,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is the key evaluable output in the reference data and is explicitly called out in the guideline: values must match within +/-0.005. Because absolute numeric agreement matters more than correlation across only three rows, relative absolute error is the most appropriate strategy, with a tolerance set directly from the stated acceptance criterion."
+            }
+          ],
+          "overall_reasoning": "Only non-ID columns present in the reference should be compared. The task emphasizes whether the predicted top mutations produce the correct solubility_gain values, while mutation identity is already handled by alignment on the ID columns position, original, and mutant and therefore should be excluded from comparison configs. The only reference data column requiring value comparison is solubility_gain, which is numeric (float64). A numerical error-based strategy is preferable to correlation because the evaluation requires close per-row agreement rather than trend agreement, and there are only three aligned rows. The tolerance is set to 0.005 to mirror the explicit evaluation rule that solubility_gain values must match within +/-0.005. Candidate-only extra columns such as rank, mutation, mutant_gravy, and mutant_solubility are not included because they are not part of the aligned reference outputs to be scored.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "position",
+            "original",
+            "mutant"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "position": "position",
+              "original": "original",
+              "mutant": "mutant",
+              "solubility_gain": "solubility_gain"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "rank",
+              "mutation",
+              "mutant_gravy",
+              "mutant_solubility"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "position",
+              "original",
+              "mutant"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "position",
+              "solubility_gain",
+              "original",
+              "mutant"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "position": [
+                "str",
+                "str",
+                true
+              ],
+              "solubility_gain": [
+                "float64",
+                "float64",
+                true
+              ],
+              "original": [
+                "str",
+                "str",
+                true
+              ],
+              "mutant": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "position"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['rank', 'mutation', 'mutant_gravy', 'mutant_solubility']",
+            "Sorted both dataframes by ['position']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "solubility_gain"
+          ],
+          "filtered_columns": [
+            "solubility_gain"
+          ],
+          "overall_similarity": 0.9995045045045045,
+          "per_column_similarities": {
+            "solubility_gain": {
+              "similarity": 0.9995045045045045,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.005
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 4,
+            "alt_cols": 8,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              4
+            ],
+            "alt_shape": [
+              3,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "position": true,
+              "solubility_gain": true,
+              "original": true,
+              "mutant": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-13-5  |  Agent: claude-skills
+Avg similarity: 0.9998
+============================================================
+
+✅ Results saved → results/a-13-5_claude-skills.json
+✅ Full states saved → results/a-13-5_claude-skills_full.json
+
+
+
+

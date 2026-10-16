@@ -139,6 +139,15 @@ class FASTAHandler(FormatHandler):
 
         try:
             if ref_validation.is_valid and alt_validation.is_valid:
+                if kwargs.get("by_name") and strategy in ("exact", "approximate"):
+                    ref_ids = set(self._load_file(reference_path, by_name=True))
+                    alt_ids = set(self._load_file(candidate_path, by_name=True))
+                    if not ref_ids & alt_ids:
+                        # No ID in common (e.g. "ORF1" vs "ORF1_Strand+_Frame1_Start1_End420"):
+                        # matching by name would score 0 whatever the sequences, so match by content.
+                        kwargs = {**kwargs, "by_name": False}
+                        self.result.details["by_name_fallback"] = "No sequence IDs in common; matched by content"
+
                 # compare files using specified strategy
                 if strategy == "exact":
                     # Direct sequence matching by ID

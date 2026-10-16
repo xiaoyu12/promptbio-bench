@@ -1,0 +1,237 @@
+
+Task:    a-3-8
+Question: Estimate human transcript abundances from the FASTQ files using Salmon, and provide a summary table of the top 10 expressed transcripts.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-3-8/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-3-8/output  (1 file(s))
+Matched files:
+  top_10_transcripts.csv → top_10_transcripts.csv  (conf=1.00)
+    Reasoning: The candidate has the exact same filename and CSV format as the reference, and it directly corresponds to the requested top-10 transcript abundance summary.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/1: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-8/ref_answer/top_10_transcripts.csv
+    alt: promptbio-bench-claude-skills/tasks/a-3-8/output/top_10_transcripts.csv
+
+  File 1/1: status=success, similarity=0.8317
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Name"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "TPM",
+          "check_permutation": false,
+          "reasoning": "Both tables already have the same orientation (10 rows x 5 columns) and identical column names: Name, Length, EffectiveLength, TPM, and NumReads, so no transpose or explicit column remapping is needed. Rows should be aligned by the transcript identifier in the Name column, which is the clear unique key for matching transcript-level Salmon output. Because the task evaluates the top 10 expressed transcripts by TPM rank, row order is semantically meaningful as a ranked list; however, the candidate preview is not in the same order as the reference and also differs in membership for at least one transcript, so sorting by TPM before comparison is appropriate to standardize ranking. Column order may differ per the evaluation guideline, so column order is not sensitive. Since this is a ranked top-10 comparison, permutation-only checking is not sufficient.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "TPM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "TPM is the primary task-critical output because success is defined by matching the reference top 10 transcripts by TPM rank and having values within 1% relative absolute error. RAE with a 0.01 tolerance directly encodes the evaluation rule."
+            },
+            {
+              "name": "Length",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "Length is transcript annotation metadata rather than the main abundance estimate being evaluated. It may differ slightly with reference/index choices and is not part of the stated success criterion, so it should not drive scoring."
+            },
+            {
+              "name": "EffectiveLength",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "EffectiveLength is a derived quantity used internally by Salmon and can vary with library/model details. The task asks for transcript abundance summary, not exact effective-length reproduction, so this column is not critical for evaluation."
+            },
+            {
+              "name": "NumReads",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "NumReads is abundance-related but the evaluation guideline explicitly requires matching transcript identity by TPM rank and TPM values within 1% RAE. Since NumReads is not part of the acceptance rule, it should be ignored to avoid over-constraining the comparison."
+            }
+          ],
+          "overall_reasoning": "The task is specifically to estimate transcript abundances with Salmon and provide the top 10 expressed transcripts, with evaluation defined as: the same 10 transcripts as the reference by TPM rank must be present, and values must match within 1% relative absolute error. Because Name is the alignment key/ID column, transcript identity/rank membership is already handled outside column comparison and must be excluded from column_configs. Among the remaining float64 columns, TPM is the only column explicitly required for correctness, so it should be compared using numerical RAE with a cell_tolerance of 0.01 to mirror the 1% acceptance threshold exactly. The other numerical columns (Length, EffectiveLength, NumReads) are not part of the stated evaluation target; Length and EffectiveLength are annotation/model-dependent support fields, and NumReads is secondary to TPM for this task. Therefore they should be ignored rather than scored. No categorical overlap strategy or delimiters are needed because all compared data columns are numerical.",
+          "overall_confidence": 0.97,
+          "id_columns": [
+            "Name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Name"
+            ],
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 1,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "The candidate and reference are both ENST-style transcript identifiers, but their core stable IDs differ: enst00000361624 vs enst00000311122. Version suffix differences alone can be ignored, but different stable IDs indicate different entities, so there is no confident match.",
+              "confidence": 0.99
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Length",
+              "EffectiveLength",
+              "NumReads",
+              "TPM",
+              "Name"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Length": [
+                "float64",
+                "float64",
+                true
+              ],
+              "EffectiveLength": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NumReads": [
+                "float64",
+                "float64",
+                true
+              ],
+              "TPM": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "TPM"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference rows: 1",
+            "Unmapped candidate rows: 1",
+            "Sorted both dataframes by ['TPM']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "EffectiveLength",
+            "Length",
+            "NumReads",
+            "TPM"
+          ],
+          "filtered_columns": [
+            "TPM"
+          ],
+          "overall_similarity": 0.8317295527363953,
+          "per_column_similarities": {
+            "TPM": {
+              "similarity": 0.8317295527363953,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 11,
+            "alt_rows": 11,
+            "row_intersection": 11,
+            "ref_cols": 5,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              11,
+              5
+            ],
+            "alt_shape": [
+              11,
+              5
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Length": true,
+              "EffectiveLength": true,
+              "NumReads": true,
+              "TPM": true,
+              "Name": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.09090909090909091,
+            "alt_missing_rate": 0.09090909090909091
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-3-8  |  Agent: claude-skills
+Avg similarity: 0.8317
+============================================================
+
+✅ Results saved → results/a-3-8_claude-skills.json
+✅ Full states saved → results/a-3-8_claude-skills_full.json
+
+
+
+

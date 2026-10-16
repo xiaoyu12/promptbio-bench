@@ -1,0 +1,234 @@
+{
+  "id": "a-11-8",
+  "question": "Integrate a PPI network and a miRNA-target network into a unified multi-layer network and identify cross-layer hub genes as genes whose degree centrality in the unified network exceeds the 90th percentile threshold.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-8/ref_answer/cross_layer_hubs.csv",
+      "eval_guideline": "Hub node records must match the reference in identity, degree centrality within 1% relative absolute error, and type; column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-11-8/output/cross_layer_hubs.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate CSV files containing the task's identified cross-layer hub genes.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare hub node records by identity and type, allowing column and row reordering, and require degree centrality values to agree within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level matching while allowing column reordering and minor numeric variation. The CSV approximate strategy supports structural alignment and tolerance-aware comparison of degree centrality values.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "node"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "node",
+          "check_permutation": true,
+          "reasoning": "No transpose is needed because both tables represent hub genes as rows. All reference column names—node, degree_centrality, and type—already match candidate columns exactly, so explicit column mapping is unnecessary; candidate-only diagnostic columns can be ignored. The node column uniquely identifies each hub record. Hub results are an unordered set rather than a ranked list, so row order is not significant; sorting by node provides deterministic comparison and permutation checking handles the differing row order.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "degree_centrality",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Degree centrality is a critical hub-identification output. Cell-wise RAE directly tests the required numerical agreement, with a 0.01 tolerance matching the evaluation guideline of at most 1% relative absolute error."
+            },
+            {
+              "name": "type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Node type is a critical scalar label that must match the reference exactly. It is not a delimited collection, so exact equality is appropriate and no delimiter or Jaccard threshold is needed."
+            }
+          ],
+          "overall_reasoning": "The node column is used only for alignment and is excluded. The two reference output fields are both essential: degree_centrality establishes whether each aligned gene has the expected unified-network hub score, while type verifies that each hub is classified as a gene. Candidate-only diagnostic columns are excluded because they have no aligned reference counterparts and are not required by the stated evaluation guideline. Numerical centrality uses cell-wise RAE with a 0.01 tolerance to enforce the specified 1% relative-error bound; the categorical type uses exact matching because each cell contains one atomic label.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "node"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "node"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "degree_centrality",
+              "node",
+              "type"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "degree_centrality": [
+                "float64",
+                "float64",
+                true
+              ],
+              "node": [
+                "str",
+                "str",
+                true
+              ],
+              "type": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "node"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['node']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "degree_centrality",
+            "type"
+          ],
+          "filtered_columns": [
+            "degree_centrality",
+            "type"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "degree_centrality": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "type": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.42857142857142855,
+            "col_recall": 1.0,
+            "col_f1": 0.6,
+            "col_jaccard": 0.42857142857142855,
+            "ref_rows": 6,
+            "alt_rows": 6,
+            "row_intersection": 6,
+            "ref_cols": 3,
+            "alt_cols": 7,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              6,
+              3
+            ],
+            "alt_shape": [
+              6,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "degree_centrality": true,
+              "node": true,
+              "type": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-8/ref_answer/integrated_network.png",
+      "eval_guideline": "Two-layer network with gene and miRNA nodes; cross-layer hubs must be visually distinguished; layout and colors may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-11-8/output/integrated_network.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames and PNG image formats are identical, clearly corresponding to the requested unified multi-layer network visualization.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires semantic visual content: a two-layer network containing gene and miRNA nodes with cross-layer hubs visually distinguished. Because layout and colors may differ, pixel-level or exact comparison would be inappropriate.",
+      "strategy_error": null,
+      "similarity": 0.94,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.97,
+        "explanation": "Both images depict the same integrated network containing 15 gene nodes and 8 miRNA nodes, with dense gene–gene PPI connections and miRNA–target connections. They identify the same six cross-layer hub genes: KRAS, MYC, AKT1, TP53, EGFR, and PIK3CA. In the reference, these hubs are conveyed primarily through larger blue node sizes, whereas the candidate marks them explicitly as red nodes with black outlines and states the 90th-percentile degree-centrality threshold (P90 = 0.636). The candidate also separates genes and miRNAs into clearly labeled layers, distinguishes PPI and miRNA-target edges by color and line style, and provides a legend; the reference instead uses a force-directed unified layout with blue genes, orange miRNAs, and uniformly styled black edges. The candidate shortens miRNA labels by omitting the 'hsa-' prefix, but the identities remain the same. Node placement and visual styling differ substantially, yet the underlying entities, network types, hub set, and scientific conclusion are equivalent."
+      },
+      "comparison_error": null
+    }
+  ]
+}

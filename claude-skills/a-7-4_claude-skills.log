@@ -1,0 +1,188 @@
+
+Task:    a-7-4
+Question: Calculate the isoelectric point (pI) of each protein in the given FASTA file.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-7-4/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-7-4/output  (1 file(s))
+Matched files:
+  isoelectric.tsv → isoelectric.tsv  (conf=1.00)
+    Reasoning: The filenames are identical, both paths indicate TSV format, and the candidate is the expected per-protein isoelectric-point output for the same task and FASTA input.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/1: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-7-4/ref_answer/isoelectric.tsv
+    alt: promptbio-bench-claude-skills/tasks/a-7-4/output/isoelectric.tsv
+
+  File 1/1: status=success, similarity=0.9996
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "protein_id": "protein_id",
+            "pI": "pI"
+          },
+          "id_columns": [
+            "protein_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The tables have the same orientation and are not transposed: both represent proteins as rows. The reference has two columns of interest, and both are present in the candidate with exact matching names: protein_id and pI. The candidate includes extra metadata columns (accession, gene, length), which can be ignored for evaluation. Rows should be aligned by protein_id because it uniquely identifies each protein and is shared exactly between tables. Row order is not semantically important for this task since the goal is to compare each protein's computed pI to the reference within tolerance, regardless of display order. No pre-sorting is necessary because ID-based matching is sufficient.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "pI",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The task explicitly evaluates each protein by whether its predicted isoelectric point matches the reference within +/-0.1. Since pI is a float measurement and absolute per-row agreement matters more than correlation, use cell-by-cell numerical comparison with RAE and a tolerance of 0.1 to reflect the evaluation rule."
+            }
+          ],
+          "overall_reasoning": "Only the pI column should be compared because the task is specifically to calculate each protein's isoelectric point, and protein_id is an alignment key that must be excluded. Extra candidate columns (accession, gene, length) are not part of the reference output and are irrelevant to task success. Because pI is a numerical measurement and the evaluation requires each value to match within a fixed per-protein tolerance of +/-0.1, a cell-wise numerical strategy is appropriate rather than Pearson or Spearman correlation, which could score well even when individual values are off. The tolerance is taken directly from the evaluation guideline.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "protein_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "protein_id": "protein_id",
+              "pI": "pI"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "accession",
+              "gene",
+              "length"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "protein_id"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "pI",
+              "protein_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "pI": [
+                "float64",
+                "float64",
+                true
+              ],
+              "protein_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['accession', 'gene', 'length']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "pI"
+          ],
+          "filtered_columns": [
+            "pI"
+          ],
+          "overall_similarity": 0.9995906328357872,
+          "per_column_similarities": {
+            "pI": {
+              "similarity": 0.9995906328357872,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 6,
+            "alt_rows": 6,
+            "row_intersection": 6,
+            "ref_cols": 2,
+            "alt_cols": 5,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              6,
+              2
+            ],
+            "alt_shape": [
+              6,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "pI": true,
+              "protein_id": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-7-4  |  Agent: claude-skills
+Avg similarity: 0.9996
+============================================================
+
+✅ Results saved → results/a-7-4_claude-skills.json
+✅ Full states saved → results/a-7-4_claude-skills_full.json
+
+
+
+

@@ -1,0 +1,196 @@
+
+Task:    a-1-13
+Question: I have the gene TP53. Could you calculate, for each transcript, the total non-overlapping exon length, ensuring that only exact gene name matches are used (no fuzzy matching).
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-1-13/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-1-13/output  (1 file(s))
+Matched files:
+  TP53_transcript_exon_lengths.tsv → TP53_transcript_exon_lengths.tsv  (conf=1.00)
+    Reasoning: The filenames are identical and both paths indicate TSV tabular outputs. The candidate is in the matching task directory and directly represents the requested per-transcript TP53 exon-length results.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/1: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-1-13/ref_answer/TP53_transcript_exon_lengths.tsv
+    alt: promptbio-bench-claude-skills/tasks/a-1-13/output/TP53_transcript_exon_lengths.tsv
+
+  File 1/1: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Transcript_ID": "Transcript_ID",
+            "Total_Exon_Length": "Total_Exon_Length"
+          },
+          "id_columns": [
+            "Transcript_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Transcript_ID",
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both represent one row per transcript, with the reference containing only the comparison fields and the candidate containing those same fields plus extra annotation columns. Column alignment is needed because the candidate has additional columns, but the two reference columns have exact name matches in the candidate: Transcript_ID and Total_Exon_Length. Rows should be aligned by Transcript_ID because the task evaluates each transcript's exon length, and Transcript_ID is the clear per-row identifier. Exact gene-name matching is part of how the candidate should have been generated, but structurally it does not introduce a separate alignment key because the reference does not include a Gene column and all candidate preview rows are already TP53. Row order does not matter since evaluation is per transcript and versioned transcript IDs identify entries regardless of ordering. Pre-sorting by Transcript_ID will make alignment deterministic and help handle different row orders. Column order is not meaningful because the guideline explicitly allows column order to differ.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Total_Exon_Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0005,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "This is the only reference data column and the task\u2019s required output. The evaluation requires each transcript\u2019s total non-overlapping exon length to match within +/-1 bp. Since this is an integer-valued measurement where absolute per-row agreement matters more than correlation, RAE is appropriate. A tolerance of 0.0005 corresponds to roughly 1 bp on values around 2000-2650 bp (1/2000 to 1/2650), matching the stated evaluation criterion closely."
+            }
+          ],
+          "overall_reasoning": "Compare only Total_Exon_Length, because Transcript_ID is the alignment key and must be excluded, and the task explicitly evaluates per-transcript total non-overlapping exon length. Although the candidate includes Gene and other annotation columns, they are not part of the aligned reference output and therefore are not comparison targets here. The instruction about exact gene-name matching informs how the candidate result should have been generated, but for dataframe comparison the relevant observable output is the final exon-length value per aligned transcript. Given the int64 dtype and the requirement of per-row agreement within +/-1 bp, a numerical RAE strategy with a tight tolerance is more suitable than Pearson/Spearman, which would allow globally similar but row-wise incorrect values.",
+          "overall_confidence": 0.96,
+          "id_columns": [
+            "Transcript_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Transcript_ID": "Transcript_ID",
+              "Total_Exon_Length": "Total_Exon_Length"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Gene",
+              "Transcript_Type",
+              "Chromosome",
+              "Strand",
+              "Start",
+              "End",
+              "Exon_Count"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Transcript_ID"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Transcript_ID",
+              "Total_Exon_Length"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Transcript_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "Total_Exon_Length": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Transcript_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Gene', 'Transcript_Type', 'Chromosome', 'Strand', 'Start', 'End', 'Exon_Count']",
+            "Sorted both dataframes by ['Transcript_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Total_Exon_Length"
+          ],
+          "filtered_columns": [
+            "Total_Exon_Length"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Total_Exon_Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 26,
+              "total_count": 26,
+              "error": null,
+              "details": {
+                "tolerance": 0.0005
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2222222222222222,
+            "col_recall": 1.0,
+            "col_f1": 0.3636363636363636,
+            "col_jaccard": 0.2222222222222222,
+            "ref_rows": 26,
+            "alt_rows": 26,
+            "row_intersection": 26,
+            "ref_cols": 2,
+            "alt_cols": 9,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              26,
+              2
+            ],
+            "alt_shape": [
+              26,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Transcript_ID": true,
+              "Total_Exon_Length": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-1-13  |  Agent: claude-skills
+Avg similarity: 1.0000
+============================================================
+
+✅ Results saved → results/a-1-13_claude-skills.json
+✅ Full states saved → results/a-1-13_claude-skills_full.json
+
+
+
+

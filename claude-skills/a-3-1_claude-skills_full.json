@@ -1,0 +1,438 @@
+{
+  "id": "a-3-1",
+  "question": "Merge two RNA-Seq datasets from different sources and correct batch effects using ComBat.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-1/ref_answer/combined_corrected.csv",
+      "eval_guideline": "Values must match within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-1/output/combined_corrected.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both paths indicate CSV format, and the candidate is the expected merged, ComBat-corrected RNA-Seq output for the same task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the batch-corrected combined RNA-Seq tables, aligning rows and columns by their identifiers; numeric values must agree within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline explicitly requires record-level numeric agreement while allowing row and column reordering. The CSV approximate strategy supports structural alignment and minor numeric differences consistent with the stated 1% tolerance.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same shape and identical column names, so no transpose or semantic column remapping is needed. The reference and candidate both use genes as rows and samples as columns, which is the expected orientation for RNA-seq matrices. Rows should be aligned by the unique gene identifier column 'Gene'. Because the task is to compare/merge batch-corrected RNA-seq values and the guideline states that row and column order may differ, neither row order nor column order should be treated as meaningful. Sorting by 'Gene' before comparison will provide stable row alignment if the datasets are permuted. Although the numeric values differ substantially in scale, that affects value comparison rather than structural alignment.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Sample1_B1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a float64 expression column. The task explicitly requires values to match within 1% relative absolute error after alignment, so RAE with a 0.01 tolerance is the appropriate direct metric."
+            },
+            {
+              "name": "Sample2_B1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a float64 expression column. Because the evaluation criterion is 1% relative absolute error, compare cell-by-cell using RAE with tolerance 0.01."
+            },
+            {
+              "name": "Sample3_B1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "RNA-seq corrected expression values are numeric continuous measurements, and the task emphasizes absolute agreement within 1% relative error rather than correlation, so RAE at 0.01 fits best."
+            },
+            {
+              "name": "Sample4_B1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 sample column should be compared by direct numeric agreement. The stated acceptance rule is within 1% relative absolute error, so use RAE with tolerance 0.01."
+            },
+            {
+              "name": "Sample5_B1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a numerical sample column in the merged batch-corrected matrix. Since every expression value matters and the task specifies 1% RAE, use RAE with tolerance 0.01."
+            },
+            {
+              "name": "Sample1_B2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 expression column is directly evaluable under the stated requirement that values match within 1% relative absolute error, making RAE with 0.01 tolerance appropriate."
+            },
+            {
+              "name": "Sample2_B2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "As a numeric expression measurement column, it should be checked for cell-level agreement, not just trend similarity. The task gives an explicit 1% RAE threshold, so use RAE with tolerance 0.01."
+            },
+            {
+              "name": "Sample3_B2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This column contains continuous float64 values. Because the evaluation is based on closeness within 1% relative absolute error, RAE with cell_tolerance 0.01 is the correct strategy."
+            },
+            {
+              "name": "Sample4_B2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This sample column is numerical and should be compared at the cell level after row/column alignment. The task's explicit comparison rule is 1% relative absolute error, so use RAE at 0.01."
+            },
+            {
+              "name": "Sample5_B2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is a float64 batch-corrected expression column. Since all non-ID columns are important outputs of the ComBat-corrected matrix and the task requires value-level agreement within 1%, use RAE with tolerance 0.01."
+            }
+          ],
+          "overall_reasoning": "The ID column Gene is used only for alignment and is correctly excluded from comparison. All remaining columns are float64 RNA-seq expression values and are equally important because the task output is the full batch-corrected expression matrix across all samples. The evaluation guideline explicitly states that values must match within 1% relative absolute error and that row/column order may differ, so the proper plan is to compare every non-ID column using a numerical cell-by-cell RAE strategy with cell_tolerance set to 0.01. Correlation-based strategies such as Pearson or Spearman are not appropriate here because they could score highly even when absolute corrected values are wrong by scale or offset, whereas the task demands near-exact numeric agreement. No categorical columns are present, so no overlap/exact categorical strategy or delimiter selection is needed. The preview also suggests the candidate values are on a very different scale than the reference, reinforcing that absolute value agreement rather than pattern similarity is the key criterion.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Sample5_B2",
+              "Sample1_B2",
+              "Sample5_B1",
+              "Sample3_B2",
+              "Sample2_B2",
+              "Sample2_B1",
+              "Sample4_B1",
+              "Sample4_B2",
+              "Sample1_B1",
+              "Gene",
+              "Sample3_B1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Sample5_B2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample1_B2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample5_B1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample3_B2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample2_B2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample2_B1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample4_B1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample4_B2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample1_B1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "Sample3_B1": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Sample1_B1",
+            "Sample1_B2",
+            "Sample2_B1",
+            "Sample2_B2",
+            "Sample3_B1",
+            "Sample3_B2",
+            "Sample4_B1",
+            "Sample4_B2",
+            "Sample5_B1",
+            "Sample5_B2"
+          ],
+          "filtered_columns": [
+            "Sample1_B1",
+            "Sample1_B2",
+            "Sample2_B1",
+            "Sample2_B2",
+            "Sample3_B1",
+            "Sample3_B2",
+            "Sample4_B1",
+            "Sample4_B2",
+            "Sample5_B1",
+            "Sample5_B2"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "Sample1_B1": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample1_B2": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample2_B1": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample2_B2": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample3_B1": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample3_B2": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample4_B1": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample4_B2": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample5_B1": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Sample5_B2": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 11,
+            "alt_cols": 11,
+            "col_intersection": 11
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              11
+            ],
+            "alt_shape": [
+              10,
+              11
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Sample5_B2": true,
+              "Sample1_B2": true,
+              "Sample5_B1": true,
+              "Sample3_B2": true,
+              "Sample2_B2": true,
+              "Sample2_B1": true,
+              "Sample4_B1": true,
+              "Sample4_B2": true,
+              "Sample1_B1": true,
+              "Gene": true,
+              "Sample3_B1": true
+            },
+            "common_columns": 11
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

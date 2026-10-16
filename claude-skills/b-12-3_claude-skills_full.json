@@ -1,0 +1,427 @@
+{
+  "id": "b-12-3",
+  "question": "Given longitudinal patient data tracking disease severity over time with states [Mild, Moderate, Severe, Remission], estimate the empirical transition probability matrix between consecutive weekly observations. Use a first-order Markov model to predict the probability of being in a Severe state after 12 steps for a patient currently in a Moderate state.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-12-3/ref_answer/severe_prediction.csv",
+      "eval_guideline": "The predicted severe-state probability must match the reference within +/-0.02; column order and label names may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-12-3/output/severe_prediction.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both paths indicate CSV format, and both represent the requested 12-step Severe-state probability prediction.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the predicted probability of being in the Severe state after 12 first-order Markov transitions from Moderate. Accept numeric differences within +/-0.02; column order and label names may differ."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The task is deterministic, and the guideline requires a scalar probability to match within +/-0.02 while allowing structural and label differences. Approximate table comparison supports numeric tolerance and flexible column alignment.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "CurrentState",
+            "Weeks"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "The reference and candidate tables have identical structure: same shape (1x3), same column names, and matching values. No transpose is needed because both are presented in the same orientation. Column alignment is unnecessary since the column names already match exactly, so column_mapping is null. Row alignment is not practically needed because there is only one row and it already corresponds directly, though the natural identifying fields for this result are CurrentState and Weeks. Row order is treated as sensitive because this is not an unordered set comparison; however, with a single row, ordering and sorting are irrelevant. No permutation check is needed.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Probability_Severe",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.02,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is the sole task-relevant output column after excluding alignment IDs. The evaluation criterion explicitly requires the predicted severe-state probability to match the reference within +/-0.02, so a numerical relative-absolute-error comparison with cell_tolerance 0.02 is the most appropriate direct encoding of the scoring rule."
+            }
+          ],
+          "overall_reasoning": "Exclude CurrentState and Weeks because they are designated ID/alignment columns only. The only substantive output to compare is Probability_Severe, a float64 probability from a Markov-model prediction. Because the task is judged by whether the predicted severe-state probability is within +/-0.02 of the reference, use a numerical 'rae' strategy with cell_tolerance set to 0.02. Correlation-based strategies are inappropriate here because there is only one aligned prediction row and the task cares about absolute agreement to a fixed tolerance, not trend agreement. No categorical overlap strategy is needed because there are no non-ID categorical data columns to score.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "CurrentState",
+            "Weeks"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Weeks",
+              "Probability_Severe",
+              "CurrentState"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Weeks": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Probability_Severe": [
+                "float64",
+                "float64",
+                true
+              ],
+              "CurrentState": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Probability_Severe"
+          ],
+          "filtered_columns": [
+            "Probability_Severe"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Probability_Severe": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.02
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              3
+            ],
+            "alt_shape": [
+              1,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Weeks": true,
+              "Probability_Severe": true,
+              "CurrentState": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-12-3/ref_answer/transition_matrix.csv",
+      "eval_guideline": "Row transition probabilities must match the reference within +/-0.01; state ordering, label casing, and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-12-3/output/transition_matrix.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both are CSV files, and both correspond to the empirical transition probability matrix requested by the task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare empirical first-order Markov transition probability matrices, aligning Mild, Moderate, Severe, and Remission state labels case-insensitively regardless of row or column order; corresponding probabilities must agree within +/-0.01."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly permits state-order, column-order, and label-casing differences while requiring cell-level transition probabilities to match within ±0.01. This is a deterministic tabular output, so approximate comparison is appropriate.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "from_state"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The reference and candidate tables have identical structure: same shape, same column names, and the same orientation, so no transpose is needed. Column alignment is unnecessary because the candidate columns exactly match the reference columns: from_state, Mild, Moderate, Severe, and Remission. Rows represent transition probabilities from each source state, and the from_state column is the natural unique identifier for matching rows across tables. Because the evaluation allows state ordering, label casing, and column order to differ, row and column order are not semantically important; alignment should therefore key on from_state and compare matched state-probability columns independent of order. No pre-sorting is required because row matching can be done directly by the identifier column, but permutation checking is appropriate since row order is not sensitive.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Mild",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This column contains transition probabilities (float64) for the probability of transitioning to Mild from each from_state. The task evaluates row transition probabilities with an allowed absolute matching tolerance of +/-0.01, so a numerical cell-wise error strategy is appropriate. RAE with cell_tolerance 0.01 directly reflects the required per-entry probability accuracy."
+            },
+            {
+              "name": "Moderate",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 column is one component of the empirical transition matrix and is therefore critical to compare directly. Because the evaluation criterion is agreement of transition probabilities within +/-0.01, RAE with a 0.01 tolerance is the most faithful numerical comparison strategy."
+            },
+            {
+              "name": "Severe",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "This float64 column is especially important because the downstream Markov prediction targets the probability of being in the Severe state after 12 steps from Moderate. It is also part of the row-wise transition matrix that must match within +/-0.01, so cell-wise numerical comparison via RAE with tolerance 0.01 is appropriate."
+            },
+            {
+              "name": "Remission",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 column is part of the transition probability matrix and contributes to valid row distributions and downstream Markov behavior. Since the task specifies row transition probabilities should match within +/-0.01, RAE with a 0.01 tolerance is the correct numerical comparison approach."
+            }
+          ],
+          "overall_reasoning": "The aligned data represent a 4x4 empirical transition probability matrix indexed by from_state, where from_state is an ID/alignment column and should be excluded from value comparison. All remaining columns are numerical float64 probabilities and are all critical because the task is to estimate a first-order Markov transition matrix; every destination-state probability affects correctness, including the 12-step Severe probability from a current Moderate state. Because the evaluation guideline explicitly states that row transition probabilities must match within +/-0.01, the best dtype-aware strategy is cell-wise numerical comparison using RAE with cell_tolerance set to 0.01 for every probability column. Correlation-based strategies such as Pearson or Spearman are inappropriate here because they could score highly even when individual probability values differ beyond the allowed error. No categorical overlap strategy is needed because there are no non-ID categorical data columns to compare, and differences in state ordering, label casing, or column order are already handled by alignment rather than value comparison.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "from_state"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "from_state"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Remission",
+              "Severe",
+              "from_state",
+              "Mild",
+              "Moderate"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Remission": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Severe": [
+                "float64",
+                "float64",
+                true
+              ],
+              "from_state": [
+                "str",
+                "str",
+                true
+              ],
+              "Mild": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Moderate": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Mild",
+            "Moderate",
+            "Remission",
+            "Severe"
+          ],
+          "filtered_columns": [
+            "Mild",
+            "Moderate",
+            "Remission",
+            "Severe"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Mild": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Moderate": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Remission": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Severe": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 5,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              5
+            ],
+            "alt_shape": [
+              4,
+              5
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Remission": true,
+              "Severe": true,
+              "from_state": true,
+              "Mild": true,
+              "Moderate": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

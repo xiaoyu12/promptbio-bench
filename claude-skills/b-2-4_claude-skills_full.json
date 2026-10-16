@@ -1,0 +1,188 @@
+{
+  "id": "b-2-4",
+  "question": "Reshape the wide format gene expression into long format with sample, gene and expression columns.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-4/ref_answer/gene_expression_long.csv",
+      "eval_guideline": "All sample-gene-expression rows must match the reference, including rows where expression is missing; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-4/output/gene_expression_long.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical base names and both are CSV format. The candidate directly corresponds to the requested long-format gene-expression output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare reshaped gene-expression tables for equivalence, requiring all sample-gene-expression rows, including missing-expression rows, while allowing row and column reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level equivalence but explicitly permits row and column order differences. The CSV approximate strategy supports structural alignment while checking that every sample-gene-expression record, including missing values, matches.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "sample",
+            "gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sample,gene",
+          "check_permutation": true,
+          "reasoning": "Both tables already have the same long-format schema and exact column names, so no transpose or column mapping is needed. The composite key of sample and gene uniquely identifies each expression row, including rows with missing expression values. Gene rows appear in a different order within each sample, but the task treats the complete sample-gene-expression records as unordered; sorting by sample and gene provides deterministic alignment and permutation checking verifies equivalence despite row-order differences.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Expression is the sole non-ID output and must match for every aligned sample-gene pair, including missing values. Cell-wise RAE is appropriate because absolute value agreement matters; a 1e-6 tolerance permits only negligible floating-point noise relative to the two-decimal measurements."
+            }
+          ],
+          "overall_reasoning": "Use sample and gene only to align rows, then compare the expression column cell by cell. RAE is preferred over correlation because correlation could hide incorrect individual expression values. Missingness must also agree, since rows with missing expression are explicitly required. No categorical overlap configuration or delimiter is applicable.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "sample",
+            "gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample",
+              "gene"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "sample",
+              "expression",
+              "gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "sample": [
+                "str",
+                "str",
+                true
+              ],
+              "expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sample",
+              "gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['sample', 'gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "expression"
+          ],
+          "filtered_columns": [
+            "expression"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2344,
+              "total_count": 2344,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 2500,
+            "alt_rows": 2500,
+            "row_intersection": 2500,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2500,
+              3
+            ],
+            "alt_shape": [
+              2500,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "sample": true,
+              "expression": true,
+              "gene": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0624,
+            "alt_missing_rate": 0.0624
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,915 @@
+{
+  "id": "b-2-14",
+  "question": "Identify outliers in all numeric columns using the IQR method (values < Q1 - 1.5xIQR or > Q3 + 1.5xIQR). Cap these outliers at the upper and lower bounds.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-14/ref_answer/outliers_capped.csv",
+      "eval_guideline": "Capped values must match the reference within 1% relative absolute error; non-outlier values must be unchanged; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-14/output/outliers_capped.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and .csv format, and both belong to task b-2-14. The candidate clearly corresponds to the requested dataset with IQR outliers capped.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare capped numeric values within 1% relative absolute error, verify non-outlier values are unchanged, and allow differing row order, column order, and header-label casing."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "This is a deterministic tabular transformation, and the guideline permits structural reordering while requiring record-level numeric agreement within 1% relative absolute error. The CSV approximate strategy is designed to align reordered tables and tolerate minor numeric differences.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "PatientID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "PatientID",
+          "check_permutation": true,
+          "reasoning": "Both dataframes have the same shape, identical column names, and the same tabular orientation, so no transpose or column mapping is needed. PatientID is the clear unique row identifier and should be used to match records. Row and column order are not semantically important for this outlier-capping task; sorting by PatientID provides deterministic alignment, and permutation checking handles reordered rows. Numeric values, including missing values, should then be compared by matched patient and column.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Age",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric column subject to IQR capping; cell-wise RAE verifies capped and unchanged values within the required 1% relative error."
+            },
+            {
+              "name": "BMI",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric measurement subject to IQR capping; a 0.01 RAE tolerance directly implements the 1% acceptance criterion."
+            },
+            {
+              "name": "BRCA1_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Gene-expression outliers must be capped to exact bounds, so cell-wise RAE is more appropriate than correlation."
+            },
+            {
+              "name": "BloodPressure_Diastolic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric measurement requires value-level validation of IQR capping with the specified 1% tolerance."
+            },
+            {
+              "name": "BloodPressure_Systolic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric measurement requires value-level validation of IQR capping with the specified 1% tolerance."
+            },
+            {
+              "name": "Category",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Single-valued categorical labels are not transformed and therefore must remain exactly unchanged."
+            },
+            {
+              "name": "Cholesterol",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric measurement subject to IQR capping; cell-wise RAE checks both capped outliers and unchanged inliers."
+            },
+            {
+              "name": "Condition",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Single-valued condition labels should be preserved exactly; no delimiter-based comparison is needed."
+            },
+            {
+              "name": "DiagnosisClass",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Diagnosis labels are atomic categories and must remain exactly unchanged."
+            },
+            {
+              "name": "EGFR_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Gene-expression values require cell-level verification of capped bounds within 1% relative error."
+            },
+            {
+              "name": "EducationLevel",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Education levels are atomic categorical values that should not change."
+            },
+            {
+              "name": "Gender",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Gender is a single categorical label and should match exactly."
+            },
+            {
+              "name": "Glucose",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric measurement subject to IQR capping; 0.01 RAE matches the required 1% relative-error allowance."
+            },
+            {
+              "name": "HeartRate",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric measurement requires cell-wise validation because correlation could conceal incorrect caps."
+            },
+            {
+              "name": "IsSmoker",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "Explicitly typed as numeric and therefore included in the all-numeric task; its binary values should ordinarily remain unchanged."
+            },
+            {
+              "name": "KRAS_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Gene-expression outliers are checked cell by cell against their IQR-capped reference values."
+            },
+            {
+              "name": "LabResult",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric laboratory values require cell-level cap verification within 1% relative error."
+            },
+            {
+              "name": "MYC_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Gene-expression values require direct comparison of capped and unchanged cells rather than correlation."
+            },
+            {
+              "name": "PatientName",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Names are atomic strings and are outside the transformation, so exact preservation is required."
+            },
+            {
+              "name": "TP53_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Gene-expression values may contain large outliers; RAE verifies the actual capped values within 1%."
+            },
+            {
+              "name": "Temperature",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric temperature values are subject to the same IQR rule and require 1%-tolerant cell-wise comparison."
+            },
+            {
+              "name": "Tissue",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Tissue values are atomic labels, not delimited sets, and must remain unchanged."
+            },
+            {
+              "name": "Var1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric variable subject to IQR capping; RAE checks each result at the required tolerance."
+            },
+            {
+              "name": "Var2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric variable subject to IQR capping; RAE checks each result at the required tolerance."
+            },
+            {
+              "name": "Var3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric variable, including negative values, requires cell-wise validation of capped and unchanged values."
+            },
+            {
+              "name": "Var4",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Numeric variable subject to IQR capping; direct RAE comparison detects incorrect cap values."
+            },
+            {
+              "name": "VisitDate",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "VisitDate is explicitly typed as a string and is outside the numeric transformation, so exact equality is appropriate."
+            }
+          ],
+          "overall_reasoning": "PatientID is used only for row alignment and is excluded. Every numeric data column is critical because the task applies IQR-based outlier detection and capping to all numeric columns; RAE is used instead of correlation so each capped outlier and each unchanged non-outlier is validated directly. A cell_tolerance of 0.01 implements the stated 1% relative absolute error allowance across the numeric value scales. All categorical columns are also included with exact comparison to ensure the transformation did not alter unrelated data. These categorical cells contain atomic labels, dates, or names rather than delimited collections, so overlap comparison, delimiters, and Jaccard thresholds are not applicable. Missing values should be compared with null-aware equality.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "PatientID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "PatientID"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Glucose",
+              "HeartRate",
+              "EducationLevel",
+              "Tissue",
+              "BloodPressure_Diastolic",
+              "BRCA1_expression",
+              "Var2",
+              "BMI",
+              "LabResult",
+              "Var3",
+              "VisitDate",
+              "BloodPressure_Systolic",
+              "Gender",
+              "DiagnosisClass",
+              "KRAS_expression",
+              "Var1",
+              "Age",
+              "IsSmoker",
+              "Var4",
+              "Temperature",
+              "Condition",
+              "MYC_expression",
+              "Category",
+              "EGFR_expression",
+              "TP53_expression",
+              "PatientID",
+              "PatientName",
+              "Cholesterol"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Glucose": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HeartRate": [
+                "float64",
+                "float64",
+                true
+              ],
+              "EducationLevel": [
+                "str",
+                "str",
+                true
+              ],
+              "Tissue": [
+                "str",
+                "str",
+                true
+              ],
+              "BloodPressure_Diastolic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BRCA1_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BMI": [
+                "float64",
+                "float64",
+                true
+              ],
+              "LabResult": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var3": [
+                "float64",
+                "float64",
+                true
+              ],
+              "VisitDate": [
+                "str",
+                "str",
+                true
+              ],
+              "BloodPressure_Systolic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gender": [
+                "str",
+                "str",
+                true
+              ],
+              "DiagnosisClass": [
+                "str",
+                "str",
+                true
+              ],
+              "KRAS_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Age": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IsSmoker": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Var4": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Temperature": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Condition": [
+                "str",
+                "str",
+                true
+              ],
+              "MYC_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Category": [
+                "str",
+                "str",
+                true
+              ],
+              "EGFR_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "TP53_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientID": [
+                "str",
+                "str",
+                true
+              ],
+              "PatientName": [
+                "str",
+                "str",
+                true
+              ],
+              "Cholesterol": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "PatientID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['PatientID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Age",
+            "BMI",
+            "BRCA1_expression",
+            "BloodPressure_Diastolic",
+            "BloodPressure_Systolic",
+            "Category",
+            "Cholesterol",
+            "Condition",
+            "DiagnosisClass",
+            "EGFR_expression",
+            "EducationLevel",
+            "Gender",
+            "Glucose",
+            "HeartRate",
+            "IsSmoker",
+            "KRAS_expression",
+            "LabResult",
+            "MYC_expression",
+            "PatientName",
+            "TP53_expression",
+            "Temperature",
+            "Tissue",
+            "Var1",
+            "Var2",
+            "Var3",
+            "Var4",
+            "VisitDate"
+          ],
+          "filtered_columns": [
+            "Age",
+            "BMI",
+            "BRCA1_expression",
+            "BloodPressure_Diastolic",
+            "BloodPressure_Systolic",
+            "Category",
+            "Cholesterol",
+            "Condition",
+            "DiagnosisClass",
+            "EGFR_expression",
+            "EducationLevel",
+            "Gender",
+            "Glucose",
+            "HeartRate",
+            "IsSmoker",
+            "KRAS_expression",
+            "LabResult",
+            "MYC_expression",
+            "PatientName",
+            "TP53_expression",
+            "Temperature",
+            "Tissue",
+            "Var1",
+            "Var2",
+            "Var3",
+            "Var4",
+            "VisitDate"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Age": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "BMI": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 456,
+              "total_count": 456,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "BRCA1_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 445,
+              "total_count": 445,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "BloodPressure_Diastolic": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 458,
+              "total_count": 458,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "BloodPressure_Systolic": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 457,
+              "total_count": 457,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Category": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Cholesterol": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 444,
+              "total_count": 444,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Condition": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "DiagnosisClass": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "EGFR_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 454,
+              "total_count": 454,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "EducationLevel": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Gender": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Glucose": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 447,
+              "total_count": 447,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "HeartRate": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 454,
+              "total_count": 454,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "IsSmoker": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "KRAS_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "LabResult": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "MYC_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "PatientName": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "TP53_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 445,
+              "total_count": 445,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Temperature": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Tissue": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Var1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Var2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Var3": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Var4": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "VisitDate": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 500,
+            "alt_rows": 500,
+            "row_intersection": 500,
+            "ref_cols": 28,
+            "alt_cols": 28,
+            "col_intersection": 28
+          },
+          "shape": {
+            "ref_shape": [
+              500,
+              28
+            ],
+            "alt_shape": [
+              500,
+              28
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Glucose": true,
+              "HeartRate": true,
+              "EducationLevel": true,
+              "Tissue": true,
+              "BloodPressure_Diastolic": true,
+              "BRCA1_expression": true,
+              "Var2": true,
+              "BMI": true,
+              "LabResult": true,
+              "Var3": true,
+              "VisitDate": true,
+              "BloodPressure_Systolic": true,
+              "Gender": true,
+              "DiagnosisClass": true,
+              "KRAS_expression": true,
+              "Var1": true,
+              "Age": true,
+              "IsSmoker": true,
+              "Var4": true,
+              "Temperature": true,
+              "Condition": true,
+              "MYC_expression": true,
+              "Category": true,
+              "EGFR_expression": true,
+              "TP53_expression": true,
+              "PatientID": true,
+              "PatientName": true,
+              "Cholesterol": true
+            },
+            "common_columns": 28
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.03259259259259259,
+            "alt_missing_rate": 0.03259259259259259
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

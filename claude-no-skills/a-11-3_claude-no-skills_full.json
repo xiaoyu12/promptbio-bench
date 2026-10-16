@@ -1,0 +1,187 @@
+{
+  "id": "a-11-3",
+  "question": "Analyze PPI network to identify top 5 hub genes using degree centrality.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-3/ref_answer/hub_gene.csv",
+      "eval_guideline": "The 5 hub gene records must match the reference in identity and degree. The last gene can be either PTEN or EGFR, as they have the same Degree value.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-11-3/output/hub_gene.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical filename and CSV format as the reference. Its location in the task output directory also clearly corresponds to the requested top-five hub-gene results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the top 5 hub gene records by gene identity and degree, allowing the final tied gene to be either PTEN or EGFR."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level agreement while explicitly permitting PTEN or EGFR for the tied fifth position. Approximate table comparison supports row/column alignment and this allowed alternative without imposing bit-identical CSV structure.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "Degree": "Degree"
+          },
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables use genes as rows, so no transpose is needed. Map the reference Gene and Degree columns directly to the identically named candidate columns; candidate-only metrics are excluded. Gene uniquely identifies records. Row order is significant because this is a ranked top-5 hub-gene result, and both tables are already ordered by descending degree with the shown tie ordering, so no pre-sort is needed.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Degree",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Degree is the sole non-ID reference column and directly measures the hub-gene criterion. As an integer count whose exact value must match the reference, cell-wise relative absolute error with zero tolerance enforces exact degree equality."
+            }
+          ],
+          "overall_reasoning": "Gene is used only for alignment and is excluded. Candidate-only columns Rank, Degree_Centrality, and Weighted_Degree are not compared because they are absent from the reference and are not required by the evaluation guideline. Degree is critical because the task requires the five hub-gene records to match in identity and degree; after alignment by Gene, exact integer Degree agreement is assessed using RAE with a 0.0 tolerance. No categorical overlap strategy or delimiter is needed. The permitted PTEN/EGFR tie should be handled by the identity-alignment/evaluation layer rather than by relaxing Degree comparison.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "Degree": "Degree"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Rank",
+              "Degree_Centrality",
+              "Weighted_Degree"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Degree",
+              "Gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Degree": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Rank', 'Degree_Centrality', 'Weighted_Degree']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Degree"
+          ],
+          "filtered_columns": [
+            "Degree"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Degree": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 2,
+            "alt_cols": 5,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              2
+            ],
+            "alt_shape": [
+              5,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Degree": true,
+              "Gene": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

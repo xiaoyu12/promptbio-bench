@@ -173,11 +173,13 @@ class ColumnCompareConfig(BaseModel):
     data_type: Literal["categorical", "numerical"] = Field(
         description="Data type of the column: 'categorical' (object, string, category) or 'numerical' (int, float, numeric)."
     )
-    strategy: Literal["exact", "overlap", "pearson", "spearman", "rae", "ignore"] = Field(
+    strategy: Literal["exact", "overlap", "partition", "pearson", "spearman", "rae", "ignore"] = Field(
         description="Comparison strategy for this column: "
                     "For categorical: "
                     "'exact' = cell-by-cell exact match (0/1 series), average gives similarity. "
                     "'overlap' = cell-by-cell Jaccard similarity (can be thresholded via cell_threshold or averaged raw). "
+                    "'partition' = arbitrary group labels (cluster, module or subtype IDs, numeric or not): "
+                    "fraction of rows that agree after the best one-to-one relabelling of candidate groups. "
                     "For numerical: "
                     "'pearson' = Pearson correlation (summary statistic, focuses on linear relationship). "
                     "'spearman' = Spearman correlation (summary statistic, focuses on monotonic/rank relationship). "

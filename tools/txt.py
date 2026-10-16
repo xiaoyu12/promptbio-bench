@@ -170,7 +170,7 @@ class TXTHandler(FormatHandler):
         
         Args:
             file_path: Path to text file
-            ignore_whitespace: Remove all whitespace if True (default: False)
+            ignore_whitespace: Remove whitespace within lines and drop blank lines if True (default: False)
             ignore_case: Convert to lowercase if True (default: False)
             
         Returns:
@@ -184,7 +184,10 @@ class TXTHandler(FormatHandler):
             if ignore_case:
                 text = text.lower()
             if ignore_whitespace:
-                text = re.sub(r'\s+', '', text)
+                # Drop whitespace within lines but keep the line structure: deleting newlines
+                # too would turn line-by-line comparison into a whole-file equality test.
+                lines = (re.sub(r'\s+', '', line) for line in text.splitlines())
+                text = "\n".join(line for line in lines if line)
             
             return text
         except Exception as e:

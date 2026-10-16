@@ -1,0 +1,1417 @@
+Output directory: claude-no-skills
+Agents (1):
+  [claude-no-skills]  promptbio-bench-no-skills/tasks/a-2-8/output
+
+Task:    a-2-8
+Question: Run GSEA on ranked gene list to identify the most enriched gene sets of biological processes. Use the provided GO_Biological_Process_2021 gene set library (data/GO_Biological_Process_2021.gmt) with min_size=15 and max_size=500. Report the full enrichment results and the top 10 significantly enriched gene sets.
+Reference files:
+  gsea_result.csv
+    guideline: All gene-set records must match the reference in GO ID (parsed from the Term string, e.g. GO:0002181) and enrichment direction; NES may vary by 5% relative absolute error and FDR q-val by 10% relative absolute error due to permutation; term name formatting, column order, and extra columns may differ.
+  gsea_top10_result.csv
+    guideline: Top-10 gene sets must match the reference in GO ID (parsed from the Term string, e.g. GO:0002181) and enrichment direction; NES may vary by 5% relative absolute error and ranking may shift by +/-2 positions; term name formatting and column order may differ.
+Input files: ['gene_rnk.txt', 'GO_Biological_Process_2021.gmt']
+
+============================================================
+Step 2/4: Detecting file formats...  [shared — runs once]
+  gsea_result.csv:
+    format:      csv
+    compression: none
+    is_text:     True
+    method:      content
+  gsea_top10_result.csv:
+    format:      csv
+    compression: none
+    is_text:     True
+    method:      content
+
+============================================================
+Step 3/4: Recommending comparison strategies...  [shared — runs once]
+Requesting strategy recommendation for 2 eval file(s).
+  csv (promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_result.csv): approximate (confidence=0.98)
+  csv (promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_top10_result.csv): approximate (confidence=0.99)
+    parameters: {'question': 'Compare all gene-set records by GO ID parsed from Term and enrichment direction; allow NES up to 5% relative absolute error and FDR q-val up to 10%, while ignoring term-name formatting, row/column order, and extra columns.'}
+    reasoning:  The guideline explicitly requires record-level matching despite permutation-induced numeric variation, so summary comparison would be too coarse. Approximate table comparison supports identifier-based alignment, reordered structures, extra columns, formatting differences, and the stated numeric tolerances.
+    parameters: {'question': 'Compare the top 10 GSEA results by GO ID parsed from Term and enrichment direction; allow NES up to 5% relative absolute error and rank shifts of up to 2 positions, while ignoring term-name formatting and column order differences.'}
+    reasoning:  The guideline requires record-level matching of the top gene sets with explicit tolerance for NES and ranking variation. The CSV approximate strategy supports structural differences and alignment by biologically meaningful identifiers.
+
+############################################################
+Agent: claude-no-skills
+  Result dir: promptbio-bench-no-skills/tasks/a-2-8/output
+  Log:        claude-no-skills/a-2-8_claude-no-skills.log
+  Results:    claude-no-skills/a-2-8_claude-no-skills.json
+
+Task:    a-2-8
+Question: Run GSEA on ranked gene list to identify the most enriched gene sets of biological processes. Use the provided GO_Biological_Process_2021 gene set library (data/GO_Biological_Process_2021.gmt) with min_size=15 and max_size=500. Report the full enrichment results and the top 10 significantly enriched gene sets.
+Label:   claude-no-skills
+Result dir: promptbio-bench-no-skills/tasks/a-2-8/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-no-skills/tasks/a-2-8/output  (2 file(s))
+Matched files:
+  gsea_result.csv → gsea_result.csv  (conf=1.00)
+    Reasoning: The filenames are identical, both paths indicate CSV format, and each represents the task's full GSEA enrichment results.
+  gsea_top10_result.csv → gsea_top10_result.csv  (conf=1.00)
+    Reasoning: The filenames are identical, both are CSV files, and the 'top10' designation directly corresponds to the requested top 10 significantly enriched gene sets.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_result.csv
+    alt: promptbio-bench-no-skills/tasks/a-2-8/output/gsea_result.csv
+
+  File 2/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_top10_result.csv
+    alt: promptbio-bench-no-skills/tasks/a-2-8/output/gsea_top10_result.csv
+
+  File 1/2: status=success, similarity=0.5284
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 10 columns and orientation, so no transpose or column mapping is needed. Align rows by Term after extracting the embedded GO identifier (for example, GO:0002181), which is the stable unique key despite the reference Term having a library-name prefix. Enrichment-result rows are records whose order can vary because permutation-derived NES/FDR values affect ranking; therefore row order is not structurally significant and permutation checking is appropriate. Enrichment direction should be compared by the sign of NES (or ES).",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Name",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The analysis label should be identical for each reported enrichment record."
+            },
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "ES is a gene-set-specific effect measurement whose sign encodes enrichment direction. Cell-wise relative error with 5% tolerance checks both magnitude and direction."
+            },
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "NES is a primary GSEA result and determines normalized enrichment strength and direction. The 5% relative tolerance follows the evaluation guideline."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Nominal p-values can vary with permutation sampling, so a 10% relative tolerance permits expected stochastic variation while retaining cell-level validation."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "FDR q-value is critical for identifying significant gene sets. The 10% relative tolerance is explicitly allowed by the evaluation guideline."
+            },
+            {
+              "name": "FWER p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "FWER p-values are permutation-derived and should be checked per gene set with a 10% relative tolerance for stochastic variation."
+            },
+            {
+              "name": "Tag %",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Tag percentage is encoded as a fraction string such as 25/30. Given the same ranked list and gene-set library, this discrete leading-edge count should match exactly."
+            },
+            {
+              "name": "Gene %",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "Gene percentage is supplied as a formatted string and reflects the leading-edge position in the fixed ranking, so its reported representation should match exactly."
+            },
+            {
+              "name": "Lead_genes",
+              "data_type": "categorical",
+              "strategy": "overlap",
+              "cell_delimiter": ";",
+              "cell_tolerance": null,
+              "cell_threshold": 1.0,
+              "confidence": 0.98,
+              "reasoning": "Leading-edge genes are semicolon-delimited. Jaccard comparison with threshold 1.0 requires the same gene set while allowing harmless differences in gene ordering."
+            }
+          ],
+          "overall_reasoning": "Term is excluded because it is the alignment identifier; its parsed GO ID establishes record correspondence. All remaining columns are included because the task requests full enrichment results. NES and FDR q-value receive the guideline-prescribed relative tolerances of 5% and 10%, respectively. ES is checked at 5% to preserve enrichment magnitude and, crucially, direction; the permutation-derived nominal and FWER p-values use 10%. Scalar categorical fields are exact, while Lead_genes is compared as an order-insensitive semicolon-delimited set with exact membership. Missing values should be treated as matching only when both aligned cells are missing.",
+          "overall_confidence": 0.96,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "unmapped_ref_rows": 2277,
+            "unmapped_alt_rows": 2277,
+            "fuzzy_matched_ids": {
+              "regulation of epithelial to mesenchymal transition (go:0010717)": "go_biological_process_2021.gmt__regulation of epithelial to mesenchymal transition (go:0010717)",
+              "positive regulation of dna recombination (go:0045911)": "go_biological_process_2021.gmt__positive regulation of dna recombination (go:0045911)",
+              "protein complex oligomerization (go:0051259)": "go_biological_process_2021.gmt__protein complex oligomerization (go:0051259)",
+              "basement membrane organization (go:0071711)": "go_biological_process_2021.gmt__basement membrane organization (go:0071711)",
+              "retinol metabolic process (go:0042572)": "go_biological_process_2021.gmt__retinol metabolic process (go:0042572)",
+              "negative regulation of ion transport (go:0043271)": "go_biological_process_2021.gmt__negative regulation of ion transport (go:0043271)",
+              "microtubule polymerization (go:0046785)": "go_biological_process_2021.gmt__microtubule polymerization (go:0046785)",
+              "mitochondrial electron transport, cytochrome c to oxygen (go:0006123)": "go_biological_process_2021.gmt__mitochondrial electron transport, cytochrome c to oxygen (go:0006123)",
+              "positive regulation of positive chemotaxis (go:0050927)": "go_biological_process_2021.gmt__positive regulation of positive chemotaxis (go:0050927)",
+              "positive regulation of intrinsic apoptotic signaling pathway (go:2001244)": "go_biological_process_2021.gmt__positive regulation of intrinsic apoptotic signaling pathway (go:2001244)",
+              "protein import (go:0017038)": "go_biological_process_2021.gmt__protein import (go:0017038)",
+              "base conversion or substitution editing (go:0016553)": "go_biological_process_2021.gmt__base conversion or substitution editing (go:0016553)",
+              "rna transport (go:0050658)": "go_biological_process_2021.gmt__rna transport (go:0050658)",
+              "regulation of canonical wnt signaling pathway (go:0060828)": "go_biological_process_2021.gmt__regulation of canonical wnt signaling pathway (go:0060828)",
+              "apical junction assembly (go:0043297)": "go_biological_process_2021.gmt__apical junction assembly (go:0043297)",
+              "purine nucleoside bisphosphate metabolic process (go:0034032)": "go_biological_process_2021.gmt__purine nucleoside bisphosphate metabolic process (go:0034032)",
+              "regulation of membrane protein ectodomain proteolysis (go:0051043)": "go_biological_process_2021.gmt__regulation of membrane protein ectodomain proteolysis (go:0051043)",
+              "positive regulation of nf-kappab transcription factor activity (go:0051092)": "go_biological_process_2021.gmt__positive regulation of nf-kappab transcription factor activity (go:0051092)",
+              "dopaminergic neuron differentiation (go:0071542)": "go_biological_process_2021.gmt__dopaminergic neuron differentiation (go:0071542)",
+              "signal release from synapse (go:0099643)": "go_biological_process_2021.gmt__signal release from synapse (go:0099643)",
+              "maintenance of protein location in nucleus (go:0051457)": "go_biological_process_2021.gmt__maintenance of protein location in nucleus (go:0051457)",
+              "negative regulation of endopeptidase activity (go:0010951)": "go_biological_process_2021.gmt__negative regulation of endopeptidase activity (go:0010951)",
+              "regulation of transforming growth factor beta receptor signaling pathway (go:0017015)": "go_biological_process_2021.gmt__regulation of transforming growth factor beta receptor signaling pathway (go:0017015)",
+              "regulation of leukocyte chemotaxis (go:0002688)": "go_biological_process_2021.gmt__regulation of leukocyte chemotaxis (go:0002688)",
+              "muscle contraction (go:0006936)": "go_biological_process_2021.gmt__muscle contraction (go:0006936)",
+              "regulation of epidermal cell differentiation (go:0045604)": "go_biological_process_2021.gmt__regulation of epidermal cell differentiation (go:0045604)",
+              "regulation of cysteine-type endopeptidase activity involved in apoptotic process (go:0043281)": "go_biological_process_2021.gmt__regulation of cysteine-type endopeptidase activity involved in apoptotic process (go:0043281)",
+              "osteoclast differentiation (go:0030316)": "go_biological_process_2021.gmt__osteoclast differentiation (go:0030316)",
+              "regulation of release of sequestered calcium ion into cytosol (go:0051279)": "go_biological_process_2021.gmt__regulation of release of sequestered calcium ion into cytosol (go:0051279)",
+              "regulation of map kinase activity (go:0043405)": "go_biological_process_2021.gmt__regulation of map kinase activity (go:0043405)",
+              "regulation of telomere maintenance via telomere lengthening (go:1904356)": "go_biological_process_2021.gmt__regulation of telomere maintenance via telomere lengthening (go:1904356)",
+              "positive regulation of protein phosphorylation (go:0001934)": "go_biological_process_2021.gmt__positive regulation of protein phosphorylation (go:0001934)",
+              "negative regulation of toll-like receptor signaling pathway (go:0034122)": "go_biological_process_2021.gmt__negative regulation of toll-like receptor signaling pathway (go:0034122)",
+              "regulation of transcription by rna polymerase iii (go:0006359)": "go_biological_process_2021.gmt__regulation of transcription by rna polymerase iii (go:0006359)",
+              "protein modification by small protein conjugation (go:0032446)": "go_biological_process_2021.gmt__protein modification by small protein conjugation (go:0032446)",
+              "positive regulation of dendritic spine development (go:0060999)": "go_biological_process_2021.gmt__positive regulation of dendritic spine development (go:0060999)",
+              "regulation of cell adhesion (go:0030155)": "go_biological_process_2021.gmt__regulation of cell adhesion (go:0030155)",
+              "protein k63-linked deubiquitination (go:0070536)": "go_biological_process_2021.gmt__protein k63-linked deubiquitination (go:0070536)",
+              "phosphatidylinositol metabolic process (go:0046488)": "go_biological_process_2021.gmt__phosphatidylinositol metabolic process (go:0046488)",
+              "postreplication repair (go:0006301)": "go_biological_process_2021.gmt__postreplication repair (go:0006301)",
+              "internal peptidyl-lysine acetylation (go:0018393)": "go_biological_process_2021.gmt__internal peptidyl-lysine acetylation (go:0018393)",
+              "cellular transition metal ion homeostasis (go:0046916)": "go_biological_process_2021.gmt__cellular transition metal ion homeostasis (go:0046916)",
+              "dna integrity checkpoint signaling (go:0031570)": "go_biological_process_2021.gmt__dna integrity checkpoint signaling (go:0031570)",
+              "cellular response to ionizing radiation (go:0071479)": "go_biological_process_2021.gmt__cellular response to ionizing radiation (go:0071479)",
+              "cellular response to steroid hormone stimulus (go:0071383)": "go_biological_process_2021.gmt__cellular response to steroid hormone stimulus (go:0071383)",
+              "central nervous system neuron differentiation (go:0021953)": "go_biological_process_2021.gmt__central nervous system neuron differentiation (go:0021953)",
+              "positive regulation of viral process (go:0048524)": "go_biological_process_2021.gmt__positive regulation of viral process (go:0048524)",
+              "regulation of phosphatidylinositol 3-kinase activity (go:0043551)": "go_biological_process_2021.gmt__regulation of phosphatidylinositol 3-kinase activity (go:0043551)",
+              "embryonic axis specification (go:0000578)": "go_biological_process_2021.gmt__embryonic axis specification (go:0000578)",
+              "lytic vacuole organization (go:0080171)": "go_biological_process_2021.gmt__lytic vacuole organization (go:0080171)",
+              "regulation of synapse organization (go:0050807)": "go_biological_process_2021.gmt__regulation of synapse organization (go:0050807)",
+              "transition metal ion homeostasis (go:0055076)": "go_biological_process_2021.gmt__transition metal ion homeostasis (go:0055076)",
+              "b cell proliferation (go:0042100)": "go_biological_process_2021.gmt__b cell proliferation (go:0042100)",
+              "regulation of myoblast differentiation (go:0045661)": "go_biological_process_2021.gmt__regulation of myoblast differentiation (go:0045661)",
+              "negative regulation of blood vessel endothelial cell migration (go:0043537)": "go_biological_process_2021.gmt__negative regulation of blood vessel endothelial cell migration (go:0043537)",
+              "positive regulation of proteasomal ubiquitin-dependent protein catabolic process (go:0032436)": "go_biological_process_2021.gmt__positive regulation of proteasomal ubiquitin-dependent protein catabolic process (go:0032436)",
+              "neuron projection extension (go:1990138)": "go_biological_process_2021.gmt__neuron projection extension (go:1990138)",
+              "trna aminoacylation (go:0043039)": "go_biological_process_2021.gmt__trna aminoacylation (go:0043039)",
+              "cellular response to interleukin-6 (go:0071354)": "go_biological_process_2021.gmt__cellular response to interleukin-6 (go:0071354)",
+              "regulation of androgen receptor signaling pathway (go:0060765)": "go_biological_process_2021.gmt__regulation of androgen receptor signaling pathway (go:0060765)",
+              "phospholipid biosynthetic process (go:0008654)": "go_biological_process_2021.gmt__phospholipid biosynthetic process (go:0008654)",
+              "regulation of neurotransmitter receptor activity (go:0099601)": "go_biological_process_2021.gmt__regulation of neurotransmitter receptor activity (go:0099601)",
+              "cellular response to organic cyclic compound (go:0071407)": "go_biological_process_2021.gmt__cellular response to organic cyclic compound (go:0071407)",
+              "muscle tissue morphogenesis (go:0060415)": "go_biological_process_2021.gmt__muscle tissue morphogenesis (go:0060415)",
+              "leukocyte cell-cell adhesion (go:0007159)": "go_biological_process_2021.gmt__leukocyte cell-cell adhesion (go:0007159)",
+              "mitotic nuclear membrane reassembly (go:0007084)": "go_biological_process_2021.gmt__mitotic nuclear membrane reassembly (go:0007084)",
+              "aggrephagy (go:0035973)": "go_biological_process_2021.gmt__aggrephagy (go:0035973)",
+              "regulation of calcium ion transport (go:0051924)": "go_biological_process_2021.gmt__regulation of calcium ion transport (go:0051924)",
+              "renal system development (go:0072001)": "go_biological_process_2021.gmt__renal system development (go:0072001)",
+              "anaphase-promoting complex-dependent catabolic process (go:0031145)": "go_biological_process_2021.gmt__anaphase-promoting complex-dependent catabolic process (go:0031145)",
+              "glutamine family amino acid catabolic process (go:0009065)": "go_biological_process_2021.gmt__glutamine family amino acid catabolic process (go:0009065)",
+              "negative regulation of small molecule metabolic process (go:0062014)": "go_biological_process_2021.gmt__negative regulation of small molecule metabolic process (go:0062014)",
+              "regulation of anatomical structure morphogenesis (go:0022603)": "go_biological_process_2021.gmt__regulation of anatomical structure morphogenesis (go:0022603)",
+              "response to purine-containing compound (go:0014074)": "go_biological_process_2021.gmt__response to purine-containing compound (go:0014074)",
+              "mirna metabolic process (go:0010586)": "go_biological_process_2021.gmt__mirna metabolic process (go:0010586)",
+              "positive regulation of mitochondrion organization (go:0010822)": "go_biological_process_2021.gmt__positive regulation of mitochondrion organization (go:0010822)",
+              "positive regulation of extrinsic apoptotic signaling pathway (go:2001238)": "go_biological_process_2021.gmt__positive regulation of extrinsic apoptotic signaling pathway (go:2001238)",
+              "positive regulation of antigen receptor-mediated signaling pathway (go:0050857)": "go_biological_process_2021.gmt__positive regulation of antigen receptor-mediated signaling pathway (go:0050857)",
+              "neuromuscular junction development (go:0007528)": "go_biological_process_2021.gmt__neuromuscular junction development (go:0007528)",
+              "negative regulation of cell migration (go:0030336)": "go_biological_process_2021.gmt__negative regulation of cell migration (go:0030336)",
+              "positive regulation of protein targeting to membrane (go:0090314)": "go_biological_process_2021.gmt__positive regulation of protein targeting to membrane (go:0090314)",
+              "positive regulation of b cell proliferation (go:0030890)": "go_biological_process_2021.gmt__positive regulation of b cell proliferation (go:0030890)",
+              "regulation of supramolecular fiber organization (go:1902903)": "go_biological_process_2021.gmt__regulation of supramolecular fiber organization (go:1902903)",
+              "cellular response to lipopolysaccharide (go:0071222)": "go_biological_process_2021.gmt__cellular response to lipopolysaccharide (go:0071222)",
+              "cell-cell junction organization (go:0045216)": "go_biological_process_2021.gmt__cell-cell junction organization (go:0045216)",
+              "regulation of cellular amino acid metabolic process (go:0006521)": "go_biological_process_2021.gmt__regulation of cellular amino acid metabolic process (go:0006521)",
+              "cellular response to hormone stimulus (go:0032870)": "go_biological_process_2021.gmt__cellular response to hormone stimulus (go:0032870)",
+              "regulation of neuron death (go:1901214)": "go_biological_process_2021.gmt__regulation of neuron death (go:1901214)",
+              "positive regulation of endocytosis (go:0045807)": "go_biological_process_2021.gmt__positive regulation of endocytosis (go:0045807)",
+              "aminoglycan biosynthetic process (go:0006023)": "go_biological_process_2021.gmt__aminoglycan biosynthetic process (go:0006023)",
+              "positive regulation of monooxygenase activity (go:0032770)": "go_biological_process_2021.gmt__positive regulation of monooxygenase activity (go:0032770)",
+              "regulation of mitochondrial membrane potential (go:0051881)": "go_biological_process_2021.gmt__regulation of mitochondrial membrane potential (go:0051881)",
+              "response to muscle stretch (go:0035994)": "go_biological_process_2021.gmt__response to muscle stretch (go:0035994)",
+              "cardiac muscle cell development (go:0055013)": "go_biological_process_2021.gmt__cardiac muscle cell development (go:0055013)",
+              "iron-sulfur cluster assembly (go:0016226)": "go_biological_process_2021.gmt__iron-sulfur cluster assembly (go:0016226)",
+              "carbohydrate catabolic process (go:0016052)": "go_biological_process_2021.gmt__carbohydrate catabolic process (go:0016052)",
+              "folic acid-containing compound metabolic process (go:0006760)": "go_biological_process_2021.gmt__folic acid-containing compound metabolic process (go:0006760)",
+              "epidermis development (go:0008544)": "go_biological_process_2021.gmt__epidermis development (go:0008544)",
+              "leukotriene metabolic process (go:0006691)": "go_biological_process_2021.gmt__leukotriene metabolic process (go:0006691)",
+              "negative regulation of gtpase activity (go:0034260)": "go_biological_process_2021.gmt__negative regulation of gtpase activity (go:0034260)",
+              "srp-dependent cotranslational protein targeting to membrane (go:0006614)": "go_biological_process_2021.gmt__srp-dependent cotranslational protein targeting to membrane (go:0006614)",
+              "positive regulation of cell communication (go:0010647)": "go_biological_process_2021.gmt__positive regulation of cell communication (go:0010647)",
+              "establishment of epithelial cell polarity (go:0090162)": "go_biological_process_2021.gmt__establishment of epithelial cell polarity (go:0090162)",
+              "aerobic electron transport chain (go:0019646)": "go_biological_process_2021.gmt__aerobic electron transport chain (go:0019646)",
+              "response to cytokine (go:0034097)": "go_biological_process_2021.gmt__response to cytokine (go:0034097)",
+              "heparan sulfate proteoglycan metabolic process (go:0030201)": "go_biological_process_2021.gmt__heparan sulfate proteoglycan metabolic process (go:0030201)",
+              "mrna splicing, via spliceosome (go:0000398)": "go_biological_process_2021.gmt__mrna splicing, via spliceosome (go:0000398)",
+              "positive regulation of neurogenesis (go:0050769)": "go_biological_process_2021.gmt__positive regulation of neurogenesis (go:0050769)",
+              "regulation of carbohydrate catabolic process (go:0043470)": "go_biological_process_2021.gmt__regulation of carbohydrate catabolic process (go:0043470)",
+              "anterograde trans-synaptic signaling (go:0098916)": "go_biological_process_2021.gmt__anterograde trans-synaptic signaling (go:0098916)",
+              "regulation of monocyte differentiation (go:0045655)": "go_biological_process_2021.gmt__regulation of monocyte differentiation (go:0045655)",
+              "cognition (go:0050890)": "go_biological_process_2021.gmt__cognition (go:0050890)",
+              "histone h4-k16 acetylation (go:0043984)": "go_biological_process_2021.gmt__histone h4-k16 acetylation (go:0043984)",
+              "negative regulation of cytoskeleton organization (go:0051494)": "go_biological_process_2021.gmt__negative regulation of cytoskeleton organization (go:0051494)",
+              "nucleotide-excision repair, preincision complex stabilization (go:0006293)": "go_biological_process_2021.gmt__nucleotide-excision repair, preincision complex stabilization (go:0006293)",
+              "regulation of collagen biosynthetic process (go:0032965)": "go_biological_process_2021.gmt__regulation of collagen biosynthetic process (go:0032965)",
+              "regulation of centriole replication (go:0046599)": "go_biological_process_2021.gmt__regulation of centriole replication (go:0046599)",
+              "adrenergic receptor signaling pathway (go:0071875)": "go_biological_process_2021.gmt__adrenergic receptor signaling pathway (go:0071875)",
+              "cellular response to hypoxia (go:0071456)": "go_biological_process_2021.gmt__cellular response to hypoxia (go:0071456)",
+              "inorganic cation transmembrane transport (go:0098662)": "go_biological_process_2021.gmt__inorganic cation transmembrane transport (go:0098662)",
+              "cellular response to amyloid-beta (go:1904646)": "go_biological_process_2021.gmt__cellular response to amyloid-beta (go:1904646)",
+              "regulation of nuclear-transcribed mrna catabolic process, deadenylation-dependent decay (go:1900151)": "go_biological_process_2021.gmt__regulation of nuclear-transcribed mrna catabolic process, deadenylation-dependent decay (go:1900151)",
+              "cellular response to nerve growth factor stimulus (go:1990090)": "go_biological_process_2021.gmt__cellular response to nerve growth factor stimulus (go:1990090)",
+              "positive regulation of protein metabolic process (go:0051247)": "go_biological_process_2021.gmt__positive regulation of protein metabolic process (go:0051247)",
+              "negative regulation of gene expression (go:0010629)": "go_biological_process_2021.gmt__negative regulation of gene expression (go:0010629)",
+              "protein alpha-1,2-demannosylation (go:0036508)": "go_biological_process_2021.gmt__protein alpha-1,2-demannosylation (go:0036508)",
+              "positive regulation of ras protein signal transduction (go:0046579)": "go_biological_process_2021.gmt__positive regulation of ras protein signal transduction (go:0046579)",
+              "regulation of p38mapk cascade (go:1900744)": "go_biological_process_2021.gmt__regulation of p38mapk cascade (go:1900744)",
+              "regulation of notch signaling pathway (go:0008593)": "go_biological_process_2021.gmt__regulation of notch signaling pathway (go:0008593)",
+              "heterophilic cell-cell adhesion via plasma membrane cell adhesion molecules (go:0007157)": "go_biological_process_2021.gmt__heterophilic cell-cell adhesion via plasma membrane cell adhesion molecules (go:0007157)",
+              "mrna modification (go:0016556)": "go_biological_process_2021.gmt__mrna modification (go:0016556)",
+              "female gonad development (go:0008585)": "go_biological_process_2021.gmt__female gonad development (go:0008585)",
+              "negative regulation of b cell activation (go:0050869)": "go_biological_process_2021.gmt__negative regulation of b cell activation (go:0050869)",
+              "positive regulation of cilium assembly (go:0045724)": "go_biological_process_2021.gmt__positive regulation of cilium assembly (go:0045724)",
+              "negative regulation of telomere maintenance via telomere lengthening (go:1904357)": "go_biological_process_2021.gmt__negative regulation of telomere maintenance via telomere lengthening (go:1904357)",
+              "dna-templated transcription, termination (go:0006353)": "go_biological_process_2021.gmt__dna-templated transcription, termination (go:0006353)",
+              "negative regulation of leukocyte cell-cell adhesion (go:1903038)": "go_biological_process_2021.gmt__negative regulation of leukocyte cell-cell adhesion (go:1903038)",
+              "negative regulation of protein localization to membrane (go:1905476)": "go_biological_process_2021.gmt__negative regulation of protein localization to membrane (go:1905476)",
+              "mitotic g1 dna damage checkpoint signaling (go:0031571)": "go_biological_process_2021.gmt__mitotic g1 dna damage checkpoint signaling (go:0031571)",
+              "translational termination (go:0006415)": "go_biological_process_2021.gmt__translational termination (go:0006415)",
+              "embryonic skeletal system morphogenesis (go:0048704)": "go_biological_process_2021.gmt__embryonic skeletal system morphogenesis (go:0048704)",
+              "regulation of epithelial cell differentiation (go:0030856)": "go_biological_process_2021.gmt__regulation of epithelial cell differentiation (go:0030856)",
+              "cortical actin cytoskeleton organization (go:0030866)": "go_biological_process_2021.gmt__cortical actin cytoskeleton organization (go:0030866)",
+              "protein mannosylation (go:0035268)": "go_biological_process_2021.gmt__protein mannosylation (go:0035268)",
+              "response to alcohol (go:0097305)": "go_biological_process_2021.gmt__response to alcohol (go:0097305)",
+              "receptor signaling pathway via jak-stat (go:0007259)": "go_biological_process_2021.gmt__receptor signaling pathway via jak-stat (go:0007259)",
+              "regulation of exocytosis (go:0017157)": "go_biological_process_2021.gmt__regulation of exocytosis (go:0017157)",
+              "positive regulation of autophagy (go:0010508)": "go_biological_process_2021.gmt__positive regulation of autophagy (go:0010508)",
+              "cell cycle g2/m phase transition (go:0044839)": "go_biological_process_2021.gmt__cell cycle g2/m phase transition (go:0044839)",
+              "extrinsic apoptotic signaling pathway via death domain receptors (go:0008625)": "go_biological_process_2021.gmt__extrinsic apoptotic signaling pathway via death domain receptors (go:0008625)",
+              "regulation of microtubule cytoskeleton organization (go:0070507)": "go_biological_process_2021.gmt__regulation of microtubule cytoskeleton organization (go:0070507)",
+              "fatty-acyl-coa metabolic process (go:0035337)": "go_biological_process_2021.gmt__fatty-acyl-coa metabolic process (go:0035337)",
+              "positive regulation of interferon-alpha production (go:0032727)": "go_biological_process_2021.gmt__positive regulation of interferon-alpha production (go:0032727)",
+              "glutathione derivative biosynthetic process (go:1901687)": "go_biological_process_2021.gmt__glutathione derivative biosynthetic process (go:1901687)",
+              "positive regulation of apoptotic signaling pathway (go:2001235)": "go_biological_process_2021.gmt__positive regulation of apoptotic signaling pathway (go:2001235)",
+              "keratan sulfate metabolic process (go:0042339)": "go_biological_process_2021.gmt__keratan sulfate metabolic process (go:0042339)",
+              "positive regulation of transforming growth factor beta receptor signaling pathway (go:0030511)": "go_biological_process_2021.gmt__positive regulation of transforming growth factor beta receptor signaling pathway (go:0030511)",
+              "protein n-linked glycosylation (go:0006487)": "go_biological_process_2021.gmt__protein n-linked glycosylation (go:0006487)",
+              "lymphocyte differentiation (go:0030098)": "go_biological_process_2021.gmt__lymphocyte differentiation (go:0030098)",
+              "cellular divalent inorganic cation homeostasis (go:0072503)": "go_biological_process_2021.gmt__cellular divalent inorganic cation homeostasis (go:0072503)",
+              "actin polymerization or depolymerization (go:0008154)": "go_biological_process_2021.gmt__actin polymerization or depolymerization (go:0008154)",
+              "positive regulation of macrophage derived foam cell differentiation (go:0010744)": "go_biological_process_2021.gmt__positive regulation of macrophage derived foam cell differentiation (go:0010744)",
+              "regulation of insulin-like growth factor receptor signaling pathway (go:0043567)": "go_biological_process_2021.gmt__regulation of insulin-like growth factor receptor signaling pathway (go:0043567)",
+              "intermediate filament organization (go:0045109)": "go_biological_process_2021.gmt__intermediate filament organization (go:0045109)",
+              "regulation of dendrite morphogenesis (go:0048814)": "go_biological_process_2021.gmt__regulation of dendrite morphogenesis (go:0048814)",
+              "ventricular septum development (go:0003281)": "go_biological_process_2021.gmt__ventricular septum development (go:0003281)",
+              "positive regulation of nuclear division (go:0051785)": "go_biological_process_2021.gmt__positive regulation of nuclear division (go:0051785)",
+              "excitatory postsynaptic potential (go:0060079)": "go_biological_process_2021.gmt__excitatory postsynaptic potential (go:0060079)",
+              "ribonucleoside bisphosphate metabolic process (go:0033875)": "go_biological_process_2021.gmt__ribonucleoside bisphosphate metabolic process (go:0033875)",
+              "regulation of axonogenesis (go:0050770)": "go_biological_process_2021.gmt__regulation of axonogenesis (go:0050770)",
+              "negative regulation of protein localization to nucleus (go:1900181)": "go_biological_process_2021.gmt__negative regulation of protein localization to nucleus (go:1900181)",
+              "stem cell differentiation (go:0048863)": "go_biological_process_2021.gmt__stem cell differentiation (go:0048863)",
+              "positive regulation of calcium ion transmembrane transporter activity (go:1901021)": "go_biological_process_2021.gmt__positive regulation of calcium ion transmembrane transporter activity (go:1901021)",
+              "protein peptidyl-prolyl isomerization (go:0000413)": "go_biological_process_2021.gmt__protein peptidyl-prolyl isomerization (go:0000413)",
+              "inorganic cation import across plasma membrane (go:0098659)": "go_biological_process_2021.gmt__inorganic cation import across plasma membrane (go:0098659)",
+              "regulation of chemotaxis (go:0050920)": "go_biological_process_2021.gmt__regulation of chemotaxis (go:0050920)",
+              "regulation of double-strand break repair via homologous recombination (go:0010569)": "go_biological_process_2021.gmt__regulation of double-strand break repair via homologous recombination (go:0010569)",
+              "chemical synaptic transmission, postsynaptic (go:0099565)": "go_biological_process_2021.gmt__chemical synaptic transmission, postsynaptic (go:0099565)",
+              "positive regulation of amyloid precursor protein catabolic process (go:1902993)": "go_biological_process_2021.gmt__positive regulation of amyloid precursor protein catabolic process (go:1902993)",
+              "regulation of neuron projection arborization (go:0150011)": "go_biological_process_2021.gmt__regulation of neuron projection arborization (go:0150011)",
+              "camp-mediated signaling (go:0019933)": "go_biological_process_2021.gmt__camp-mediated signaling (go:0019933)",
+              "mitochondrial transport (go:0006839)": "go_biological_process_2021.gmt__mitochondrial transport (go:0006839)",
+              "response to lipid (go:0033993)": "go_biological_process_2021.gmt__response to lipid (go:0033993)",
+              "negative regulation of focal adhesion assembly (go:0051895)": "go_biological_process_2021.gmt__negative regulation of focal adhesion assembly (go:0051895)",
+              "positive regulation of epithelial cell proliferation (go:0050679)": "go_biological_process_2021.gmt__positive regulation of epithelial cell proliferation (go:0050679)",
+              "negative regulation of cellular carbohydrate metabolic process (go:0010677)": "go_biological_process_2021.gmt__negative regulation of cellular carbohydrate metabolic process (go:0010677)",
+              "cardiac ventricle development (go:0003231)": "go_biological_process_2021.gmt__cardiac ventricle development (go:0003231)",
+              "membrane raft organization (go:0031579)": "go_biological_process_2021.gmt__membrane raft organization (go:0031579)",
+              "regulation of bone mineralization (go:0030500)": "go_biological_process_2021.gmt__regulation of bone mineralization (go:0030500)",
+              "androgen metabolic process (go:0008209)": "go_biological_process_2021.gmt__androgen metabolic process (go:0008209)",
+              "steroid hormone biosynthetic process (go:0120178)": "go_biological_process_2021.gmt__steroid hormone biosynthetic process (go:0120178)",
+              "purinergic nucleotide receptor signaling pathway (go:0035590)": "go_biological_process_2021.gmt__purinergic nucleotide receptor signaling pathway (go:0035590)",
+              "endoplasmic reticulum calcium ion homeostasis (go:0032469)": "go_biological_process_2021.gmt__endoplasmic reticulum calcium ion homeostasis (go:0032469)",
+              "regulation of fibroblast growth factor receptor signaling pathway (go:0040036)": "go_biological_process_2021.gmt__regulation of fibroblast growth factor receptor signaling pathway (go:0040036)",
+              "positive regulation of interleukin-6 production (go:0032755)": "go_biological_process_2021.gmt__positive regulation of interleukin-6 production (go:0032755)",
+              "positive regulation of nitric oxide biosynthetic process (go:0045429)": "go_biological_process_2021.gmt__positive regulation of nitric oxide biosynthetic process (go:0045429)",
+              "regulation of smad protein signal transduction (go:0060390)": "go_biological_process_2021.gmt__regulation of smad protein signal transduction (go:0060390)",
+              "embryonic organ development (go:0048568)": "go_biological_process_2021.gmt__embryonic organ development (go:0048568)",
+              "protein modification process (go:0036211)": "go_biological_process_2021.gmt__protein modification process (go:0036211)",
+              "positive regulation of cation channel activity (go:2001259)": "go_biological_process_2021.gmt__positive regulation of cation channel activity (go:2001259)",
+              "axonogenesis (go:0007409)": "go_biological_process_2021.gmt__axonogenesis (go:0007409)",
+              "amide biosynthetic process (go:0043604)": "go_biological_process_2021.gmt__amide biosynthetic process (go:0043604)",
+              "positive regulation of atpase activity (go:0032781)": "go_biological_process_2021.gmt__positive regulation of atpase activity (go:0032781)",
+              "ion homeostasis (go:0050801)": "go_biological_process_2021.gmt__ion homeostasis (go:0050801)",
+              "hydrogen peroxide catabolic process (go:0042744)": "go_biological_process_2021.gmt__hydrogen peroxide catabolic process (go:0042744)",
+              "regulation of megakaryocyte differentiation (go:0045652)": "go_biological_process_2021.gmt__regulation of megakaryocyte differentiation (go:0045652)",
+              "phosphatidylinositol dephosphorylation (go:0046856)": "go_biological_process_2021.gmt__phosphatidylinositol dephosphorylation (go:0046856)",
+              "establishment of protein localization to mitochondrion (go:0072655)": "go_biological_process_2021.gmt__establishment of protein localization to mitochondrion (go:0072655)",
+              "regulation of acute inflammatory response (go:0002673)": "go_biological_process_2021.gmt__regulation of acute inflammatory response (go:0002673)",
+              "regulation of cellular ketone metabolic process (go:0010565)": "go_biological_process_2021.gmt__regulation of cellular ketone metabolic process (go:0010565)",
+              "regulation of ubiquitin protein ligase activity (go:1904666)": "go_biological_process_2021.gmt__regulation of ubiquitin protein ligase activity (go:1904666)",
+              "negative regulation of cell cycle process (go:0010948)": "go_biological_process_2021.gmt__negative regulation of cell cycle process (go:0010948)",
+              "triglyceride metabolic process (go:0006641)": "go_biological_process_2021.gmt__triglyceride metabolic process (go:0006641)",
+              "actin nucleation (go:0045010)": "go_biological_process_2021.gmt__actin nucleation (go:0045010)",
+              "negative regulation of cellular response to growth factor stimulus (go:0090288)": "go_biological_process_2021.gmt__negative regulation of cellular response to growth factor stimulus (go:0090288)",
+              "positive regulation of cellular catabolic process (go:0031331)": "go_biological_process_2021.gmt__positive regulation of cellular catabolic process (go:0031331)",
+              "pigment granule transport (go:0051904)": "go_biological_process_2021.gmt__pigment granule transport (go:0051904)",
+              "positive regulation of cellular component organization (go:0051130)": "go_biological_process_2021.gmt__positive regulation of cellular component organization (go:0051130)",
+              "regulation of granulocyte chemotaxis (go:0071622)": "go_biological_process_2021.gmt__regulation of granulocyte chemotaxis (go:0071622)",
+              "extracellular structure organization (go:0043062)": "go_biological_process_2021.gmt__extracellular structure organization (go:0043062)",
+              "camera-type eye development (go:0043010)": "go_biological_process_2021.gmt__camera-type eye development (go:0043010)",
+              "chromatin remodeling at centromere (go:0031055)": "go_biological_process_2021.gmt__chromatin remodeling at centromere (go:0031055)",
+              "respiratory chain complex iv assembly (go:0008535)": "go_biological_process_2021.gmt__respiratory chain complex iv assembly (go:0008535)",
+              "regulation of cardiac muscle contraction (go:0055117)": "go_biological_process_2021.gmt__regulation of cardiac muscle contraction (go:0055117)",
+              "mammary gland epithelium development (go:0061180)": "go_biological_process_2021.gmt__mammary gland epithelium development (go:0061180)",
+              "regulation of transcription regulatory region dna binding (go:2000677)": "go_biological_process_2021.gmt__regulation of transcription regulatory region dna binding (go:2000677)",
+              "intrinsic apoptotic signaling pathway by p53 class mediator (go:0072332)": "go_biological_process_2021.gmt__intrinsic apoptotic signaling pathway by p53 class mediator (go:0072332)",
+              "regulation of smooth muscle contraction (go:0006940)": "go_biological_process_2021.gmt__regulation of smooth muscle contraction (go:0006940)",
+              "maturation of ssu-rrna (go:0030490)": "go_biological_process_2021.gmt__maturation of ssu-rrna (go:0030490)",
+              "phosphatidylinositol acyl-chain remodeling (go:0036149)": "go_biological_process_2021.gmt__phosphatidylinositol acyl-chain remodeling (go:0036149)",
+              "regulation of transcription elongation from rna polymerase ii promoter (go:0034243)": "go_biological_process_2021.gmt__regulation of transcription elongation from rna polymerase ii promoter (go:0034243)",
+              "blood circulation (go:0008015)": "go_biological_process_2021.gmt__blood circulation (go:0008015)",
+              "positive regulation of natural killer cell activation (go:0032816)": "go_biological_process_2021.gmt__positive regulation of natural killer cell activation (go:0032816)",
+              "negative regulation of viral entry into host cell (go:0046597)": "go_biological_process_2021.gmt__negative regulation of viral entry into host cell (go:0046597)",
+              "positive regulation of lipid catabolic process (go:0050996)": "go_biological_process_2021.gmt__positive regulation of lipid catabolic process (go:0050996)",
+              "g protein-coupled acetylcholine receptor signaling pathway (go:0007213)": "go_biological_process_2021.gmt__g protein-coupled acetylcholine receptor signaling pathway (go:0007213)",
+              "positive regulation of leukocyte migration (go:0002687)": "go_biological_process_2021.gmt__positive regulation of leukocyte migration (go:0002687)",
+              "positive regulation of creb transcription factor activity (go:0032793)": "go_biological_process_2021.gmt__positive regulation of creb transcription factor activity (go:0032793)",
+              "beta-catenin destruction complex disassembly (go:1904886)": "go_biological_process_2021.gmt__beta-catenin destruction complex disassembly (go:1904886)",
+              "regulation of humoral immune response (go:0002920)": "go_biological_process_2021.gmt__regulation of humoral immune response (go:0002920)",
+              "negative regulation of insulin secretion (go:0046676)": "go_biological_process_2021.gmt__negative regulation of insulin secretion (go:0046676)",
+              "protein targeting to peroxisome (go:0006625)": "go_biological_process_2021.gmt__protein targeting to peroxisome (go:0006625)",
+              "positive regulation of interleukin-1 production (go:0032732)": "go_biological_process_2021.gmt__positive regulation of interleukin-1 production (go:0032732)",
+              "rna export from nucleus (go:0006405)": "go_biological_process_2021.gmt__rna export from nucleus (go:0006405)",
+              "3'-utr-mediated mrna destabilization (go:0061158)": "go_biological_process_2021.gmt__3'-utr-mediated mrna destabilization (go:0061158)",
+              "cortical cytoskeleton organization (go:0030865)": "go_biological_process_2021.gmt__cortical cytoskeleton organization (go:0030865)",
+              "extrinsic apoptotic signaling pathway in absence of ligand (go:0097192)": "go_biological_process_2021.gmt__extrinsic apoptotic signaling pathway in absence of ligand (go:0097192)",
+              "response to uv (go:0009411)": "go_biological_process_2021.gmt__response to uv (go:0009411)",
+              "negative regulation of cell differentiation (go:0045596)": "go_biological_process_2021.gmt__negative regulation of cell differentiation (go:0045596)",
+              "organonitrogen compound biosynthetic process (go:1901566)": "go_biological_process_2021.gmt__organonitrogen compound biosynthetic process (go:1901566)",
+              "maintenance of gastrointestinal epithelium (go:0030277)": "go_biological_process_2021.gmt__maintenance of gastrointestinal epithelium (go:0030277)",
+              "protein-containing complex subunit organization (go:0043933)": "go_biological_process_2021.gmt__protein-containing complex subunit organization (go:0043933)",
+              "negative regulation of cold-induced thermogenesis (go:0120163)": "go_biological_process_2021.gmt__negative regulation of cold-induced thermogenesis (go:0120163)",
+              "regulation of cellular protein localization (go:1903827)": "go_biological_process_2021.gmt__regulation of cellular protein localization (go:1903827)",
+              "nad biosynthetic process (go:0009435)": "go_biological_process_2021.gmt__nad biosynthetic process (go:0009435)",
+              "dna repair (go:0006281)": "go_biological_process_2021.gmt__dna repair (go:0006281)",
+              "retinoid metabolic process (go:0001523)": "go_biological_process_2021.gmt__retinoid metabolic process (go:0001523)",
+              "plasma membrane organization (go:0007009)": "go_biological_process_2021.gmt__plasma membrane organization (go:0007009)",
+              "negative regulation of cell-cell adhesion (go:0022408)": "go_biological_process_2021.gmt__negative regulation of cell-cell adhesion (go:0022408)",
+              "negative regulation of cation transmembrane transport (go:1904063)": "go_biological_process_2021.gmt__negative regulation of cation transmembrane transport (go:1904063)",
+              "positive regulation of cell migration involved in sprouting angiogenesis (go:0090050)": "go_biological_process_2021.gmt__positive regulation of cell migration involved in sprouting angiogenesis (go:0090050)",
+              "regulation of stem cell differentiation (go:2000736)": "go_biological_process_2021.gmt__regulation of stem cell differentiation (go:2000736)",
+              "skeletal muscle organ development (go:0060538)": "go_biological_process_2021.gmt__skeletal muscle organ development (go:0060538)",
+              "negative regulation of blood vessel morphogenesis (go:2000181)": "go_biological_process_2021.gmt__negative regulation of blood vessel morphogenesis (go:2000181)",
+              "establishment of protein localization to plasma membrane (go:0061951)": "go_biological_process_2021.gmt__establishment of protein localization to plasma membrane (go:0061951)",
+              "positive regulation of peptidyl-tyrosine phosphorylation (go:0050731)": "go_biological_process_2021.gmt__positive regulation of peptidyl-tyrosine phosphorylation (go:0050731)",
+              "regulation of cytokinesis (go:0032465)": "go_biological_process_2021.gmt__regulation of cytokinesis (go:0032465)",
+              "regulation of mitotic spindle assembly (go:1901673)": "go_biological_process_2021.gmt__regulation of mitotic spindle assembly (go:1901673)",
+              "positive regulation of histone acetylation (go:0035066)": "go_biological_process_2021.gmt__positive regulation of histone acetylation (go:0035066)",
+              "xenobiotic transport (go:0042908)": "go_biological_process_2021.gmt__xenobiotic transport (go:0042908)",
+              "post-golgi vesicle-mediated transport (go:0006892)": "go_biological_process_2021.gmt__post-golgi vesicle-mediated transport (go:0006892)",
+              "regulation of cell development (go:0060284)": "go_biological_process_2021.gmt__regulation of cell development (go:0060284)",
+              "negative regulation of lymphocyte activation (go:0051250)": "go_biological_process_2021.gmt__negative regulation of lymphocyte activation (go:0051250)",
+              "histone exchange (go:0043486)": "go_biological_process_2021.gmt__histone exchange (go:0043486)",
+              "odontogenesis (go:0042476)": "go_biological_process_2021.gmt__odontogenesis (go:0042476)",
+              "positive regulation of natural killer cell mediated immunity (go:0002717)": "go_biological_process_2021.gmt__positive regulation of natural killer cell mediated immunity (go:0002717)",
+              "import into nucleus (go:0051170)": "go_biological_process_2021.gmt__import into nucleus (go:0051170)",
+              "snrna metabolic process (go:0016073)": "go_biological_process_2021.gmt__snrna metabolic process (go:0016073)",
+              "positive regulation of protein localization to nucleus (go:1900182)": "go_biological_process_2021.gmt__positive regulation of protein localization to nucleus (go:1900182)",
+              "positive regulation of phosphatidylinositol 3-kinase signaling (go:0014068)": "go_biological_process_2021.gmt__positive regulation of phosphatidylinositol 3-kinase signaling (go:0014068)",
+              "acute-phase response (go:0006953)": "go_biological_process_2021.gmt__acute-phase response (go:0006953)",
+              "positive regulation of mitotic cell cycle (go:0045931)": "go_biological_process_2021.gmt__positive regulation of mitotic cell cycle (go:0045931)",
+              "regulation of b cell differentiation (go:0045577)": "go_biological_process_2021.gmt__regulation of b cell differentiation (go:0045577)",
+              "regulation of peptide hormone secretion (go:0090276)": "go_biological_process_2021.gmt__regulation of peptide hormone secretion (go:0090276)",
+              "regulation of cellular localization (go:0060341)": "go_biological_process_2021.gmt__regulation of cellular localization (go:0060341)",
+              "negative regulation of interleukin-1 beta production (go:0032691)": "go_biological_process_2021.gmt__negative regulation of interleukin-1 beta production (go:0032691)",
+              "phosphatidylinositol phosphate biosynthetic process (go:0046854)": "go_biological_process_2021.gmt__phosphatidylinositol phosphate biosynthetic process (go:0046854)",
+              "mrna splice site selection (go:0006376)": "go_biological_process_2021.gmt__mrna splice site selection (go:0006376)",
+              "morphogenesis of an epithelium (go:0002009)": "go_biological_process_2021.gmt__morphogenesis of an epithelium (go:0002009)",
+              "icosanoid metabolic process (go:0006690)": "go_biological_process_2021.gmt__icosanoid metabolic process (go:0006690)",
+              "positive regulation of dna biosynthetic process (go:2000573)": "go_biological_process_2021.gmt__positive regulation of dna biosynthetic process (go:2000573)",
+              "lipid homeostasis (go:0055088)": "go_biological_process_2021.gmt__lipid homeostasis (go:0055088)",
+              "inner ear morphogenesis (go:0042472)": "go_biological_process_2021.gmt__inner ear morphogenesis (go:0042472)",
+              "golgi organization (go:0007030)": "go_biological_process_2021.gmt__golgi organization (go:0007030)",
+              "positive regulation of establishment of protein localization (go:1904951)": "go_biological_process_2021.gmt__positive regulation of establishment of protein localization (go:1904951)",
+              "positive regulation of transport (go:0051050)": "go_biological_process_2021.gmt__positive regulation of transport (go:0051050)",
+              "adenine nucleotide transport (go:0051503)": "go_biological_process_2021.gmt__adenine nucleotide transport (go:0051503)",
+              "establishment of apical/basal cell polarity (go:0035089)": "go_biological_process_2021.gmt__establishment of apical/basal cell polarity (go:0035089)",
+              "apoptotic nuclear changes (go:0030262)": "go_biological_process_2021.gmt__apoptotic nuclear changes (go:0030262)",
+              "positive regulation of blood coagulation (go:0030194)": "go_biological_process_2021.gmt__positive regulation of blood coagulation (go:0030194)",
+              "regulation of natural killer cell mediated cytotoxicity (go:0042269)": "go_biological_process_2021.gmt__regulation of natural killer cell mediated cytotoxicity (go:0042269)",
+              "regulation of apoptotic signaling pathway (go:2001233)": "go_biological_process_2021.gmt__regulation of apoptotic signaling pathway (go:2001233)",
+              "7-methylguanosine rna capping (go:0009452)": "go_biological_process_2021.gmt__7-methylguanosine rna capping (go:0009452)",
+              "regulation of epidermal growth factor-activated receptor activity (go:0007176)": "go_biological_process_2021.gmt__regulation of epidermal growth factor-activated receptor activity (go:0007176)",
+              "negative regulation of microtubule depolymerization (go:0007026)": "go_biological_process_2021.gmt__negative regulation of microtubule depolymerization (go:0007026)",
+              "oligosaccharide metabolic process (go:0009311)": "go_biological_process_2021.gmt__oligosaccharide metabolic process (go:0009311)",
+              "glycogen catabolic process (go:0005980)": "go_biological_process_2021.gmt__glycogen catabolic process (go:0005980)",
+              "positive regulation of glial cell differentiation (go:0045687)": "go_biological_process_2021.gmt__positive regulation of glial cell differentiation (go:0045687)",
+              "regulation of tumor necrosis factor-mediated signaling pathway (go:0010803)": "go_biological_process_2021.gmt__regulation of tumor necrosis factor-mediated signaling pathway (go:0010803)",
+              "receptor signaling pathway via stat (go:0097696)": "go_biological_process_2021.gmt__receptor signaling pathway via stat (go:0097696)",
+              "positive regulation of stress fiber assembly (go:0051496)": "go_biological_process_2021.gmt__positive regulation of stress fiber assembly (go:0051496)",
+              "vitamin d metabolic process (go:0042359)": "go_biological_process_2021.gmt__vitamin d metabolic process (go:0042359)",
+              "glycerophospholipid biosynthetic process (go:0046474)": "go_biological_process_2021.gmt__glycerophospholipid biosynthetic process (go:0046474)",
+              "regulation of primary metabolic process (go:0080090)": "go_biological_process_2021.gmt__regulation of primary metabolic process (go:0080090)",
+              "positive regulation of rna splicing (go:0033120)": "go_biological_process_2021.gmt__positive regulation of rna splicing (go:0033120)",
+              "notch signaling pathway (go:0007219)": "go_biological_process_2021.gmt__notch signaling pathway (go:0007219)",
+              "heme catabolic process (go:0042167)": "go_biological_process_2021.gmt__heme catabolic process (go:0042167)",
+              "regulation of cell motility (go:2000145)": "go_biological_process_2021.gmt__regulation of cell motility (go:2000145)",
+              "skeletal muscle contraction (go:0003009)": "go_biological_process_2021.gmt__skeletal muscle contraction (go:0003009)",
+              "sterol transport (go:0015918)": "go_biological_process_2021.gmt__sterol transport (go:0015918)",
+              "protein-dna complex assembly (go:0065004)": "go_biological_process_2021.gmt__protein-dna complex assembly (go:0065004)",
+              "cellular response to lectin (go:1990858)": "go_biological_process_2021.gmt__cellular response to lectin (go:1990858)",
+              "regulation of vascular endothelial growth factor signaling pathway (go:1900746)": "go_biological_process_2021.gmt__regulation of vascular endothelial growth factor signaling pathway (go:1900746)",
+              "regulation of lymphocyte proliferation (go:0050670)": "go_biological_process_2021.gmt__regulation of lymphocyte proliferation (go:0050670)",
+              "positive regulation of protein transport (go:0051222)": "go_biological_process_2021.gmt__positive regulation of protein transport (go:0051222)",
+              "cellular response to glucose stimulus (go:0071333)": "go_biological_process_2021.gmt__cellular response to glucose stimulus (go:0071333)",
+              "negative regulation of cytokine production involved in immune response (go:0002719)": "go_biological_process_2021.gmt__negative regulation of cytokine production involved in immune response (go:0002719)",
+              "dna alkylation (go:0006305)": "go_biological_process_2021.gmt__dna alkylation (go:0006305)",
+              "cation transmembrane transport (go:0098655)": "go_biological_process_2021.gmt__cation transmembrane transport (go:0098655)",
+              "mrna cis splicing, via spliceosome (go:0045292)": "go_biological_process_2021.gmt__mrna cis splicing, via spliceosome (go:0045292)",
+              "fatty acid beta-oxidation using acyl-coa oxidase (go:0033540)": "go_biological_process_2021.gmt__fatty acid beta-oxidation using acyl-coa oxidase (go:0033540)",
+              "peptidyl-tyrosine modification (go:0018212)": "go_biological_process_2021.gmt__peptidyl-tyrosine modification (go:0018212)",
+              "intracellular ph reduction (go:0051452)": "go_biological_process_2021.gmt__intracellular ph reduction (go:0051452)",
+              "skin development (go:0043588)": "go_biological_process_2021.gmt__skin development (go:0043588)",
+              "toll-like receptor signaling pathway (go:0002224)": "go_biological_process_2021.gmt__toll-like receptor signaling pathway (go:0002224)",
+              "positive regulation of ion transport (go:0043270)": "go_biological_process_2021.gmt__positive regulation of ion transport (go:0043270)",
+              "regulation of inflammatory response to antigenic stimulus (go:0002861)": "go_biological_process_2021.gmt__regulation of inflammatory response to antigenic stimulus (go:0002861)",
+              "phosphatidylinositol-mediated signaling (go:0048015)": "go_biological_process_2021.gmt__phosphatidylinositol-mediated signaling (go:0048015)",
+              "regulation of g protein-coupled receptor signaling pathway (go:0008277)": "go_biological_process_2021.gmt__regulation of g protein-coupled receptor signaling pathway (go:0008277)",
+              "extracellular matrix assembly (go:0085029)": "go_biological_process_2021.gmt__extracellular matrix assembly (go:0085029)",
+              "positive regulation of granulocyte chemotaxis (go:0071624)": "go_biological_process_2021.gmt__positive regulation of granulocyte chemotaxis (go:0071624)",
+              "establishment of protein localization to extracellular region (go:0035592)": "go_biological_process_2021.gmt__establishment of protein localization to extracellular region (go:0035592)",
+              "regulation of mapk cascade (go:0043408)": "go_biological_process_2021.gmt__regulation of mapk cascade (go:0043408)",
+              "metal ion export (go:0070839)": "go_biological_process_2021.gmt__metal ion export (go:0070839)",
+              "negative regulation of ossification (go:0030279)": "go_biological_process_2021.gmt__negative regulation of ossification (go:0030279)",
+              "leukotriene biosynthetic process (go:0019370)": "go_biological_process_2021.gmt__leukotriene biosynthetic process (go:0019370)",
+              "cellular response to glucagon stimulus (go:0071377)": "go_biological_process_2021.gmt__cellular response to glucagon stimulus (go:0071377)",
+              "regulation of hippo signaling (go:0035330)": "go_biological_process_2021.gmt__regulation of hippo signaling (go:0035330)",
+              "trna processing (go:0008033)": "go_biological_process_2021.gmt__trna processing (go:0008033)",
+              "positive regulation of cell junction assembly (go:1901890)": "go_biological_process_2021.gmt__positive regulation of cell junction assembly (go:1901890)",
+              "zinc ion transport (go:0006829)": "go_biological_process_2021.gmt__zinc ion transport (go:0006829)",
+              "myofibril assembly (go:0030239)": "go_biological_process_2021.gmt__myofibril assembly (go:0030239)",
+              "7-methylguanosine mrna capping (go:0006370)": "go_biological_process_2021.gmt__7-methylguanosine mrna capping (go:0006370)",
+              "bile acid and bile salt transport (go:0015721)": "go_biological_process_2021.gmt__bile acid and bile salt transport (go:0015721)",
+              "stress-activated protein kinase signaling cascade (go:0031098)": "go_biological_process_2021.gmt__stress-activated protein kinase signaling cascade (go:0031098)",
+              "male gonad development (go:0008584)": "go_biological_process_2021.gmt__male gonad development (go:0008584)",
+              "cell junction organization (go:0034330)": "go_biological_process_2021.gmt__cell junction organization (go:0034330)",
+              "n-terminal protein amino acid acetylation (go:0006474)": "go_biological_process_2021.gmt__n-terminal protein amino acid acetylation (go:0006474)",
+              "homotypic cell-cell adhesion (go:0034109)": "go_biological_process_2021.gmt__homotypic cell-cell adhesion (go:0034109)",
+              "hexose transmembrane transport (go:0008645)": "go_biological_process_2021.gmt__hexose transmembrane transport (go:0008645)",
+              "serine family amino acid metabolic process (go:0009069)": "go_biological_process_2021.gmt__serine family amino acid metabolic process (go:0009069)",
+              "regulation of intracellular estrogen receptor signaling pathway (go:0033146)": "go_biological_process_2021.gmt__regulation of intracellular estrogen receptor signaling pathway (go:0033146)",
+              "positive regulation of muscle cell differentiation (go:0051149)": "go_biological_process_2021.gmt__positive regulation of muscle cell differentiation (go:0051149)",
+              "regulation of protein tyrosine kinase activity (go:0061097)": "go_biological_process_2021.gmt__regulation of protein tyrosine kinase activity (go:0061097)",
+              "negative regulation of amyloid-beta formation (go:1902430)": "go_biological_process_2021.gmt__negative regulation of amyloid-beta formation (go:1902430)",
+              "nucleotide-excision repair, dna duplex unwinding (go:0000717)": "go_biological_process_2021.gmt__nucleotide-excision repair, dna duplex unwinding (go:0000717)",
+              "regulation of membrane depolarization (go:0003254)": "go_biological_process_2021.gmt__regulation of membrane depolarization (go:0003254)",
+              "sensory perception of bitter taste (go:0050913)": "go_biological_process_2021.gmt__sensory perception of bitter taste (go:0050913)",
+              "negative regulation of neuron death (go:1901215)": "go_biological_process_2021.gmt__negative regulation of neuron death (go:1901215)",
+              "cellular response to glucocorticoid stimulus (go:0071385)": "go_biological_process_2021.gmt__cellular response to glucocorticoid stimulus (go:0071385)",
+              "calcium ion transmembrane transport (go:0070588)": "go_biological_process_2021.gmt__calcium ion transmembrane transport (go:0070588)",
+              "cellular response to cytokine stimulus (go:0071345)": "go_biological_process_2021.gmt__cellular response to cytokine stimulus (go:0071345)",
+              "regulation of receptor recycling (go:0001919)": "go_biological_process_2021.gmt__regulation of receptor recycling (go:0001919)",
+              "regulation of interferon-alpha production (go:0032647)": "go_biological_process_2021.gmt__regulation of interferon-alpha production (go:0032647)",
+              "negative regulation of response to external stimulus (go:0032102)": "go_biological_process_2021.gmt__negative regulation of response to external stimulus (go:0032102)",
+              "histone h2a monoubiquitination (go:0035518)": "go_biological_process_2021.gmt__histone h2a monoubiquitination (go:0035518)",
+              "regulation of t cell mediated cytotoxicity (go:0001914)": "go_biological_process_2021.gmt__regulation of t cell mediated cytotoxicity (go:0001914)",
+              "anterograde axonal transport (go:0008089)": "go_biological_process_2021.gmt__anterograde axonal transport (go:0008089)",
+              "fatty acid derivative biosynthetic process (go:1901570)": "go_biological_process_2021.gmt__fatty acid derivative biosynthetic process (go:1901570)",
+              "dopamine metabolic process (go:0042417)": "go_biological_process_2021.gmt__dopamine metabolic process (go:0042417)",
+              "iron ion homeostasis (go:0055072)": "go_biological_process_2021.gmt__iron ion homeostasis (go:0055072)",
+              "phospholipid translocation (go:0045332)": "go_biological_process_2021.gmt__phospholipid translocation (go:0045332)",
+              "regulation of fatty acid metabolic process (go:0019217)": "go_biological_process_2021.gmt__regulation of fatty acid metabolic process (go:0019217)",
+              "regulation of erk1 and erk2 cascade (go:0070372)": "go_biological_process_2021.gmt__regulation of erk1 and erk2 cascade (go:0070372)",
+              "response to calcium ion (go:0051592)": "go_biological_process_2021.gmt__response to calcium ion (go:0051592)",
+              "killing by host of symbiont cells (go:0051873)": "go_biological_process_2021.gmt__killing by host of symbiont cells (go:0051873)",
+              "regulation of postsynapse organization (go:0099175)": "go_biological_process_2021.gmt__regulation of postsynapse organization (go:0099175)",
+              "negative regulation of lipid storage (go:0010888)": "go_biological_process_2021.gmt__negative regulation of lipid storage (go:0010888)",
+              "pore complex assembly (go:0046931)": "go_biological_process_2021.gmt__pore complex assembly (go:0046931)",
+              "protein polymerization (go:0051258)": "go_biological_process_2021.gmt__protein polymerization (go:0051258)",
+              "t cell activation involved in immune response (go:0002286)": "go_biological_process_2021.gmt__t cell activation involved in immune response (go:0002286)",
+              "actin filament polymerization (go:0030041)": "go_biological_process_2021.gmt__actin filament polymerization (go:0030041)",
+              "proteolysis (go:0006508)": "go_biological_process_2021.gmt__proteolysis (go:0006508)",
+              "regulation of superoxide anion generation (go:0032928)": "go_biological_process_2021.gmt__regulation of superoxide anion generation (go:0032928)",
+              "positive regulation of cell projection organization (go:0031346)": "go_biological_process_2021.gmt__positive regulation of cell projection organization (go:0031346)",
+              "nucleotide-excision repair, dna gap filling (go:0006297)": "go_biological_process_2021.gmt__nucleotide-excision repair, dna gap filling (go:0006297)",
+              "late endosome to vacuole transport via multivesicular body sorting pathway (go:0032511)": "go_biological_process_2021.gmt__late endosome to vacuole transport via multivesicular body sorting pathway (go:0032511)",
+              "negative regulation of inflammatory response to antigenic stimulus (go:0002862)": "go_biological_process_2021.gmt__negative regulation of inflammatory response to antigenic stimulus (go:0002862)",
+              "intracellular protein transmembrane transport (go:0065002)": "go_biological_process_2021.gmt__intracellular protein transmembrane transport (go:0065002)",
+              "defense response to virus (go:0051607)": "go_biological_process_2021.gmt__defense response to virus (go:0051607)",
+              "dna strand elongation (go:0022616)": "go_biological_process_2021.gmt__dna strand elongation (go:0022616)",
+              "regulation of keratinocyte differentiation (go:0045616)": "go_biological_process_2021.gmt__regulation of keratinocyte differentiation (go:0045616)",
+              "erbb2 signaling pathway (go:0038128)": "go_biological_process_2021.gmt__erbb2 signaling pathway (go:0038128)",
+              "photoperiodism (go:0009648)": "go_biological_process_2021.gmt__photoperiodism (go:0009648)",
+              "proteasome-mediated ubiquitin-dependent protein catabolic process (go:0043161)": "go_biological_process_2021.gmt__proteasome-mediated ubiquitin-dependent protein catabolic process (go:0043161)",
+              "potassium ion import across plasma membrane (go:1990573)": "go_biological_process_2021.gmt__potassium ion import across plasma membrane (go:1990573)",
+              "modified amino acid transport (go:0072337)": "go_biological_process_2021.gmt__modified amino acid transport (go:0072337)",
+              "regulation of calcineurin-nfat signaling cascade (go:0070884)": "go_biological_process_2021.gmt__regulation of calcineurin-nfat signaling cascade (go:0070884)",
+              "regulation of cardiac muscle contraction by regulation of the release of sequestered calcium ion (go:0010881)": "go_biological_process_2021.gmt__regulation of cardiac muscle contraction by regulation of the release of sequestered calcium ion (go:0010881)",
+              "erythrocyte differentiation (go:0030218)": "go_biological_process_2021.gmt__erythrocyte differentiation (go:0030218)",
+              "regulation of vasoconstriction (go:0019229)": "go_biological_process_2021.gmt__regulation of vasoconstriction (go:0019229)",
+              "positive regulation of i-kappab kinase/nf-kappab signaling (go:0043123)": "go_biological_process_2021.gmt__positive regulation of i-kappab kinase/nf-kappab signaling (go:0043123)",
+              "negative regulation of antigen receptor-mediated signaling pathway (go:0050858)": "go_biological_process_2021.gmt__negative regulation of antigen receptor-mediated signaling pathway (go:0050858)",
+              "aerobic respiration (go:0009060)": "go_biological_process_2021.gmt__aerobic respiration (go:0009060)",
+              "post-transcriptional gene silencing by rna (go:0035194)": "go_biological_process_2021.gmt__post-transcriptional gene silencing by rna (go:0035194)",
+              "embryonic heart tube morphogenesis (go:0003143)": "go_biological_process_2021.gmt__embryonic heart tube morphogenesis (go:0003143)",
+              "peptidyl-proline modification (go:0018208)": "go_biological_process_2021.gmt__peptidyl-proline modification (go:0018208)",
+              "protein destabilization (go:0031648)": "go_biological_process_2021.gmt__protein destabilization (go:0031648)",
+              "detection of chemical stimulus involved in sensory perception of taste (go:0050912)": "go_biological_process_2021.gmt__detection of chemical stimulus involved in sensory perception of taste (go:0050912)",
+              "negative regulation of epithelial cell apoptotic process (go:1904036)": "go_biological_process_2021.gmt__negative regulation of epithelial cell apoptotic process (go:1904036)",
+              "negative regulation of nucleic acid-templated transcription (go:1903507)": "go_biological_process_2021.gmt__negative regulation of nucleic acid-templated transcription (go:1903507)",
+              "regulation of cell growth (go:0001558)": "go_biological_process_2021.gmt__regulation of cell growth (go:0001558)",
+              "nadh dehydrogenase complex assembly (go:0010257)": "go_biological_process_2021.gmt__nadh dehydrogenase complex assembly (go:0010257)",
+              "regulation of lipid biosynthetic process (go:0046890)": "go_biological_process_2021.gmt__regulation of lipid biosynthetic process (go:0046890)",
+              "positive regulation of release of sequestered calcium ion into cytosol (go:0051281)": "go_biological_process_2021.gmt__positive regulation of release of sequestered calcium ion into cytosol (go:0051281)",
+              "positive regulation of calcium ion transport into cytosol (go:0010524)": "go_biological_process_2021.gmt__positive regulation of calcium ion transport into cytosol (go:0010524)",
+              "positive regulation of osteoblast differentiation (go:0045669)": "go_biological_process_2021.gmt__positive regulation of osteoblast differentiation (go:0045669)",
+              "negative regulation of atpase activity (go:0032780)": "go_biological_process_2021.gmt__negative regulation of atpase activity (go:0032780)",
+              "membrane lipid biosynthetic process (go:0046467)": "go_biological_process_2021.gmt__membrane lipid biosynthetic process (go:0046467)",
+              "dna modification (go:0006304)": "go_biological_process_2021.gmt__dna modification (go:0006304)",
+              "regulation of cell morphogenesis (go:0022604)": "go_biological_process_2021.gmt__regulation of cell morphogenesis (go:0022604)",
+              "organelle assembly (go:0070925)": "go_biological_process_2021.gmt__organelle assembly (go:0070925)",
+              "regulation of postsynaptic membrane potential (go:0060078)": "go_biological_process_2021.gmt__regulation of postsynaptic membrane potential (go:0060078)",
+              "regulation of protein autophosphorylation (go:0031952)": "go_biological_process_2021.gmt__regulation of protein autophosphorylation (go:0031952)",
+              "regulation of interferon-beta production (go:0032648)": "go_biological_process_2021.gmt__regulation of interferon-beta production (go:0032648)",
+              "snrna 3'-end processing (go:0034472)": "go_biological_process_2021.gmt__snrna 3'-end processing (go:0034472)",
+              "protein-dna complex disassembly (go:0032986)": "go_biological_process_2021.gmt__protein-dna complex disassembly (go:0032986)",
+              "monocarboxylic acid metabolic process (go:0032787)": "go_biological_process_2021.gmt__monocarboxylic acid metabolic process (go:0032787)",
+              "regulation of protein metabolic process (go:0051246)": "go_biological_process_2021.gmt__regulation of protein metabolic process (go:0051246)",
+              "positive regulation of protein modification by small protein conjugation or removal (go:1903322)": "go_biological_process_2021.gmt__positive regulation of protein modification by small protein conjugation or removal (go:1903322)",
+              "positive regulation of cyclin-dependent protein kinase activity (go:1904031)": "go_biological_process_2021.gmt__positive regulation of cyclin-dependent protein kinase activity (go:1904031)",
+              "limb morphogenesis (go:0035108)": "go_biological_process_2021.gmt__limb morphogenesis (go:0035108)",
+              "melanosome localization (go:0032400)": "go_biological_process_2021.gmt__melanosome localization (go:0032400)",
+              "neural crest cell development (go:0014032)": "go_biological_process_2021.gmt__neural crest cell development (go:0014032)",
+              "mitochondrion disassembly (go:0061726)": "go_biological_process_2021.gmt__mitochondrion disassembly (go:0061726)",
+              "regulation of golgi organization (go:1903358)": "go_biological_process_2021.gmt__regulation of golgi organization (go:1903358)",
+              "positive regulation of neuron differentiation (go:0045666)": "go_biological_process_2021.gmt__positive regulation of neuron differentiation (go:0045666)",
+              "proteoglycan metabolic process (go:0006029)": "go_biological_process_2021.gmt__proteoglycan metabolic process (go:0006029)",
+              "receptor internalization (go:0031623)": "go_biological_process_2021.gmt__receptor internalization (go:0031623)",
+              "golgi to plasma membrane protein transport (go:0043001)": "go_biological_process_2021.gmt__golgi to plasma membrane protein transport (go:0043001)",
+              "microtubule depolymerization (go:0007019)": "go_biological_process_2021.gmt__microtubule depolymerization (go:0007019)",
+              "heme biosynthetic process (go:0006783)": "go_biological_process_2021.gmt__heme biosynthetic process (go:0006783)",
+              "regulation of b cell activation (go:0050864)": "go_biological_process_2021.gmt__regulation of b cell activation (go:0050864)",
+              "protein monoubiquitination (go:0006513)": "go_biological_process_2021.gmt__protein monoubiquitination (go:0006513)",
+              "positive regulation of heart rate (go:0010460)": "go_biological_process_2021.gmt__positive regulation of heart rate (go:0010460)",
+              "regulation of glycolytic process (go:0006110)": "go_biological_process_2021.gmt__regulation of glycolytic process (go:0006110)",
+              "negative regulation of anoikis (go:2000811)": "go_biological_process_2021.gmt__negative regulation of anoikis (go:2000811)",
+              "cellular protein metabolic process (go:0044267)": "go_biological_process_2021.gmt__cellular protein metabolic process (go:0044267)",
+              "ubiquitin-dependent protein catabolic process via the multivesicular body sorting pathway (go:0043162)": "go_biological_process_2021.gmt__ubiquitin-dependent protein catabolic process via the multivesicular body sorting pathway (go:0043162)",
+              "negative regulation of map kinase activity (go:0043407)": "go_biological_process_2021.gmt__negative regulation of map kinase activity (go:0043407)",
+              "mitochondrial membrane organization (go:0007006)": "go_biological_process_2021.gmt__mitochondrial membrane organization (go:0007006)",
+              "protein localization to chromatin (go:0071168)": "go_biological_process_2021.gmt__protein localization to chromatin (go:0071168)",
+              "response to ionizing radiation (go:0010212)": "go_biological_process_2021.gmt__response to ionizing radiation (go:0010212)",
+              "chemical homeostasis (go:0048878)": "go_biological_process_2021.gmt__chemical homeostasis (go:0048878)",
+              "mapk cascade (go:0000165)": "go_biological_process_2021.gmt__mapk cascade (go:0000165)",
+              "protein localization to cell periphery (go:1990778)": "go_biological_process_2021.gmt__protein localization to cell periphery (go:1990778)",
+              "rho protein signal transduction (go:0007266)": "go_biological_process_2021.gmt__rho protein signal transduction (go:0007266)",
+              "organelle fission (go:0048285)": "go_biological_process_2021.gmt__organelle fission (go:0048285)",
+              "linoleic acid metabolic process (go:0043651)": "go_biological_process_2021.gmt__linoleic acid metabolic process (go:0043651)",
+              "organophosphate ester transport (go:0015748)": "go_biological_process_2021.gmt__organophosphate ester transport (go:0015748)",
+              "synaptic transmission, glutamatergic (go:0035249)": "go_biological_process_2021.gmt__synaptic transmission, glutamatergic (go:0035249)",
+              "protein autophosphorylation (go:0046777)": "go_biological_process_2021.gmt__protein autophosphorylation (go:0046777)",
+              "regulation of response to biotic stimulus (go:0002831)": "go_biological_process_2021.gmt__regulation of response to biotic stimulus (go:0002831)",
+              "positive regulation of smoothened signaling pathway (go:0045880)": "go_biological_process_2021.gmt__positive regulation of smoothened signaling pathway (go:0045880)",
+              "positive regulation of dna damage response, signal transduction by p53 class mediator (go:0043517)": "go_biological_process_2021.gmt__positive regulation of dna damage response, signal transduction by p53 class mediator (go:0043517)",
+              "apoptotic process (go:0006915)": "go_biological_process_2021.gmt__apoptotic process (go:0006915)",
+              "myeloid cell differentiation (go:0030099)": "go_biological_process_2021.gmt__myeloid cell differentiation (go:0030099)",
+              "regulation of cell-substrate junction assembly (go:0090109)": "go_biological_process_2021.gmt__regulation of cell-substrate junction assembly (go:0090109)",
+              "plasma membrane invagination (go:0099024)": "go_biological_process_2021.gmt__plasma membrane invagination (go:0099024)",
+              "positive regulation of mrna catabolic process (go:0061014)": "go_biological_process_2021.gmt__positive regulation of mrna catabolic process (go:0061014)",
+              "positive regulation of exosomal secretion (go:1903543)": "go_biological_process_2021.gmt__positive regulation of exosomal secretion (go:1903543)",
+              "activation of gtpase activity (go:0090630)": "go_biological_process_2021.gmt__activation of gtpase activity (go:0090630)",
+              "monosaccharide transmembrane transport (go:0015749)": "go_biological_process_2021.gmt__monosaccharide transmembrane transport (go:0015749)",
+              "regulation of cell size (go:0008361)": "go_biological_process_2021.gmt__regulation of cell size (go:0008361)",
+              "protein insertion into mitochondrial membrane (go:0051204)": "go_biological_process_2021.gmt__protein insertion into mitochondrial membrane (go:0051204)",
+              "negative regulation of lipid biosynthetic process (go:0051055)": "go_biological_process_2021.gmt__negative regulation of lipid biosynthetic process (go:0051055)",
+              "ceramide metabolic process (go:0006672)": "go_biological_process_2021.gmt__ceramide metabolic process (go:0006672)",
+              "organelle transport along microtubule (go:0072384)": "go_biological_process_2021.gmt__organelle transport along microtubule (go:0072384)",
+              "positive regulation of transcription of notch receptor target (go:0007221)": "go_biological_process_2021.gmt__positive regulation of transcription of notch receptor target (go:0007221)",
+              "regulation of jnk cascade (go:0046328)": "go_biological_process_2021.gmt__regulation of jnk cascade (go:0046328)",
+              "tetrapyrrole metabolic process (go:0033013)": "go_biological_process_2021.gmt__tetrapyrrole metabolic process (go:0033013)",
+              "phosphatidylethanolamine acyl-chain remodeling (go:0036152)": "go_biological_process_2021.gmt__phosphatidylethanolamine acyl-chain remodeling (go:0036152)",
+              "protein exit from endoplasmic reticulum (go:0032527)": "go_biological_process_2021.gmt__protein exit from endoplasmic reticulum (go:0032527)",
+              "positive regulation of signal transduction (go:0009967)": "go_biological_process_2021.gmt__positive regulation of signal transduction (go:0009967)",
+              "positive regulation of calcium ion transmembrane transport (go:1904427)": "go_biological_process_2021.gmt__positive regulation of calcium ion transmembrane transport (go:1904427)",
+              "neutrophil degranulation (go:0043312)": "go_biological_process_2021.gmt__neutrophil degranulation (go:0043312)",
+              "ganglioside metabolic process (go:0001573)": "go_biological_process_2021.gmt__ganglioside metabolic process (go:0001573)",
+              "positive regulation of canonical wnt signaling pathway (go:0090263)": "go_biological_process_2021.gmt__positive regulation of canonical wnt signaling pathway (go:0090263)",
+              "peptidyl-threonine modification (go:0018210)": "go_biological_process_2021.gmt__peptidyl-threonine modification (go:0018210)",
+              "spindle assembly checkpoint signaling (go:0071173)": "go_biological_process_2021.gmt__spindle assembly checkpoint signaling (go:0071173)",
+              "regulation of vasculature development (go:1901342)": "go_biological_process_2021.gmt__regulation of vasculature development (go:1901342)",
+              "diacylglycerol metabolic process (go:0046339)": "go_biological_process_2021.gmt__diacylglycerol metabolic process (go:0046339)",
+              "endoderm development (go:0007492)": "go_biological_process_2021.gmt__endoderm development (go:0007492)",
+              "inner mitochondrial membrane organization (go:0007007)": "go_biological_process_2021.gmt__inner mitochondrial membrane organization (go:0007007)",
+              "glycosphingolipid biosynthetic process (go:0006688)": "go_biological_process_2021.gmt__glycosphingolipid biosynthetic process (go:0006688)",
+              "divalent inorganic cation homeostasis (go:0072507)": "go_biological_process_2021.gmt__divalent inorganic cation homeostasis (go:0072507)",
+              "rna phosphodiester bond hydrolysis (go:0090501)": "go_biological_process_2021.gmt__rna phosphodiester bond hydrolysis (go:0090501)",
+              "activation of protein kinase a activity (go:0034199)": "go_biological_process_2021.gmt__activation of protein kinase a activity (go:0034199)",
+              "negative regulation of i-kappab kinase/nf-kappab signaling (go:0043124)": "go_biological_process_2021.gmt__negative regulation of i-kappab kinase/nf-kappab signaling (go:0043124)",
+              "copii-coated vesicle budding (go:0090114)": "go_biological_process_2021.gmt__copii-coated vesicle budding (go:0090114)",
+              "positive regulation of stem cell differentiation (go:2000738)": "go_biological_process_2021.gmt__positive regulation of stem cell differentiation (go:2000738)",
+              "regulation of neuronal synaptic plasticity (go:0048168)": "go_biological_process_2021.gmt__regulation of neuronal synaptic plasticity (go:0048168)",
+              "regulation of establishment of protein localization (go:0070201)": "go_biological_process_2021.gmt__regulation of establishment of protein localization (go:0070201)",
+              "regulation of nervous system process (go:0031644)": "go_biological_process_2021.gmt__regulation of nervous system process (go:0031644)",
+              "ephrin receptor signaling pathway (go:0048013)": "go_biological_process_2021.gmt__ephrin receptor signaling pathway (go:0048013)",
+              "spliceosomal snrnp assembly (go:0000387)": "go_biological_process_2021.gmt__spliceosomal snrnp assembly (go:0000387)",
+              "amino acid transport (go:0006865)": "go_biological_process_2021.gmt__amino acid transport (go:0006865)",
+              "peptidyl-asparagine modification (go:0018196)": "go_biological_process_2021.gmt__peptidyl-asparagine modification (go:0018196)",
+              "positive regulation of phagocytosis (go:0050766)": "go_biological_process_2021.gmt__positive regulation of phagocytosis (go:0050766)",
+              "visual system development (go:0150063)": "go_biological_process_2021.gmt__visual system development (go:0150063)",
+              "heart trabecula morphogenesis (go:0061384)": "go_biological_process_2021.gmt__heart trabecula morphogenesis (go:0061384)",
+              "negative regulation of reactive oxygen species metabolic process (go:2000378)": "go_biological_process_2021.gmt__negative regulation of reactive oxygen species metabolic process (go:2000378)",
+              "lymphocyte chemotaxis (go:0048247)": "go_biological_process_2021.gmt__lymphocyte chemotaxis (go:0048247)",
+              "acute inflammatory response (go:0002526)": "go_biological_process_2021.gmt__acute inflammatory response (go:0002526)",
+              "nucleotide-excision repair, dna incision (go:0033683)": "go_biological_process_2021.gmt__nucleotide-excision repair, dna incision (go:0033683)",
+              "keratinocyte differentiation (go:0030216)": "go_biological_process_2021.gmt__keratinocyte differentiation (go:0030216)",
+              "cellular response to chemokine (go:1990869)": "go_biological_process_2021.gmt__cellular response to chemokine (go:1990869)",
+              "positive regulation of t cell mediated immunity (go:0002711)": "go_biological_process_2021.gmt__positive regulation of t cell mediated immunity (go:0002711)",
+              "positive regulation of peptidyl-serine phosphorylation of stat protein (go:0033141)": "go_biological_process_2021.gmt__positive regulation of peptidyl-serine phosphorylation of stat protein (go:0033141)",
+              "negative regulation of epithelial cell differentiation (go:0030857)": "go_biological_process_2021.gmt__negative regulation of epithelial cell differentiation (go:0030857)",
+              "retrograde protein transport, er to cytosol (go:0030970)": "go_biological_process_2021.gmt__retrograde protein transport, er to cytosol (go:0030970)",
+              "negative regulation of insulin receptor signaling pathway (go:0046627)": "go_biological_process_2021.gmt__negative regulation of insulin receptor signaling pathway (go:0046627)",
+              "regulation of cardiac muscle hypertrophy (go:0010611)": "go_biological_process_2021.gmt__regulation of cardiac muscle hypertrophy (go:0010611)",
+              "regulation of interferon-gamma-mediated signaling pathway (go:0060334)": "go_biological_process_2021.gmt__regulation of interferon-gamma-mediated signaling pathway (go:0060334)",
+              "positive regulation of leukocyte mediated cytotoxicity (go:0001912)": "go_biological_process_2021.gmt__positive regulation of leukocyte mediated cytotoxicity (go:0001912)",
+              "positive regulation of syncytium formation by plasma membrane fusion (go:0060143)": "go_biological_process_2021.gmt__positive regulation of syncytium formation by plasma membrane fusion (go:0060143)",
+              "protein targeting to lysosome (go:0006622)": "go_biological_process_2021.gmt__protein targeting to lysosome (go:0006622)",
+              "histone monoubiquitination (go:0010390)": "go_biological_process_2021.gmt__histone monoubiquitination (go:0010390)",
+              "positive regulation of erk1 and erk2 cascade (go:0070374)": "go_biological_process_2021.gmt__positive regulation of erk1 and erk2 cascade (go:0070374)",
+              "odontogenesis of dentin-containing tooth (go:0042475)": "go_biological_process_2021.gmt__odontogenesis of dentin-containing tooth (go:0042475)",
+              "regulation of bicellular tight junction assembly (go:2000810)": "go_biological_process_2021.gmt__regulation of bicellular tight junction assembly (go:2000810)",
+              "glycosaminoglycan biosynthetic process (go:0006024)": "go_biological_process_2021.gmt__glycosaminoglycan biosynthetic process (go:0006024)",
+              "positive regulation of protein processing (go:0010954)": "go_biological_process_2021.gmt__positive regulation of protein processing (go:0010954)",
+              "regulation of transcription from rna polymerase ii promoter in response to hypoxia (go:0061418)": "go_biological_process_2021.gmt__regulation of transcription from rna polymerase ii promoter in response to hypoxia (go:0061418)",
+              "regulation of muscle cell differentiation (go:0051147)": "go_biological_process_2021.gmt__regulation of muscle cell differentiation (go:0051147)",
+              "negative regulation of biomineral tissue development (go:0070168)": "go_biological_process_2021.gmt__negative regulation of biomineral tissue development (go:0070168)",
+              "negative regulation of mitotic cell cycle (go:0045930)": "go_biological_process_2021.gmt__negative regulation of mitotic cell cycle (go:0045930)",
+              "heparan sulfate proteoglycan biosynthetic process (go:0015012)": "go_biological_process_2021.gmt__heparan sulfate proteoglycan biosynthetic process (go:0015012)",
+              "negative regulation of cellular biosynthetic process (go:0031327)": "go_biological_process_2021.gmt__negative regulation of cellular biosynthetic process (go:0031327)",
+              "cellular response to drug (go:0035690)": "go_biological_process_2021.gmt__cellular response to drug (go:0035690)",
+              "transport across blood-brain barrier (go:0150104)": "go_biological_process_2021.gmt__transport across blood-brain barrier (go:0150104)",
+              "response to glucose (go:0009749)": "go_biological_process_2021.gmt__response to glucose (go:0009749)",
+              "porphyrin-containing compound biosynthetic process (go:0006779)": "go_biological_process_2021.gmt__porphyrin-containing compound biosynthetic process (go:0006779)",
+              "protein import into mitochondrial matrix (go:0030150)": "go_biological_process_2021.gmt__protein import into mitochondrial matrix (go:0030150)",
+              "cellular component disassembly (go:0022411)": "go_biological_process_2021.gmt__cellular component disassembly (go:0022411)",
+              "fc receptor signaling pathway (go:0038093)": "go_biological_process_2021.gmt__fc receptor signaling pathway (go:0038093)",
+              "regulation of monooxygenase activity (go:0032768)": "go_biological_process_2021.gmt__regulation of monooxygenase activity (go:0032768)",
+              "oligodendrocyte development (go:0014003)": "go_biological_process_2021.gmt__oligodendrocyte development (go:0014003)",
+              "aflatoxin metabolic process (go:0046222)": "go_biological_process_2021.gmt__aflatoxin metabolic process (go:0046222)",
+              "myelination (go:0042552)": "go_biological_process_2021.gmt__myelination (go:0042552)",
+              "double-strand break repair (go:0006302)": "go_biological_process_2021.gmt__double-strand break repair (go:0006302)",
+              "glycoprotein biosynthetic process (go:0009101)": "go_biological_process_2021.gmt__glycoprotein biosynthetic process (go:0009101)",
+              "positive regulation of nitric oxide metabolic process (go:1904407)": "go_biological_process_2021.gmt__positive regulation of nitric oxide metabolic process (go:1904407)",
+              "negative regulation of endothelial cell apoptotic process (go:2000352)": "go_biological_process_2021.gmt__negative regulation of endothelial cell apoptotic process (go:2000352)",
+              "histone methylation (go:0016571)": "go_biological_process_2021.gmt__histone methylation (go:0016571)",
+              "presynapse assembly (go:0099054)": "go_biological_process_2021.gmt__presynapse assembly (go:0099054)",
+              "regulation of endothelial cell chemotaxis (go:2001026)": "go_biological_process_2021.gmt__regulation of endothelial cell chemotaxis (go:2001026)",
+              "positive regulation of lamellipodium assembly (go:0010592)": "go_biological_process_2021.gmt__positive regulation of lamellipodium assembly (go:0010592)",
+              "response to interferon-beta (go:0035456)": "go_biological_process_2021.gmt__response to interferon-beta (go:0035456)",
+              "cenp-a containing nucleosome assembly (go:0034080)": "go_biological_process_2021.gmt__cenp-a containing nucleosome assembly (go:0034080)",
+              "autophagosome organization (go:1905037)": "go_biological_process_2021.gmt__autophagosome organization (go:1905037)",
+              "negative regulation of transforming growth factor beta receptor signaling pathway (go:0030512)": "go_biological_process_2021.gmt__negative regulation of transforming growth factor beta receptor signaling pathway (go:0030512)",
+              "positive regulation of nitrogen compound metabolic process (go:0051173)": "go_biological_process_2021.gmt__positive regulation of nitrogen compound metabolic process (go:0051173)",
+              "fc-gamma receptor signaling pathway involved in phagocytosis (go:0038096)": "go_biological_process_2021.gmt__fc-gamma receptor signaling pathway involved in phagocytosis (go:0038096)",
+              "negative regulation of calcium ion transport (go:0051926)": "go_biological_process_2021.gmt__negative regulation of calcium ion transport (go:0051926)",
+              "negative regulation of protein catabolic process (go:0042177)": "go_biological_process_2021.gmt__negative regulation of protein catabolic process (go:0042177)",
+              "establishment of endothelial barrier (go:0061028)": "go_biological_process_2021.gmt__establishment of endothelial barrier (go:0061028)",
+              "histone h3-k4 methylation (go:0051568)": "go_biological_process_2021.gmt__histone h3-k4 methylation (go:0051568)",
+              "regulation of heart rate by cardiac conduction (go:0086091)": "go_biological_process_2021.gmt__regulation of heart rate by cardiac conduction (go:0086091)",
+              "negative regulation of interleukin-6 production (go:0032715)": "go_biological_process_2021.gmt__negative regulation of interleukin-6 production (go:0032715)",
+              "protein phosphorylation (go:0006468)": "go_biological_process_2021.gmt__protein phosphorylation (go:0006468)",
+              "positive regulation of mrna splicing, via spliceosome (go:0048026)": "go_biological_process_2021.gmt__positive regulation of mrna splicing, via spliceosome (go:0048026)",
+              "mitotic g2/m transition checkpoint (go:0044818)": "go_biological_process_2021.gmt__mitotic g2/m transition checkpoint (go:0044818)",
+              "visual perception (go:0007601)": "go_biological_process_2021.gmt__visual perception (go:0007601)"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Exact one-to-one matches were identified by the shared GO accession and normalized biological-process label; target identifiers add the dataset prefix.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene %",
+              "NOM p-val",
+              "FDR q-val",
+              "NES",
+              "ES",
+              "Lead_genes",
+              "Term",
+              "FWER p-val",
+              "Name",
+              "Tag %"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene %": [
+                "str",
+                "str",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Lead_genes": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "FWER p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "Tag %": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 2277",
+            "Unmapped candidate rows: 2277"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "filtered_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "overall_similarity": 0.5284156844323142,
+          "per_column_similarities": {
+            "ES": {
+              "similarity": 0.9999244509246185,
+              "strategy": "rae",
+              "matching_count": 584,
+              "total_count": 584,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "FDR q-val": {
+              "similarity": 0.9326184563944548,
+              "strategy": "rae",
+              "matching_count": 490,
+              "total_count": 585,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "FWER p-val": {
+              "similarity": 0.9755240715551654,
+              "strategy": "rae",
+              "matching_count": 553,
+              "total_count": 585,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Gene %": {
+              "similarity": 0.07648890618917867,
+              "strategy": "exact",
+              "matching_count": 393,
+              "total_count": 5138,
+              "error": null,
+              "details": {}
+            },
+            "Lead_genes": {
+              "similarity": 0.11362769650311477,
+              "strategy": "overlap",
+              "matching_count": 582,
+              "total_count": 5138,
+              "error": null,
+              "details": {
+                "delimiter": ";",
+                "threshold": 1.0,
+                "valid_pairs": 5138,
+                "total_pairs": 5138
+              }
+            },
+            "NES": {
+              "similarity": 0.9942319198156194,
+              "strategy": "rae",
+              "matching_count": 584,
+              "total_count": 584,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "NOM p-val": {
+              "similarity": 0.43638910732144387,
+              "strategy": "rae",
+              "matching_count": 359,
+              "total_count": 1088,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Name": {
+              "similarity": 0.11366290385363954,
+              "strategy": "exact",
+              "matching_count": 584,
+              "total_count": 5138,
+              "error": null,
+              "details": {}
+            },
+            "Tag %": {
+              "similarity": 0.11327364733359284,
+              "strategy": "exact",
+              "matching_count": 582,
+              "total_count": 5138,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5138,
+            "alt_rows": 5138,
+            "row_intersection": 5138,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              5138,
+              10
+            ],
+            "alt_shape": [
+              5138,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene %": true,
+              "NOM p-val": true,
+              "FDR q-val": true,
+              "NES": true,
+              "ES": true,
+              "Lead_genes": true,
+              "Term": true,
+              "FWER p-val": true,
+              "Name": true,
+              "Tag %": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.11366290385363954,
+            "ref_missing_rate": 0.44316854807318024,
+            "alt_missing_rate": 0.44316854807318024
+          }
+        }
+      }
+
+  File 2/2: status=success, similarity=0.7342
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables already have the same 10-column structure and exact column names, so no transpose or column mapping is needed. Align rows using Term, normalizing it to the embedded GO identifier because the reference adds a library-name prefix while the candidate does not. Row order is meaningful because these are ranked top-10 enrichment results and the evaluation allows only limited rank shifts; therefore, preserve the reported order rather than sorting or treating the rows as a permutation.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Name",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The analysis label should match exactly for every reported enrichment result."
+            },
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "ES is a core enrichment statistic whose magnitude and sign should agree. A 5% relative-error tolerance accommodates minor numerical or permutation-related variation while detecting direction changes."
+            },
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "NES is the principal statistic for enrichment direction and ranking. The 5% relative-error tolerance directly reflects the evaluation guideline and will reject sign reversals."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.82,
+              "reasoning": "Nominal p-values determine significance but can vary with finite permutations. A 10% relative tolerance allows modest stochastic variation while preserving close agreement; identical zeros remain matched."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1.0,
+              "cell_threshold": null,
+              "confidence": 0.78,
+              "reasoning": "FDR values are important for identifying significant sets but the displayed values are very small and permutation-discrete, making relative errors unstable. A broad relative tolerance permits expected Monte Carlo variation while still penalizing materially different results."
+            },
+            {
+              "name": "FWER p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1.0,
+              "cell_threshold": null,
+              "confidence": 0.77,
+              "reasoning": "FWER values are small, permutation-dependent significance estimates. A 100% relative tolerance is appropriate for differences of only a few permutation increments while retaining a check on significance behavior."
+            },
+            {
+              "name": "Tag %",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Tag percentage is encoded as an exact leading-edge count/set-size ratio such as 72/94. Exact comparison verifies the same core-member count and effective gene-set size."
+            },
+            {
+              "name": "Gene %",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "This is a rounded percentage string, and the preview shows harmless 0.01 percentage-point differences. Exact string comparison would over-penalize formatting and rounding, while overlap parsing is semantically inappropriate."
+            },
+            {
+              "name": "Lead_genes",
+              "data_type": "categorical",
+              "strategy": "overlap",
+              "cell_delimiter": ";",
+              "cell_tolerance": null,
+              "cell_threshold": 0.8,
+              "confidence": 0.98,
+              "reasoning": "Leading-edge genes are semicolon-delimited sets. Jaccard overlap with a high 0.8 threshold verifies strong biological agreement without requiring an identical ordering or complete identity under minor implementation variation."
+            }
+          ],
+          "overall_reasoning": "Term is excluded because it is the alignment identifier and already captures GO-set identity. NES is the most critical comparison because the evaluation explicitly requires the correct enrichment direction and allows 5% relative error; ES receives the same tolerance. Significance statistics are included but receive wider tolerances where permutation discreteness makes tiny values unstable. Name and Tag % use exact comparison, Lead_genes uses semicolon-delimited Jaccard overlap, and the rounded Gene % string is ignored because its observed differences are formatting-level. Missing result rows will still be exposed through mismatches in the included result columns, helping assess whether the complete and top-significant gene-set outputs agree.",
+          "overall_confidence": 0.94,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "unmapped_ref_rows": 2,
+            "unmapped_alt_rows": 2,
+            "fuzzy_matched_ids": {
+              "srp-dependent cotranslational protein targeting to membrane (go:0006614)": "go_biological_process_2021.gmt__srp-dependent cotranslational protein targeting to membrane (go:0006614)",
+              "nuclear-transcribed mrna catabolic process, nonsense-mediated decay (go:0000184)": "go_biological_process_2021.gmt__nuclear-transcribed mrna catabolic process, nonsense-mediated decay (go:0000184)",
+              "fc receptor signaling pathway (go:0038093)": "go_biological_process_2021.gmt__fc receptor signaling pathway (go:0038093)",
+              "regulation of nmda receptor activity (go:2000310)": "go_biological_process_2021.gmt__regulation of nmda receptor activity (go:2000310)",
+              "cotranslational protein targeting to membrane (go:0006613)": "go_biological_process_2021.gmt__cotranslational protein targeting to membrane (go:0006613)",
+              "erbb2 signaling pathway (go:0038128)": "go_biological_process_2021.gmt__erbb2 signaling pathway (go:0038128)",
+              "cytoplasmic translation (go:0002181)": "go_biological_process_2021.gmt__cytoplasmic translation (go:0002181)",
+              "fc-epsilon receptor signaling pathway (go:0038095)": "go_biological_process_2021.gmt__fc-epsilon receptor signaling pathway (go:0038095)"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Matched exact GO terms and accession identifiers after accounting for the reference prefix. Two candidates have no corresponding reference term.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene %",
+              "NOM p-val",
+              "FDR q-val",
+              "NES",
+              "ES",
+              "Lead_genes",
+              "Term",
+              "FWER p-val",
+              "Name",
+              "Tag %"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene %": [
+                "str",
+                "str",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Lead_genes": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "FWER p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "Tag %": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 2",
+            "Unmapped candidate rows: 2"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "filtered_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "overall_similarity": 0.7342346440204712,
+          "per_column_similarities": {
+            "ES": {
+              "similarity": 0.9999498536619853,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "FDR q-val": {
+              "similarity": 0.5051911198988083,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1.0
+              }
+            },
+            "FWER p-val": {
+              "similarity": 0.5729166666666667,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1.0
+              }
+            },
+            "Lead_genes": {
+              "similarity": 0.6666666666666666,
+              "strategy": "overlap",
+              "matching_count": 8,
+              "total_count": 12,
+              "error": null,
+              "details": {
+                "delimiter": ";",
+                "threshold": 0.8,
+                "valid_pairs": 12,
+                "total_pairs": 12
+              }
+            },
+            "NES": {
+              "similarity": 0.9958195119363098,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "NOM p-val": {
+              "similarity": 0.8,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Name": {
+              "similarity": 0.6666666666666666,
+              "strategy": "exact",
+              "matching_count": 8,
+              "total_count": 12,
+              "error": null,
+              "details": {}
+            },
+            "Tag %": {
+              "similarity": 0.6666666666666666,
+              "strategy": "exact",
+              "matching_count": 8,
+              "total_count": 12,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 12,
+            "alt_rows": 12,
+            "row_intersection": 12,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              12,
+              10
+            ],
+            "alt_shape": [
+              12,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene %": true,
+              "NOM p-val": true,
+              "FDR q-val": true,
+              "NES": true,
+              "ES": true,
+              "Lead_genes": true,
+              "Term": true,
+              "FWER p-val": true,
+              "Name": true,
+              "Tag %": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.6666666666666666,
+            "ref_missing_rate": 0.16666666666666666,
+            "alt_missing_rate": 0.16666666666666666
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-2-8  |  Agent: claude-no-skills
+Avg similarity: 0.6313
+============================================================
+
+✅ Results saved → claude-no-skills/a-2-8_claude-no-skills.json
+✅ Full states saved → claude-no-skills/a-2-8_claude-no-skills_full.json
+
+
+
+

@@ -1,0 +1,549 @@
+
+Task:    a-11-7
+Question: Analyze the Spearman correlation between gene expression and gene essentiality scores across common cell lines. Identify the top 5 and bottom 5 correlated genes and visualize the scatter plot of the top correlated gene.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-11-7/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-11-7/output  (3 file(s))
+Matched files:
+  bottom_5.csv → bottom_5.csv  (conf=1.00)
+    Reasoning: The filenames match exactly and both are CSV files representing the five genes with the lowest Spearman correlations.
+  top_5.csv → top_5.csv  (conf=1.00)
+    Reasoning: The filenames and CSV formats match exactly, and both correspond to the five genes with the highest Spearman correlations.
+  top_gene.png → top_gene.png  (conf=1.00)
+    Reasoning: The filenames and PNG image formats match exactly, and both represent the requested scatter plot for the top-correlated gene.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/3: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-11-7/ref_answer/bottom_5.csv
+    alt: promptbio-bench-claude-skills/tasks/a-11-7/output/bottom_5.csv
+
+  File 2/3: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-11-7/ref_answer/top_5.csv
+    alt: promptbio-bench-claude-skills/tasks/a-11-7/output/top_5.csv
+
+  File 3/3: png, strategy=semantic
+    ref: promptbio-bench-data/tasks/a-11-7/ref_answer/top_gene.png
+    alt: promptbio-bench-claude-skills/tasks/a-11-7/output/top_gene.png
+
+  File 1/3: status=success, similarity=0.4663
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "gene": "gene",
+            "spearman_r": "spearman_r",
+            "p_value": "p_value",
+            "adj_p_value": "adj_p_value",
+            "significant": "significant"
+          },
+          "id_columns": [
+            "gene"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "spearman_r",
+          "check_permutation": false,
+          "reasoning": "The tables are already in the same orientation: genes are rows and correlation metrics are columns, so no transpose is needed. The reference columns have direct name matches in the candidate for all 5 relevant fields; the candidate includes one extra column, 'n_cell_lines', which is not present in the reference and can be ignored for alignment. Rows should be aligned by the 'gene' column because each row represents a gene-specific correlation result. Row order is sensitive because the task asks for the bottom 5 correlated genes, which implies a ranked result set. Pre-sorting by 'spearman_r' is appropriate to ensure both tables are compared on the same ranking criterion, especially since the evaluation focuses on the bottom-correlated genes and matching Spearman r values. Column order does not matter because the evaluation explicitly allows column order to differ.",
+          "confidence": 0.96
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "spearman_r",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is the primary task output: identifying top/bottom correlated genes by Spearman correlation, and the evaluation explicitly requires bottom-correlated genes to match in Spearman r within +/-0.001. Therefore absolute value agreement matters more than overall rank-shape correlation, so RAE with a tight tolerance of 0.001 is the most appropriate numerical comparison."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "P-values support the reported gene-correlation results and should closely match if the same Spearman analysis was performed. Since these are small continuous values and exact numerical agreement is important, RAE is appropriate. A tolerance of 0.001 is reasonable given the displayed precision and typical reporting scale."
+            },
+            {
+              "name": "adj_p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Adjusted p-values are secondary statistical outputs. They may legitimately be NaN if multiple-testing correction was not applied or if only partial output was returned, but when present they should numerically align. RAE with 0.001 tolerance captures close agreement without over-penalizing minor float differences."
+            },
+            {
+              "name": "significant",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This boolean-like object column indicates significance status derived from the statistical results. Exact comparison is appropriate because the expected output is a single categorical label per gene, not a tokenized set."
+            }
+          ],
+          "overall_reasoning": "The task is centered on gene-level Spearman correlation analysis across aligned genes, with special emphasis on correctly identifying the top 5 and bottom 5 correlated genes and matching bottom-gene Spearman r values within +/-0.001. Since the alignment ID column 'gene' is excluded from comparison, the most critical non-ID column is 'spearman_r'. For this column, a value-based numerical comparison is needed, and RAE with cell_tolerance 0.001 directly reflects the stated evaluation criterion. 'p_value' and 'adj_p_value' are supporting numerical outputs of the same analysis, so they are also compared with RAE and a small tolerance suitable for small reported decimals. The 'significant' column is categorical/boolean-like and should match exactly. Pearson/Spearman summary-column strategies are not ideal here because each row already contains a per-gene Spearman result; the evaluation is about reproducing those per-row values and identities rather than matching only the overall distribution shape across rows. No overlap strategy or delimiter is needed because there are no multi-valued categorical cells.",
+          "overall_confidence": 0.94,
+          "id_columns": [
+            "gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "gene": "gene",
+              "spearman_r": "spearman_r",
+              "p_value": "p_value",
+              "adj_p_value": "adj_p_value",
+              "significant": "significant"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "n_cell_lines"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "gene"
+            ],
+            "unmapped_ref_rows": 5,
+            "unmapped_alt_rows": 5,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "None of the candidate gene symbols confidently match any of the reference gene symbols. The only superficially similar pair is ate1 vs atf4, but these are distinct gene symbols and should not be matched.",
+              "confidence": 0.98
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "gene",
+              "p_value",
+              "spearman_r",
+              "adj_p_value",
+              "significant"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "gene": [
+                "str",
+                "str",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "spearman_r": [
+                "float64",
+                "float64",
+                true
+              ],
+              "adj_p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "significant": [
+                "object",
+                "object",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "spearman_r"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['n_cell_lines']",
+            "Unmapped reference rows: 5",
+            "Unmapped candidate rows: 5",
+            "Sorted both dataframes by ['spearman_r']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "adj_p_value",
+            "p_value",
+            "significant",
+            "spearman_r"
+          ],
+          "filtered_columns": [
+            "adj_p_value",
+            "p_value",
+            "significant",
+            "spearman_r"
+          ],
+          "overall_similarity": 0.4662658489667078,
+          "per_column_similarities": {
+            "adj_p_value": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            },
+            "p_value": {
+              "similarity": 0.0939142698734727,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "significant": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {}
+            },
+            "spearman_r": {
+              "similarity": 0.7711491259933585,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8333333333333334,
+            "col_recall": 1.0,
+            "col_f1": 0.9090909090909091,
+            "col_jaccard": 0.8333333333333334,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 5,
+            "alt_cols": 6,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              5
+            ],
+            "alt_shape": [
+              10,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "gene": true,
+              "p_value": true,
+              "spearman_r": true,
+              "adj_p_value": true,
+              "significant": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.875,
+            "ref_missing_rate": 0.625,
+            "alt_missing_rate": 0.5
+          }
+        }
+      }
+
+  File 2/3: status=success, similarity=0.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "gene": "gene",
+            "spearman_r": "spearman_r",
+            "p_value": "p_value",
+            "adj_p_value": "adj_p_value",
+            "significant": "significant"
+          },
+          "id_columns": [
+            "gene"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "The tables are not transposed: both are gene-level result tables with genes as rows and summary statistics as columns. The candidate contains all reference columns with exact name matches, plus one extra column (n_cell_lines), so column alignment should map each reference column directly to the identically named candidate column. Row alignment is needed because the task evaluates ranked top-correlated genes, and rows represent gene-specific records; the gene column is the natural identifier for matching records across outputs. Row order is sensitive because the task asks for the top 5 and bottom 5 correlated genes, implying a ranking by spearman_r. No pre-sort is recommended from the structural preview alone because both tables already appear presented as ranked outputs; sorting should only be applied during evaluation if needed using the analysis logic, not as a structural correction here. Permutation checking is not appropriate because order matters for top-ranked results.",
+          "confidence": 0.96
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "spearman_r",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is the primary metric in the task: top 5 and bottom 5 genes are determined by Spearman correlation, and evaluation explicitly requires Spearman r to match within +/-0.001. Use RAE with a strict tolerance of 0.001 to enforce near-exact agreement on per-gene correlation values rather than only checking overall association."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "P-values are a direct downstream result of the gene-wise Spearman analysis and help validate that the same statistical test/results were produced. A tight tolerance is appropriate because values are small continuous outputs and should closely match if the computation is correct."
+            },
+            {
+              "name": "adj_p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Adjusted p-values are relevant supporting outputs for significance assessment, though less central than spearman_r because the evaluation focuses on top/bottom correlated genes and r values. Compare numerically with a small tolerance to capture agreement while allowing for tiny floating-point differences."
+            },
+            {
+              "name": "significant",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This boolean-like object column represents the significance call derived from the p-value outputs. Exact comparison is appropriate because these are discrete labels with no multi-value structure."
+            }
+          ],
+          "overall_reasoning": "The task is to assess gene-wise Spearman correlation results across aligned genes and identify the top and bottom correlated genes, with evaluation explicitly centered on gene identity and spearman_r agreement within +/-0.001. Since the gene column is the alignment key and must be excluded, the most critical comparison column is spearman_r; it should be compared by absolute per-row agreement rather than summary correlation, so RAE with cell_tolerance 0.001 is the best fit. The p_value and adj_p_value columns are relevant secondary statistical outputs from the same analysis and should also be checked numerically with tight tolerances because matching analysis pipelines should yield nearly identical values. The significant column is a derived categorical/boolean result and should be compared exactly. No overlap strategy is needed because there are no list-like categorical cells, and no Pearson/Spearman summary-column comparison is appropriate because the task cares about row-level output correctness and ranking-defining values, not merely whether the candidate columns trend similarly overall. Extra candidate-only column n_cell_lines is excluded because it is not part of the reference outputs and not required by the evaluation guideline.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "gene": "gene",
+              "spearman_r": "spearman_r",
+              "p_value": "p_value",
+              "adj_p_value": "adj_p_value",
+              "significant": "significant"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "n_cell_lines"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "gene"
+            ],
+            "unmapped_ref_rows": 5,
+            "unmapped_alt_rows": 5,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "None of the candidate gene symbols confidently match any of the provided reference gene symbols. Although some share initial letters (e.g., atf4 vs ate1, armh3 vs ampd3/ap1ar), these are different standard gene symbols and should not be aligned without stronger evidence.",
+              "confidence": 0.98
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "gene",
+              "p_value",
+              "spearman_r",
+              "adj_p_value",
+              "significant"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "gene": [
+                "str",
+                "str",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "spearman_r": [
+                "float64",
+                "float64",
+                true
+              ],
+              "adj_p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "significant": [
+                "object",
+                "object",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['n_cell_lines']",
+            "Unmapped reference rows: 5",
+            "Unmapped candidate rows: 5"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "adj_p_value",
+            "p_value",
+            "significant",
+            "spearman_r"
+          ],
+          "filtered_columns": [
+            "adj_p_value",
+            "p_value",
+            "significant",
+            "spearman_r"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "adj_p_value": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            },
+            "p_value": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            },
+            "significant": {
+              "similarity": 0.0,
+              "strategy": "exact",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {}
+            },
+            "spearman_r": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8333333333333334,
+            "col_recall": 1.0,
+            "col_f1": 0.9090909090909091,
+            "col_jaccard": 0.8333333333333334,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 5,
+            "alt_cols": 6,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              5
+            ],
+            "alt_shape": [
+              10,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "gene": true,
+              "p_value": true,
+              "spearman_r": true,
+              "adj_p_value": true,
+              "significant": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.125,
+            "ref_missing_rate": 0.625,
+            "alt_missing_rate": 0.5
+          }
+        }
+      }
+
+  File 3/3: status=success, similarity=0.1800
+    details:
+      {
+        "recommendation": "not equivalent",
+        "confidence": 0.99,
+        "explanation": "Both images are scatter plots of log2(TPM+1) gene expression versus inverted gene-essentiality score across cell lines, and both visibly annotate a positive Spearman correlation. However, they depict different genes and different underlying data. The reference identifies BMP8B (656) as the top gene, with Spearman r = 0.623; its expression spans approximately -0.1 to 6.1 and its inverted-essentiality values approximately -0.11 to 0.58. The candidate instead identifies BECN1, with Spearman r = 0.586, adjusted p = 0.0687, and n = 29; its expression spans roughly 4.3 to 7.4 and inverted-essentiality values roughly -0.03 to 0.91. The point arrangements and axis ranges are consequently substantially different. Although the candidate follows the requested visualization format and conveys a broadly similar positive-correlation concept, it does not reproduce the reference's top correlated gene, correlation statistic, or dataset pattern. The candidate also labels the inversion explicitly as negative CRISPR gene effect, while the reference uses a generic inverted gene-essentiality label; this is not itself problematic, but it does not overcome the central content mismatch."
+      }
+
+============================================================
+RESULTS  —  Task: a-11-7  |  Agent: claude-skills
+Avg similarity: 0.2154
+============================================================
+
+✅ Results saved → results/a-11-7_claude-skills.json
+✅ Full states saved → results/a-11-7_claude-skills_full.json
+
+
+
+

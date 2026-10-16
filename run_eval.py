@@ -52,7 +52,7 @@ from typing import Optional
 ROOT = Path(__file__).parent
 sys.path.insert(0, str(ROOT))
 
-from utils.agents import load_api
+from utils.agents import is_codex_model, load_api
 from utils.logger import log_context
 from utils.match import match_output_files
 from utils.format import detect_file_signature
@@ -435,8 +435,10 @@ def main():
                         help="Directory to save the comparison results and logs")
     parser.add_argument("--label", default="agent",
                         help="Comma-separated labels for output filenames, one per --result-dir (default: agent)")
-    parser.add_argument("--model", default="gpt-5.4",
-                        help="LLM model for matching/strategy/comparison (default: gpt-5.4)")
+    parser.add_argument("--model", default="codex:gpt-5.6-sol",
+                        help="LLM model for matching/strategy/comparison (default: codex:gpt-5.6-sol); "
+                             "prefix with 'codex:' (e.g. codex:gpt-5.6-sol) to use the ChatGPT "
+                             "subscription via the Codex CLI instead of the API")
     args = parser.parse_args()
 
     result_dirs = [Path(p.strip()) for p in args.result_dir.split(",")]
@@ -453,7 +455,8 @@ def main():
             f"number of --result-dir values ({len(result_dirs)})"
         )
 
-    load_api()
+    if not is_codex_model(args.model):
+        load_api()
 
     task_json_path = args.task_dir / "task.json"
     eval_json_path = args.task_dir / "eval.json"

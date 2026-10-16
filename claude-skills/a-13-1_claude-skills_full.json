@@ -1,0 +1,325 @@
+{
+  "id": "a-13-1",
+  "question": "Design CRISPR gRNAs for human FOXP3 using 20nt guide sequences with NGG PAM. Search both forward and reverse strands. Apply basic quality filters: GC content 20-80%, exclude sequences with four or more consecutive identical nucleotides (e.g., TTTT).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-1/ref_answer/foxp3_grnas.csv",
+      "eval_guideline": "Each target_sequence must be present in the reference with the correct pam_sequence; no extra or missing pairs are allowed; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-1/output/foxp3_grnas.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the exact same basename and CSV format as the reference, and its output path corresponds to the same FOXP3 gRNA-design task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare CRISPR gRNA tables by the complete set of (target_sequence, pam_sequence) pairs. Require every pair to match with no extras or omissions; ignore row order, column order, and extra columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires exact record-level equivalence of target/PAM pairs while explicitly allowing reordered rows, reordered columns, and extra columns. CSV approximate comparison is therefore appropriate and avoids the overly strict structural requirements of exact comparison.",
+      "strategy_error": null,
+      "similarity": 0.9991720316946162,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "grna_id": "grna_id",
+            "gene": null,
+            "species": null,
+            "target_sequence": "target_sequence",
+            "pam_sequence": "pam_sequence",
+            "pam_type": null,
+            "position_start": "start",
+            "position_end": "end",
+            "strand": "strand",
+            "gc_content": "gc_content",
+            "full_site": null
+          },
+          "id_columns": [
+            "target_sequence",
+            "pam_sequence"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "target_sequence,pam_sequence",
+          "check_permutation": true,
+          "reasoning": "The tables are not transposed: both are standard row-wise gRNA lists. Column alignment is needed because several names differ and the candidate lacks some reference metadata. Direct matches exist for grna_id, target_sequence, pam_sequence, strand, and gc_content. position_start/position_end map naturally to start/end. Reference-only fields gene, species, pam_type, and full_site have no candidate equivalents; candidate-only fields pam_start, pam_end, and cut_site are extra and can be ignored. For row matching, the evaluation guideline explicitly states that each target_sequence must be present with the correct pam_sequence and that no extra or missing pairs are allowed, so the best structural identifier is the composite key [target_sequence, pam_sequence]. Row order does not matter because the task evaluates set equality of sequence/PAM pairs rather than ranked output, so permutation checking is appropriate. Pre-sorting by target_sequence and pam_sequence will make comparison deterministic after alignment.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "grna_id",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Guide IDs are naming artifacts rather than biological outputs required by the task. The candidate uses a different ID convention from the reference (e.g., FOXP3_gRNA_xxxx vs gRNA_xxx), so this column should not be compared."
+            },
+            {
+              "name": "position_start",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Genomic start coordinate is a core correctness field for each aligned target_sequence/pam_sequence pair. Because exact locus assignment matters for gRNA design, require exact equality via RAE with zero tolerance."
+            },
+            {
+              "name": "position_end",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Genomic end coordinate is also a core correctness field. For fixed 20nt guides, end positions should match exactly if coordinates are reported in the same convention, so use RAE with zero tolerance."
+            },
+            {
+              "name": "strand",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The task explicitly requires searching both forward and reverse strands, so strand assignment is essential and should match exactly."
+            },
+            {
+              "name": "gc_content",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "GC content is part of the stated quality filter and is shown as whole-number percentages in the preview (e.g., 60.0, 50.0). Since these appear deterministically derived from the 20nt sequence, exact agreement is expected; use zero tolerance."
+            }
+          ],
+          "overall_reasoning": "The task's primary correctness criterion is that each target_sequence/pam_sequence pair is present with no extras or omissions; those ID columns are used only for alignment and are therefore excluded from comparison as instructed. Among the remaining shared columns, the biologically meaningful outputs are strand, genomic coordinates, and GC content. Strand is categorical and should be compared with exact matching because forward/reverse assignment is explicitly required by the task. position_start and position_end are numerical but represent discrete genomic coordinates where exact equality matters more than correlation, so RAE with cell_tolerance 0.0 is appropriate to enforce exact matches. gc_content is numerical and directly tied to the required GC filter; because the values appear to be deterministic percentage calculations for 20nt guides, exact agreement is expected, so RAE with 0.0 tolerance is used. grna_id is intentionally ignored because the candidate and reference clearly use different naming schemes, and identifier formatting is not part of the evaluation goal. Extra reference-only columns (gene, species, pam_type, full_site) and candidate-only columns (pam_start, pam_end, cut_site) are not included because comparison should focus on aligned shared data columns relevant to the task, and extra columns may differ.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "target_sequence",
+            "pam_sequence"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "grna_id": "grna_id",
+              "target_sequence": "target_sequence",
+              "pam_sequence": "pam_sequence",
+              "position_start": "start",
+              "position_end": "end",
+              "strand": "strand",
+              "gc_content": "gc_content"
+            },
+            "unmapped_ref": [
+              "gene",
+              "species",
+              "pam_type",
+              "full_site"
+            ],
+            "unmapped_alt": [
+              "pam_start",
+              "pam_end",
+              "cut_site"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "target_sequence",
+              "pam_sequence"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "pam_sequence",
+              "position_start",
+              "grna_id",
+              "strand",
+              "gc_content",
+              "target_sequence",
+              "position_end"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "pam_sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "position_start": [
+                "int64",
+                "int64",
+                true
+              ],
+              "grna_id": [
+                "str",
+                "str",
+                true
+              ],
+              "strand": [
+                "str",
+                "str",
+                true
+              ],
+              "gc_content": [
+                "float64",
+                "float64",
+                true
+              ],
+              "target_sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "position_end": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "target_sequence",
+              "pam_sequence"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['gene', 'species', 'pam_type', 'full_site']",
+            "Unmapped candidate columns: ['pam_start', 'pam_end', 'cut_site']",
+            "Sorted both dataframes by ['target_sequence', 'pam_sequence']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "gc_content",
+            "grna_id",
+            "position_end",
+            "position_start",
+            "strand"
+          ],
+          "filtered_columns": [
+            "gc_content",
+            "position_end",
+            "position_start",
+            "strand"
+          ],
+          "overall_similarity": 0.9991720316946162,
+          "per_column_similarities": {
+            "gc_content": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 311,
+              "total_count": 311,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "position_end": {
+              "similarity": 0.9985956800179248,
+              "strategy": "rae",
+              "matching_count": 122,
+              "total_count": 311,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "position_start": {
+              "similarity": 0.99809244676054,
+              "strategy": "rae",
+              "matching_count": 122,
+              "total_count": 311,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "strand": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 311,
+              "total_count": 311,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.7,
+            "col_recall": 0.6363636363636364,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 311,
+            "alt_rows": 311,
+            "row_intersection": 311,
+            "ref_cols": 11,
+            "alt_cols": 10,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              311,
+              11
+            ],
+            "alt_shape": [
+              311,
+              10
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": 1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "pam_sequence": true,
+              "position_start": true,
+              "grna_id": true,
+              "strand": true,
+              "gc_content": true,
+              "target_sequence": true,
+              "position_end": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

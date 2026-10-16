@@ -96,6 +96,13 @@ class FormatHandler(ABC):
                 "Candidate file not found" if not alt_val.exists
                 else f"Candidate file is not valid: {alt_val.error}"
             )
+        elif not alt_val.non_empty and not ref_val.non_empty:
+            # Both files parse but hold no data records (e.g. header-only): the candidate
+            # reproduces the reference's empty result.
+            result.status = "success"
+            result.similarity = 1.0
+            result.error = None
+            result.details = {**(result.details or {}), "note": "Reference and candidate both contain no data records"}
         elif not alt_val.non_empty:
             # File exists and parses correctly but contains no data records
             result.status = "invalid"

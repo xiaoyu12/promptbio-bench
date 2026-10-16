@@ -1,0 +1,170 @@
+{
+  "id": "a-2-1",
+  "question": "Translate the gene symbols in data/gene.txt to their corresponding Ensembl gene IDs using biomaRt. Report hgnc_symbol and ensembl_gene_id, one row per gene.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-2-1/ref_answer/gene_mapping.csv",
+      "eval_guideline": "Each (hgnc_symbol, ensembl_gene_id) row must match the reference; row order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-2-1/output/gene_mapping.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical basename and CSV format as the reference, and its output path corresponds to the same a-2-1 gene-symbol-to-Ensembl-ID mapping task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the gene-mapping tables by matching each (hgnc_symbol, ensembl_gene_id) pair; allow row reordering and extra columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level agreement for every symbol–Ensembl ID pair while explicitly allowing different row order and extra columns. The CSV approximate strategy supports this structural flexibility without weakening the required pairwise matching.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "hgnc_symbol"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The reference and candidate tables have the same orientation, shape, and identical column names ('hgnc_symbol' and 'ensembl_gene_id'), so no transpose or column remapping is needed. Rows should still be aligned logically because evaluation is based on matching each (hgnc_symbol, ensembl_gene_id) pair, and row order may differ. 'hgnc_symbol' is the natural row identifier because the task is to translate input gene symbols to corresponding Ensembl gene IDs, with one row per gene. Row order is not semantically meaningful for this gene mapping task, so permutation checking is appropriate and pre-sorting is unnecessary.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ensembl_gene_id",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The task is to map each HGNC gene symbol to its corresponding Ensembl gene ID, and evaluation requires each (hgnc_symbol, ensembl_gene_id) pair to match the reference exactly. Since hgnc_symbol is the alignment ID and ensembl_gene_id is a single string identifier, exact categorical comparison is the appropriate strategy."
+            }
+          ],
+          "overall_reasoning": "The only non-ID output column is ensembl_gene_id, which is the core required result of the task. Because the evaluation states that each (hgnc_symbol, ensembl_gene_id) row must match the reference, and hgnc_symbol is already used for alignment and excluded from comparison, ensembl_gene_id should be compared as a categorical string with exact matching. An overlap strategy is unnecessary because each cell contains a single Ensembl identifier rather than a list, so no delimiter or Jaccard threshold applies. Numerical strategies and tolerances are not relevant because there are no numerical columns.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "hgnc_symbol"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "hgnc_symbol"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "hgnc_symbol",
+              "ensembl_gene_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "hgnc_symbol": [
+                "str",
+                "str",
+                true
+              ],
+              "ensembl_gene_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "ensembl_gene_id"
+          ],
+          "filtered_columns": [
+            "ensembl_gene_id"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "ensembl_gene_id": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              2
+            ],
+            "alt_shape": [
+              5,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "hgnc_symbol": true,
+              "ensembl_gene_id": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

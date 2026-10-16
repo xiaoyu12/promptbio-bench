@@ -1,0 +1,237 @@
+Output directory: claude-no-skills
+Agents (1):
+  [claude-no-skills]  promptbio-bench-no-skills/tasks/a-14-1/output
+
+Task:    a-14-1
+Question: Predict the 3D structure of a protein sequence using AlphaFold2, and output all 5 ranked PDB files with per-residue pLDDT confidence scores encoded in B-factor fields.
+Reference files:
+  test_protein_unrelaxed_rank_001_alphafold2_ptm_model_4_seed_000.pdb
+    guideline: 5 PDB files (rank_001 through rank_005) must be present; Ca RMSD of each ranked structure compared by matching rank to the corresponding reference within 2 Angstroms; B-factor column must encode per-residue pLDDT (values in 0-100 range, not all-zero); atom-record order may differ.
+  test_protein_unrelaxed_rank_002_alphafold2_ptm_model_5_seed_000.pdb
+  test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb
+  test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb
+  test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb
+Input files: ['test_protein.fasta']
+
+============================================================
+Step 2/4: Detecting file formats...  [shared — runs once]
+  test_protein_unrelaxed_rank_001_alphafold2_ptm_model_4_seed_000.pdb:
+    format:      pdb
+    compression: none
+    is_text:     True
+    method:      extension
+  test_protein_unrelaxed_rank_002_alphafold2_ptm_model_5_seed_000.pdb:
+    format:      pdb
+    compression: none
+    is_text:     True
+    method:      extension
+  test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb:
+    format:      pdb
+    compression: none
+    is_text:     True
+    method:      extension
+  test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb:
+    format:      pdb
+    compression: none
+    is_text:     True
+    method:      extension
+  test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb:
+    format:      pdb
+    compression: none
+    is_text:     True
+    method:      extension
+
+============================================================
+Step 3/4: Recommending comparison strategies...  [shared — runs once]
+Requesting strategy recommendation for 5 eval file(s).
+  pdb (promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_001_alphafold2_ptm_model_4_seed_000.pdb): approximate (confidence=0.99)
+  pdb (promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_002_alphafold2_ptm_model_5_seed_000.pdb): approximate (confidence=0.98)
+  pdb (promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb): approximate (confidence=0.98)
+  pdb (promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb): approximate (confidence=0.98)
+  pdb (promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb): approximate (confidence=0.98)
+    parameters: {'rmsd_threshold': 2.0}
+    reasoning:  The guideline explicitly allows predicted structures within 2 Å Cα RMSD and permits atom-record reordering, so approximate structural comparison is appropriate. It also supports sequence-aware alignment while accommodating modeling variation.
+    parameters: {'by_name': True, 'sequence_weight': 0.5, 'structure_weight': 0.5, 'rmsd_threshold': 2.0}
+    reasoning:  This is a protein structure prediction task, which explicitly overrides the PDB exact-match default in favor of approximate comparison. Sequence-aware RMSD comparison allows structurally equivalent predictions while tolerating small coordinate differences between AlphaFold2 runs or environments.
+    parameters: {}
+    reasoning:  This is a protein structure prediction task, which explicitly overrides the PDB exact-match default. Approximate comparison accommodates structurally similar predictions that may differ in coordinates due to model inference while still evaluating sequence and RMSD similarity.
+    parameters: {}
+    reasoning:  This is a structure-prediction task, so the PDB format default is overridden in favor of approximate comparison. Sequence alignment and RMSD-based similarity accommodate valid structural variation between AlphaFold2 runs while still assessing structural agreement.
+    parameters: {}
+    reasoning:  This is a protein structure prediction task, which explicitly overrides the PDB exact default in favor of approximate comparison. Sequence-alignment and RMSD-based similarity appropriately accommodate structurally similar predictions that are not coordinate-identical.
+
+############################################################
+Agent: claude-no-skills
+  Result dir: promptbio-bench-no-skills/tasks/a-14-1/output
+  Log:        claude-no-skills/a-14-1_claude-no-skills.log
+  Results:    claude-no-skills/a-14-1_claude-no-skills.json
+
+Task:    a-14-1
+Question: Predict the 3D structure of a protein sequence using AlphaFold2, and output all 5 ranked PDB files with per-residue pLDDT confidence scores encoded in B-factor fields.
+Label:   claude-no-skills
+Result dir: promptbio-bench-no-skills/tasks/a-14-1/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-no-skills/tasks/a-14-1/output  (6 file(s))
+Matched files:
+  test_protein_unrelaxed_rank_001_alphafold2_ptm_model_4_seed_000.pdb → test_protein_unrelaxed_rank_002_alphafold2_ptm_model_4_seed_000.pdb  (conf=0.94)
+    Reasoning: Both are PDB-format unrelaxed AlphaFold2-PTM predictions for model 4 with seed 000. The rank differs, indicating the candidate ranking swapped the first two models, but model identity provides the strongest correspondence.
+  test_protein_unrelaxed_rank_002_alphafold2_ptm_model_5_seed_000.pdb → test_protein_unrelaxed_rank_001_alphafold2_ptm_model_5_seed_000.pdb  (conf=0.94)
+    Reasoning: Both paths identify a PDB-format unrelaxed AlphaFold2-PTM prediction from model 5 with seed 000. Their differing ranks are consistent with a ranking-order change, while the model and seed match exactly.
+  test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb → test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb  (conf=1.00)
+    Reasoning: The PDB filenames match exactly apart from their directory, including protein name, unrelaxed status, rank 003, AlphaFold2-PTM model 3, and seed 000.
+  test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb → test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb  (conf=1.00)
+    Reasoning: The PDB filenames match exactly apart from their directory, including protein name, unrelaxed status, rank 004, AlphaFold2-PTM model 1, and seed 000.
+  test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb → test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb  (conf=1.00)
+    Reasoning: The PDB filenames match exactly apart from their directory, including protein name, unrelaxed status, rank 005, AlphaFold2-PTM model 2, and seed 000.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/5: pdb, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_001_alphafold2_ptm_model_4_seed_000.pdb
+    alt: promptbio-bench-no-skills/tasks/a-14-1/output/test_protein_unrelaxed_rank_002_alphafold2_ptm_model_4_seed_000.pdb
+
+  File 2/5: pdb, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_002_alphafold2_ptm_model_5_seed_000.pdb
+    alt: promptbio-bench-no-skills/tasks/a-14-1/output/test_protein_unrelaxed_rank_001_alphafold2_ptm_model_5_seed_000.pdb
+
+  File 3/5: pdb, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb
+    alt: promptbio-bench-no-skills/tasks/a-14-1/output/test_protein_unrelaxed_rank_003_alphafold2_ptm_model_3_seed_000.pdb
+
+  File 4/5: pdb, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb
+    alt: promptbio-bench-no-skills/tasks/a-14-1/output/test_protein_unrelaxed_rank_004_alphafold2_ptm_model_1_seed_000.pdb
+
+  File 5/5: pdb, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-14-1/ref_answer/test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb
+    alt: promptbio-bench-no-skills/tasks/a-14-1/output/test_protein_unrelaxed_rank_005_alphafold2_ptm_model_2_seed_000.pdb
+
+  File 1/5: status=success, similarity=0.6175
+    details:
+      {
+        "matching_count": 1,
+        "missing_count": 0,
+        "extra_count": 0,
+        "total_ref_count": 1,
+        "total_alt_count": 1,
+        "avg_chain_similarity": 0.6174654826282309,
+        "sequence_weight": 0.5,
+        "structure_weight": 0.5,
+        "rmsd_threshold": 2.0,
+        "chain_details": {
+          "chain_A_vs_A": {
+            "sequence_similarity": 1.0,
+            "structure_similarity": 0.23493096525646168,
+            "rmsd": 4.296319961547852,
+            "tm_score": 0.3531632423400879,
+            "combined_similarity": 0.6174654826282309
+          }
+        }
+      }
+
+  File 2/5: status=success, similarity=0.5215
+    details:
+      {
+        "matching_count": 1,
+        "missing_count": 0,
+        "extra_count": 0,
+        "total_ref_count": 1,
+        "total_alt_count": 1,
+        "avg_chain_similarity": 0.5215201607693167,
+        "sequence_weight": 0.5,
+        "structure_weight": 0.5,
+        "rmsd_threshold": 2.0,
+        "chain_details": {
+          "chain_A_vs_A": {
+            "sequence_similarity": 1.0,
+            "structure_similarity": 0.04304032153863346,
+            "rmsd": 14.659778594970703,
+            "tm_score": 0.0854249969124794,
+            "combined_similarity": 0.5215201607693167
+          }
+        }
+      }
+
+  File 3/5: status=success, similarity=0.6931
+    details:
+      {
+        "matching_count": 1,
+        "missing_count": 0,
+        "extra_count": 0,
+        "total_ref_count": 1,
+        "total_alt_count": 1,
+        "avg_chain_similarity": 0.6930716377358482,
+        "sequence_weight": 0.5,
+        "structure_weight": 0.5,
+        "rmsd_threshold": 2.0,
+        "chain_details": {
+          "chain_A_vs_A": {
+            "sequence_similarity": 1.0,
+            "structure_similarity": 0.3861432754716964,
+            "rmsd": 2.8441519737243652,
+            "tm_score": 0.531073808670044,
+            "combined_similarity": 0.6930716377358482
+          }
+        }
+      }
+
+  File 4/5: status=success, similarity=0.7768
+    details:
+      {
+        "matching_count": 1,
+        "missing_count": 0,
+        "extra_count": 0,
+        "total_ref_count": 1,
+        "total_alt_count": 1,
+        "avg_chain_similarity": 0.7768366006297153,
+        "sequence_weight": 0.5,
+        "structure_weight": 0.5,
+        "rmsd_threshold": 2.0,
+        "chain_details": {
+          "chain_A_vs_A": {
+            "sequence_similarity": 1.0,
+            "structure_similarity": 0.5536732012594305,
+            "rmsd": 1.8848296403884888,
+            "tm_score": 0.7176607251167297,
+            "combined_similarity": 0.7768366006297153
+          }
+        }
+      }
+
+  File 5/5: status=success, similarity=0.6357
+    details:
+      {
+        "matching_count": 1,
+        "missing_count": 0,
+        "extra_count": 0,
+        "total_ref_count": 1,
+        "total_alt_count": 1,
+        "avg_chain_similarity": 0.6357166285113869,
+        "sequence_weight": 0.5,
+        "structure_weight": 0.5,
+        "rmsd_threshold": 2.0,
+        "chain_details": {
+          "chain_A_vs_A": {
+            "sequence_similarity": 1.0,
+            "structure_similarity": 0.2714332570227739,
+            "rmsd": 3.958341360092163,
+            "tm_score": 0.4046827256679535,
+            "combined_similarity": 0.6357166285113869
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-14-1  |  Agent: claude-no-skills
+Avg similarity: 0.6489
+============================================================
+
+✅ Results saved → claude-no-skills/a-14-1_claude-no-skills.json
+✅ Full states saved → claude-no-skills/a-14-1_claude-no-skills_full.json
+
+
+
+

@@ -1,0 +1,281 @@
+{
+  "id": "a-7-10",
+  "question": "Fit the Michaelis-Menten equation to calculate Vmax and Km with and without inhibitor, and plot both the Michaelis-Menten and Lineweaver-Burk (double-reciprocal) curves to compare enzyme kinetics.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-10/ref_answer/fit_results.tsv",
+      "eval_guideline": "TSV with columns condition, Vmax, Km; fitted values for Control and Inhibitor must match the reference within 10% relative absolute error; column order and decimal precision may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-7-10/output/fit_results.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both paths indicate TSV tabular output containing the fitted Vmax and Km results.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare condition, Vmax, and Km values by aligning Control and Inhibitor rows by condition; require Vmax and Km to match within 10% relative absolute error. Allow column reordering and differences in decimal precision."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level comparison of fitted Vmax and Km values for two named conditions within 10% relative absolute error. Approximate table comparison supports row/column alignment and harmless numeric formatting differences.",
+      "strategy_error": null,
+      "similarity": 0.9983501968040693,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "condition": "condition",
+            "Vmax": "Vmax",
+            "Km": "Km"
+          },
+          "id_columns": [
+            "condition"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The candidate table is not transposed: both tables have conditions as rows and kinetic parameters as columns. The reference requires only three columns (condition, Vmax, Km), while the candidate includes those exact columns plus extra diagnostic/fitting columns (standard errors, R2, and Lineweaver-Burk estimates). Therefore columns should be aligned by selecting the exact matching candidate columns for each reference column. Rows should be aligned using condition as the unique identifier because the two rows represent Control and Inhibitor conditions. Row order is not semantically important since evaluation is based on matching fitted values by condition rather than preserving ranking. No pre-sorting is necessary because the identifiers already match clearly, but permutation checking is appropriate in case row order differs.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Vmax",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Vmax is a primary reported fitted parameter explicitly required by the task. The evaluation guideline says fitted values must match within 10% relative absolute error, so RAE with a 0.1 tolerance directly encodes the acceptance criterion."
+            },
+            {
+              "name": "Km",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Km is the other primary fitted parameter explicitly required in the output TSV. Since evaluation requires matching within 10% relative absolute error, RAE with cell_tolerance 0.1 is the correct dtype-aware strategy."
+            }
+          ],
+          "overall_reasoning": "Compare only Vmax and Km, because the task and evaluation guideline specify a TSV with columns condition, Vmax, Km, and condition is an ID/alignment column that must be excluded from value comparison. Although the candidate contains extra diagnostic columns (standard errors, R2, Lineweaver-Burk-derived values), these are not part of the required evaluated output and should not affect scoring. Both compared columns are float64 numerical fitted parameters, so relative absolute error is more appropriate than correlation-based metrics: the task cares about accurate parameter values for each condition, not just trend agreement across the two rows. The tolerance is set to 0.1 for both columns to exactly reflect the stated evaluation rule of matching within 10% relative absolute error. No categorical overlap strategy or delimiters are needed because no non-ID categorical data columns are being compared.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "condition"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "condition": "condition",
+              "Vmax": "Vmax",
+              "Km": "Km"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Vmax_SE",
+              "Km_SE",
+              "R2",
+              "Vmax_LB",
+              "Km_LB",
+              "LB_R2"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "condition"
+            ],
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Km",
+              "condition",
+              "Vmax"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Km": [
+                "float64",
+                "float64",
+                true
+              ],
+              "condition": [
+                "str",
+                "str",
+                true
+              ],
+              "Vmax": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Vmax_SE', 'Km_SE', 'R2', 'Vmax_LB', 'Km_LB', 'LB_R2']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Km",
+            "Vmax"
+          ],
+          "filtered_columns": [
+            "Km",
+            "Vmax"
+          ],
+          "overall_similarity": 0.9983501968040693,
+          "per_column_similarities": {
+            "Km": {
+              "similarity": 0.9977877237851662,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Vmax": {
+              "similarity": 0.9989126698229724,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.3333333333333333,
+            "col_recall": 1.0,
+            "col_f1": 0.5,
+            "col_jaccard": 0.3333333333333333,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 3,
+            "alt_cols": 9,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              3
+            ],
+            "alt_shape": [
+              2,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Km": true,
+              "condition": true,
+              "Vmax": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-10/ref_answer/lineweaver_burk_plot.png",
+      "eval_guideline": "Double-reciprocal plot with 1/[S] on x-axis and 1/V on y-axis showing both control and inhibitor series; colors, fonts, and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-7-10/output/lineweaver_burk_plot.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both are PNG images, and they clearly correspond to the requested Lineweaver-Burk plot.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline specifies semantic visual content: a double-reciprocal plot with correctly labeled reciprocal axes and both control and inhibitor series, while explicitly allowing styling differences. Semantic image comparison is therefore more appropriate than pixel-level matching.",
+      "strategy_error": null,
+      "similarity": 0.95,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.98,
+        "explanation": "Both images present the same Lineweaver–Burk comparison, with 1/[S] on the x-axis and 1/V on the y-axis. They show matching control and inhibitor data patterns at the same reciprocal-substrate positions: the inhibitor series has consistently higher reciprocal velocity than the control, especially at large 1/[S], conveying the same enzyme-inhibition result. The candidate uses different shades of blue/red, smaller markers and fonts, and includes a slightly wider range with negative x and y values around the fitted intercepts. It also adds solid lines derived from the Michaelis–Menten fits, dotted linear-regression lines, R² values, and fitted reciprocal parameters in the legend. These additions are scientifically relevant and do not contradict the reference; they make the kinetic interpretation more explicit. The reference contains only the reciprocal data points and a simpler legend. Thus, despite presentation and annotation differences, the underlying data, axes, series identities, trends, and scientific message are equivalent."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-10/ref_answer/michaelis_menten_fit.png",
+      "eval_guideline": "Saturation curve plot with [S] on x-axis and V on y-axis showing fitted curves for both control and inhibitor conditions; annotation style, colors, and fonts may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-7-10/output/michaelis_menten_fit.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, both are PNG images, and they clearly correspond to the requested Michaelis-Menten fitted-curve plot.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The evaluation guideline requires visual and semantic plot content—substrate concentration and velocity axes with fitted control and inhibitor saturation curves—while explicitly allowing stylistic differences. Semantic image comparison is therefore appropriate rather than pixel-exact matching.",
+      "strategy_error": null,
+      "similarity": 0.98,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.99,
+        "explanation": "Both images present the same Michaelis–Menten kinetic data and fitted saturation curves for control and inhibitor conditions. The substrate concentrations and observed velocities match, as do the fitted parameters: control Km≈1.15 and Vmax≈3.47, and inhibitor Km≈1.70 and Vmax≈2.80. Both therefore convey the same scientific conclusion: inhibitor treatment lowers Vmax and increases Km relative to control. Axes appropriately show substrate concentration [S] versus reaction velocity V, and both conditions are clearly distinguished with blue and red markers/curves. The candidate adds useful horizontal Vmax and vertical Km guide lines and uses solid fitted curves, whereas the reference uses dashed curves and reports parameters in the legend; these are non-substantive presentation differences. The candidate also extends the y-axis to display the fitted asymptotes. Notably, despite the broader task mentioning a Lineweaver–Burk plot, neither provided image contains one, so this is a shared omission rather than a difference between the two images. For the displayed Michaelis–Menten analysis, the images are scientifically equivalent."
+      },
+      "comparison_error": null
+    }
+  ]
+}
