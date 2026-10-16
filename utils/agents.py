@@ -1,17 +1,147 @@
 """LLM agent utilities for structured output."""
 
+import base64
+import json
 import logging
 import os
+import re
+import subprocess
+import tempfile
 from typing import Any, Dict, Optional, TypeVar, Type
 
 from langchain.agents import create_agent
 from langchain.chat_models import init_chat_model
 from dotenv import load_dotenv
 from pathlib import Path
+from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
 T = TypeVar('T')
+
+# Models named "codex:<model>" are run through the Codex CLI (`codex exec`), which
+# bills against the ChatGPT subscription it is logged in with instead of the API.
+CODEX_PREFIX = "codex:"
+# Codex caps a turn's input at 1,048,576 chars; leave room for instructions and schema.
+CODEX_MAX_BODY_CHARS = 1_000_000
+
+
+def is_codex_model(model: str) -> bool:
+    return model.startswith(CODEX_PREFIX)
+
+
+class CodexAgent:
+    """Minimal stand-in for a LangChain agent that answers via `codex exec`.
+
+    Supports what the evaluation code uses: `invoke({"messages": [...]})` returning
+    a dict with "structured_response" (when response_format is set) or "output".
+    """
+
+    def __init__(self, model: str, system_prompt: str, response_format: Optional[Type[T]] = None,
+                 max_attempts: int = 3, timeout: int = 900):
+        self.model = model[len(CODEX_PREFIX):]
+        self.system_prompt = system_prompt
+        self.response_format = response_format
+        self.max_attempts = max_attempts
+        self.timeout = int(os.getenv("CODEX_TIMEOUT", timeout))
+        self.reasoning_effort = os.getenv("CODEX_REASONING_EFFORT")
+
+    def _render(self, messages: list, image_dir: Path) -> tuple[str, list[str]]:
+        """Flatten chat messages into one prompt; write images to files for `--image`."""
+        parts, images = [], []
+        for msg in messages:
+            content = msg.get("content") if isinstance(msg, dict) else getattr(msg, "content", msg)
+            role = msg.get("role", "user") if isinstance(msg, dict) else "user"
+            if isinstance(content, str):
+                parts.append(content if role == "user" else f"[{role}]\n{content}")
+                continue
+            for block in content:
+                if block.get("type") == "text":
+                    parts.append(block["text"])
+                    continue
+                if block.get("type") == "image" and block.get("source", {}).get("type") == "base64":
+                    data, media_type = block["source"]["data"], block["source"].get("media_type", "image/png")
+                elif block.get("type") == "image_url":
+                    url = block["image_url"]["url"] if isinstance(block["image_url"], dict) else block["image_url"]
+                    media_type, data = re.match(r"data:([^;]+);base64,(.*)", url, re.S).groups()
+                else:
+                    raise ValueError(f"Unsupported content block for Codex backend: {block.get('type')}")
+                path = image_dir / f"image_{len(images) + 1}.{media_type.split('/')[-1]}"
+                path.write_bytes(base64.b64decode(data))
+                images.append(str(path))
+                parts.append(f"[Attached image #{len(images)}]")
+        return "\n\n".join(parts), images
+
+    def _build_prompt(self, body: str) -> str:
+        if len(body) > CODEX_MAX_BODY_CHARS:
+            # Codex rejects inputs over 1,048,576 chars; keep the start and end of the body.
+            half = CODEX_MAX_BODY_CHARS // 2
+            logger.warning(f"Codex prompt body is {len(body):,} chars; truncating to {CODEX_MAX_BODY_CHARS:,}")
+            body = f"{body[:half]}\n\n[... {len(body) - 2 * half:,} characters omitted ...]\n\n{body[-half:]}"
+        prompt = (
+            "You are being used as a plain LLM, not a coding agent: do not run commands, read files "
+            "or browse. Answer only from the content below.\n\n"
+            f"# Instructions\n{self.system_prompt}\n\n# Input\n{body}"
+        )
+        if self.response_format is not None:
+            schema = json.dumps(self.response_format.model_json_schema(), indent=2)
+            prompt += (
+                "\n\n# Output format\nReply with a single JSON object that validates against this "
+                f"JSON Schema, and nothing else (no prose, no code fences):\n{schema}"
+            )
+        return prompt
+
+    def _run_codex(self, prompt: str, images: list[str], workdir: Path) -> str:
+        out_file = workdir / "last_message.txt"
+        cmd = [
+            "codex", "exec",
+            "--model", self.model,
+            "--sandbox", "read-only",
+            "--ephemeral", "--skip-git-repo-check", "--ignore-user-config", "--ignore-rules",
+            "--color", "never",
+            "--cd", str(workdir),
+            "--output-last-message", str(out_file),
+        ]
+        if self.reasoning_effort:
+            cmd += ["-c", f'model_reasoning_effort="{self.reasoning_effort}"']
+        for img in images:
+            cmd += ["--image", img]
+        cmd.append("-")  # read prompt from stdin
+        proc = subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=self.timeout)
+        if proc.returncode != 0 or not out_file.exists():
+            # stderr echoes the whole prompt; surface the error lines rather than its tail.
+            errors = [l for l in proc.stderr.splitlines() if l.startswith(("ERROR", "Error"))]
+            detail = "\n".join(errors) if errors else proc.stderr.strip()[-2000:]
+            raise RuntimeError(f"codex exec failed (rc={proc.returncode}): {detail}")
+        return out_file.read_text()
+
+    @staticmethod
+    def _extract_json(text: str) -> str:
+        fenced = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
+        if fenced:
+            return fenced.group(1)
+        start, end = text.find("{"), text.rfind("}")
+        return text[start:end + 1] if start != -1 and end > start else text
+
+    def invoke(self, inputs: dict) -> dict:
+        messages = inputs["messages"] if isinstance(inputs, dict) else inputs
+        with tempfile.TemporaryDirectory(prefix="codex_eval_") as tmp:
+            workdir = Path(tmp)
+            body, images = self._render(messages, workdir)
+            prompt = self._build_prompt(body)
+            if self.response_format is None:
+                return {"output": self._run_codex(prompt, images, workdir)}
+
+            last_error = None
+            for _ in range(self.max_attempts):
+                text = self._run_codex(prompt, images, workdir)
+                try:
+                    parsed = self.response_format.model_validate_json(self._extract_json(text))
+                    return {"structured_response": parsed, "output": text}
+                except ValidationError as e:
+                    last_error = e
+                    logger.warning(f"Codex reply did not match {self.response_format.__name__}, retrying: {e}")
+            raise ValueError(f"Codex reply never matched {self.response_format.__name__}: {last_error}")
 
 
 def create_llm_agent(
@@ -24,12 +154,14 @@ def create_llm_agent(
 ) -> Any:
     """Create an LLM agent with structured output support.
     
-    Supports OpenAI (direct) and OpenRouter (for third-party models).
-    
+    Supports OpenAI (direct), OpenRouter (for third-party models) and the Codex CLI
+    (ChatGPT subscription).
+
     Args:
         model: Model name
             - OpenAI direct: "gpt-4o", "gpt-3.5-turbo", etc.
             - OpenRouter: "anthropic/claude-3.5-sonnet", "google/gemini-pro", etc.
+            - Codex CLI: "codex:gpt-5.6-sol", etc. (tools and temperature are ignored)
         system_prompt: System prompt for the agent
         response_format: Optional Pydantic model for structured output
         tools: Optional list of tools for the agent
@@ -39,6 +171,9 @@ def create_llm_agent(
     Returns:
         Configured agent
     """
+    if is_codex_model(model):
+        return CodexAgent(model, system_prompt, response_format)
+
     # Initialize the chat model with temperature and other parameters
     chat_model = init_chat_model(model, temperature=temperature, **kwargs)
     

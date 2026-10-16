@@ -72,6 +72,8 @@ If the task involves any of the following, use 'summary' regardless of file form
 
 **Exception**: If the task fixes a random seed AND the guideline says "must match exactly", use exact or approximate instead.
 
+**Exception**: A small results table — a few metrics, estimates or a single value (AUPRC per configuration, model coefficients, a final AIC) — is compared value by value: use approximate, and let the guideline's tolerance absorb run-to-run noise. 'summary' compares distributions of many values and cannot judge a handful of numbers.
+
 ## Step 3 — Apply format defaults (when guideline and stochasticity give no override)
 
 | Format | Default strategy | Override when |

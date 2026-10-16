@@ -27,8 +27,21 @@ def pearson_correlation(x: ArrayLike, y: ArrayLike, nan_policy: str = "propagate
         if x.shape != y.shape:
             raise ValueError("Input arrays must have the same shape.")
 
+        # scipy.stats.pearsonr only accepts nan_policy from SciPy 1.17 on; on older versions the
+        # keyword raised TypeError and every Pearson comparison silently came back NaN. Apply
+        # the policy here instead.
+        nan_mask = np.isnan(x) | np.isnan(y)
+        if nan_mask.any():
+            if nan_policy == "raise":
+                raise ValueError("Input contains NaN.")
+            if nan_policy == "propagate":
+                return np.nan
+            x, y = x[~nan_mask], y[~nan_mask]
+        if len(x) < 2:
+            return np.nan
+
         # Use scipy.stats.pearsonr for robust and standard computation
-        corr, _ = stats.pearsonr(x, y, nan_policy=nan_policy)
+        corr, _ = stats.pearsonr(x, y)
         return corr
     except Exception:
         return np.nan

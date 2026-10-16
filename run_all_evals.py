@@ -43,13 +43,31 @@ def _task_ids(runs_dir: Path, ref_dir: Path, only: list[str] | None) -> list[str
     return [t for t in ids if t not in missing_ref]
 
 
-def _already_done(json_path: Path) -> bool:
+def _already_done(task_id: str, args) -> bool:
+    json_path = args.output_dir / f"{task_id}_{args.label}.json"
     if not json_path.exists():
         return False
     try:
-        return json.loads(json_path.read_text()).get("error") is None
+        if json.loads(json_path.read_text()).get("error") is not None:
+            return False
     except json.JSONDecodeError:
         return False
+    # A task can finish with some files scored and others refused for quota; its average
+    # covers only part of the files, so it is redone too.
+    return not _hit_usage_limit(task_id, args)
+
+
+USAGE_LIMIT_MARKERS = ("You've hit your usage limit", "You’ve hit your usage limit", "insufficient_quota",
+                       "credit_balance_exhausted")
+
+
+def _hit_usage_limit(task_id: str, args) -> bool:
+    """True if this task's eval log shows the LLM backend refusing for quota/credits."""
+    for log in (args.output_dir / f"{task_id}_{args.label}.log",
+                args.output_dir / "runner_logs" / f"{task_id}_{args.label}.stdout.log"):
+        if log.exists() and any(m in log.read_text(errors="replace") for m in USAGE_LIMIT_MARKERS):
+            return True
+    return False
 
 
 def _run_one(task_id: str, args) -> tuple[str, int, float]:
@@ -110,7 +128,7 @@ def main():
                         help="Directory of reference tasks (task.json, eval.json, ref_answer/)")
     parser.add_argument("--output-dir", type=Path, default=Path("results"))
     parser.add_argument("--label", default="claude-skills")
-    parser.add_argument("--model", default="codex:gpt-5.6-sol",
+    parser.add_argument("--model", default="codex:gpt-6.1-sol",
                         help="Eval LLM; 'codex:<model>' uses the ChatGPT subscription via the Codex CLI, "
                              "a bare model name uses the OpenAI API")
     parser.add_argument("--workers", type=int, default=4, help="Number of tasks evaluated in parallel")
@@ -124,18 +142,28 @@ def main():
     (args.output_dir / "runner_logs").mkdir(parents=True, exist_ok=True)
 
     todo = [t for t in task_ids
-            if args.overwrite or not _already_done(args.output_dir / f"{t}_{args.label}.json")]
+            if args.overwrite or not _already_done(t, args)]
     print(f"{len(task_ids)} task(s) found, {len(task_ids) - len(todo)} already done, {len(todo)} to run "
           f"(workers={args.workers}, model={args.model})")
 
-    failed = []
+    failed, limited = [], False
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = [pool.submit(_run_one, t, args) for t in todo]
         for i, fut in enumerate(as_completed(futures), 1):
+            if fut.cancelled():
+                continue
             task_id, rc, elapsed = fut.result()
             status = "ok" if rc == 0 else f"FAILED (rc={rc})"
             if rc != 0:
                 failed.append(task_id)
+            if _hit_usage_limit(task_id, args):
+                status += "  [usage limit]"
+                if not limited:
+                    limited = True
+                    # Every later task would fail the same way; let running ones finish, start no more.
+                    n_cancelled = sum(f.cancel() for f in futures)
+                    print(f"\n❌ LLM usage limit hit on {task_id}; cancelled {n_cancelled} queued task(s). "
+                          f"Re-run the same command once the quota resets to resume.", flush=True)
             print(f"[{i}/{len(todo)}] {task_id}: {status}  {elapsed:.0f}s", flush=True)
 
     if failed:
