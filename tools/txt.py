@@ -511,16 +511,21 @@ CRITICAL: You MUST provide numeric values for both equivalence and confidence. D
 
         Uses RAE-based similarity: 1 - |ref - alt| / |ref|.
         If tolerance is provided, similarity is binary: 1.0 if RAE <= tolerance, else 0.0.
+        A tolerance >= 1 sets no lower bound for positive values (e.g. 99 accepts anything
+        from 0 up to 100x the reference).
         """
         try:
             ref_val = float(self._load_file(ref_validation.file_path).strip())
             alt_val = float(self._load_file(alt_validation.file_path).strip())
 
             rae_sim = float(rae_similarity([ref_val], [alt_val])[0])
+            # rae_similarity clips at 0, so the tolerance is checked against the raw error: with the
+            # clipped value a tolerance >= 1 also accepted values far above (1 + tolerance) x reference.
+            raw_rae = abs(alt_val - ref_val) / abs(ref_val) if ref_val != 0 else (0.0 if alt_val == 0 else float("inf"))
             tolerance = kwargs.get("tolerance")
 
             if tolerance is not None:
-                similarity = 1.0 if (1.0 - rae_sim) <= tolerance else 0.0
+                similarity = 1.0 if raw_rae <= tolerance else 0.0
             else:
                 similarity = rae_sim
 
@@ -529,6 +534,7 @@ CRITICAL: You MUST provide numeric values for both equivalence and confidence. D
                 "ref_value": ref_val,
                 "alt_value": alt_val,
                 "rae_similarity": rae_sim,
+                "rae": raw_rae,
                 "tolerance": tolerance,
             })
         except ValueError as e:

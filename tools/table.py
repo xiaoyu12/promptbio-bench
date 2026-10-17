@@ -40,6 +40,18 @@ _TRUE_STRINGS = {"true", "t", "yes", "y", "1"}
 _FALSE_STRINGS = {"false", "f", "no", "n", "0"}
 
 
+def _printed_decimals(series: Series, max_decimals: int = 10) -> int:
+    """Largest number of decimal places among a float column's values (as Python prints them)."""
+    decimals = 0
+    for val in series.dropna():
+        text = repr(float(val))
+        if "e" in text or "E" in text:
+            return max_decimals
+        if "." in text:
+            decimals = max(decimals, len(text.split(".")[1].rstrip("0")))
+    return min(decimals, max_decimals)
+
+
 def _to_bool_series(series: Series) -> Series:
     """Map true/false-like values ("Yes", "no", "TRUE", 0, 1) to booleans.
 
@@ -879,6 +891,15 @@ Provide a mapping from EACH candidate identifier to its matching reference ident
             try:
                 ref_merge = ref_df.copy()
                 alt_merge = alt_df.copy()
+                # Floating-point keys (m/z, retention time) rarely match bit for bit: the candidate
+                # may print more digits than the reference. Compare them at the reference's precision.
+                rounded_keys = {}
+                for col in id_cols:
+                    if pd.api.types.is_float_dtype(ref_merge[col]) and pd.api.types.is_numeric_dtype(alt_merge[col]):
+                        decimals = _printed_decimals(ref_merge[col])
+                        ref_merge[col] = ref_merge[col].round(decimals)
+                        alt_merge[col] = alt_merge[col].astype(float).round(decimals)
+                        rounded_keys[col] = decimals
                 if ignore_case:
                     for col in id_cols:
                         ref_merge[col] = ref_merge[col].astype(str).str.lower()
@@ -933,6 +954,7 @@ Provide a mapping from EACH candidate identifier to its matching reference ident
                     "matched_rows": matched,
                     "unmapped_ref_rows": unmapped_ref,
                     "unmapped_alt_rows": unmapped_alt,
+                    "rounded_float_keys": rounded_keys,
                     "fuzzy_matched_ids": fuzzy_matched_ids,
                     "fuzzy_match_metadata": fuzzy_meta,
                     **id_metadata,
@@ -1098,6 +1120,10 @@ PROVIDE ALL OF THE FOLLOWING:
        columns of a pair/match/merge output (["id_dataset1", "id_dataset2"]), or every column when
        the table is just a set of identifiers. Positional alignment pairs unrelated rows as soon as
        the candidate sorts differently or has extra rows.
+     * Never key on measured or computed continuous values (retention time, intensity, scores, coordinates
+       a tool estimated): they differ slightly between runs and will not match. Inputs copied through
+       unchanged (e.g. a query m/z from the input list) are fine. If only such values identify rows, use []
+       and set pre_sort/sort_by on the most stable of them instead.
      * Use [] (empty list) only if rows have no identifying columns at all (will use positional alignment)
      * Use null to let the system auto-detect
    - row_order_sensitive: Does row order matter?
@@ -1344,6 +1370,13 @@ PROVIDE ALL OF THE FOLLOWING:
      * For "rae": threshold on RAE (e.g., 0.01 for percentages, 1e-6 for floats, 1.0 for integers)
      * For other strategies: None (not applicable)
    
+   - compare_abs: For numerical columns, true to compare absolute values (sign ignored)
+     * Only when the sign is a convention the task leaves open, e.g. a signed mass/ppm error defined as
+       observed - theoretical in one file and theoretical - observed in the other, or a value the task
+       ranks by absolute magnitude
+     * False (default) whenever the sign means something: fold changes, coefficients, correlations,
+       effect directions
+
    - cell_threshold: Optional threshold for Jaccard similarity in overlap strategy (categorical columns)
      * When set: pairs with Jaccard similarity >= threshold are counted as matching
      * When None: raw Jaccard similarity values are averaged
@@ -1698,8 +1731,13 @@ Based on the task description, column dtypes, and aligned data previews, provide
                 is_numeric = pd.api.types.is_numeric_dtype(ref_aligned[col].dtype)
                 strategy = "rae" if is_numeric else "exact"
             
+            ref_col, alt_col = ref_aligned[col], alt_aligned[col]
+            if (config_dict.get("compare_abs") and pd.api.types.is_numeric_dtype(ref_col)
+                    and pd.api.types.is_numeric_dtype(alt_col)):
+                # Sign is a convention here (e.g. observed - theoretical vs the reverse)
+                ref_col, alt_col = ref_col.abs(), alt_col.abs()
             column_similarities[col] = self._get_col_similarity(
-                ref_aligned[col], alt_aligned[col], strategy,
+                ref_col, alt_col, strategy,
                 tolerance=config_dict.get("cell_tolerance") or default_tolerance,
                 delimiter=config_dict.get("cell_delimiter"),
                 threshold=config_dict.get("cell_threshold", 1.0)

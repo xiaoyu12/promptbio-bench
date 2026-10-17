@@ -202,6 +202,14 @@ class ColumnCompareConfig(BaseModel):
                     "For 'rae': threshold on RAE (e.g., 0.01 = RAE values <= 0.01 count as matching). "
                     "For other strategies: not applicable."
     )
+    compare_abs: bool = Field(
+        default=False,
+        description="Numerical columns only: compare absolute values, ignoring sign. Set true ONLY when the sign "
+                    "is a convention the task does not fix, e.g. a signed mass/ppm error that may be defined as "
+                    "observed - theoretical or the reverse, or a value the task ranks by absolute magnitude. "
+                    "Leave false whenever the sign carries meaning: fold changes, coefficients, correlations, "
+                    "effect directions, differences between groups."
+    )
     cell_threshold: Optional[float] = Field(
         default=None,
         ge=0.0,

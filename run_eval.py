@@ -45,6 +45,7 @@ Output (written to --output-dir, one set of files per agent):
 import argparse
 import json
 import math
+import os
 import sys
 from pathlib import Path
 from typing import Optional
@@ -457,6 +458,9 @@ def main():
 
     if not is_codex_model(args.model):
         load_api()
+    # Code paths that call the LLM without being handed a model (format detection during file
+    # validation) read it from here, so the whole evaluation uses --model.
+    os.environ["EVAL_MODEL"] = args.model
 
     task_json_path = args.task_dir / "task.json"
     eval_json_path = args.task_dir / "eval.json"
