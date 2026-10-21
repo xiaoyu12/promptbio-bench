@@ -1,0 +1,217 @@
+{
+  "id": "b-8-9",
+  "question": "Fit a multiple regression model predicting drug clearance (mL/min) with age, weight, and their interaction, plus age^2. Report the coefficients and p-values for all terms.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-9/ref_answer/regression_results.csv",
+      "eval_guideline": "All five term rows must be present; coefficients must match the reference within +/-0.001; column order and term-label phrasing may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-8-9/output/regression_results.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames match exactly and both are CSV files. Both hold the regression coefficients and p-values for the clearance model.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Multiple regression of drug clearance (mL/min) on age, weight, age×weight interaction, and age^2. Compare per-term coefficients and p-values. All five term rows (intercept, age, weight, age:weight, age^2) must be present, and coefficients must match the reference within +/-0.001. Column order and term-label phrasing may differ (e.g., 'age:weight' vs 'age*weight', 'I(age^2)' vs 'age_squared')."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a small, deterministic results table from an OLS regression: five terms, each with a coefficient and p-value. Approximate matching can compare each term's values within the guideline's ±0.001 tolerance, even if column order or term labels differ.",
+      "strategy_error": null,
+      "similarity": 0.9999999999997744,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Term": "Term",
+            "Coefficient": "Coefficient",
+            "P_Value": "P_Value"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same orientation, with one row per regression term, so no transpose is needed. The three reference columns (Term, Coefficient, P_Value) have exact-name matches in the candidate. The extra candidate columns (Std_Error, t_value, CI bounds) are not used. Term labels are worded differently ('Age*Weight (Interaction)' vs 'Age:Weight', 'Age^2 (Quadratic)' vs 'Age^2'), and the guideline says that is allowed, so an exact key match on Term would fail for 2 of the 5 rows. Both tables list the five terms in the same standard order (Intercept, Age, Weight, interaction, quadratic), and the coefficients match row by row, so rows are aligned by position instead of a key. The reference reports some p-values as '<1e-300' strings, so p-values should be compared loosely, while coefficients are compared within ±0.001.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Coefficient",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is the core value the guideline scores. RAE at a 1e-3 tolerance roughly matches the ±0.001 rule when applied across the range of coefficient sizes, and signs are kept because they carry meaning."
+            },
+            {
+              "name": "Term",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline allows term labels to be worded differently. Rows are matched by position, so the labels only identify the terms."
+            },
+            {
+              "name": "P_Value",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "The guideline does not score p-values. The reference uses a '<1e-300' text placeholder, which looks wrong and cannot be compared numerically with the candidate's exact values."
+            }
+          ],
+          "overall_reasoning": "The guideline only scores coefficients: all five terms must be present and each coefficient must be within ±0.001 of the reference. It also says term labels may be worded differently. Rows are matched by position, and the terms appear in the same order in both tables (Intercept, Age, Weight, interaction, quadratic).\n\n- **Coefficient:** compared with relative absolute error (RAE) at a tolerance of 1e-3. A single relative tolerance cannot exactly reproduce a ±0.001 absolute rule when values range from 94.2 down to 0.0035, so 1e-3 is a compromise. It is a bit looser than the rule for the intercept (about ±0.094) and much stricter for the small terms. Signs are kept because a coefficient's direction matters.\n- **Term:** ignored, because the guideline allows different wording (\"Age*Weight (Interaction)\" vs \"Age:Weight\").\n- **P_Value:** ignored. It is not part of the guideline. The reference values \"<1e-300\" are text placeholders that cannot be compared numerically, and they look wrong next to the candidate's exact p-values.\n- **Extra candidate columns** (standard error, t value, confidence interval bounds): not in the reference, so they are not compared.",
+          "overall_confidence": 0.85,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Term": "Term",
+              "Coefficient": "Coefficient",
+              "P_Value": "P_Value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Std_Error",
+              "t_value",
+              "CI_Lower_95",
+              "CI_Upper_95"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Term",
+              "P_Value",
+              "Coefficient"
+            ],
+            "converted_columns": [
+              "P_Value"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "P_Value": [
+                "str",
+                "float64",
+                true
+              ],
+              "Coefficient": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Std_Error', 't_value', 'CI_Lower_95', 'CI_Upper_95']",
+            "Converted 1 column(s) to match reference dtypes"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Coefficient",
+            "P_Value",
+            "Term"
+          ],
+          "filtered_columns": [
+            "Coefficient"
+          ],
+          "overall_similarity": 0.9999999999997744,
+          "per_column_similarities": {
+            "Coefficient": {
+              "similarity": 0.9999999999997744,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.42857142857142855,
+            "col_recall": 1.0,
+            "col_f1": 0.6,
+            "col_jaccard": 0.42857142857142855,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 3,
+            "alt_cols": 7,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              3
+            ],
+            "alt_shape": [
+              5,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Term": true,
+              "P_Value": true,
+              "Coefficient": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

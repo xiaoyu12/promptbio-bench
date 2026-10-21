@@ -1,0 +1,288 @@
+{
+  "id": "a-3-8",
+  "question": "Estimate human transcript abundances from the FASTQ files using Salmon, and provide a summary table of the top 10 expressed transcripts.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-8/ref_answer/top_10_transcripts.csv",
+      "eval_guideline": "The same 10 transcripts as the reference (by TPM rank) must be present, with values matching within 1% relative absolute error; column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-3-8/output/top_10_transcripts.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named top_10_transcripts.csv and are CSV summary tables of the top 10 expressed transcripts.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Salmon quantification of human transcripts (GENCODE v46) from K562 paired-end FASTQ; summary table of top 10 expressed transcripts by TPM. The same 10 transcripts as the reference (by TPM rank) must be present, with values (TPM, NumReads, etc.) matching within 1% relative absolute error; column order may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "This is a small results table of the top 10 transcripts. The guideline asks for record-level matching: the same transcripts, values within 1% relative error, and column order may vary. Approximate alignment handles all of that, and the tolerance absorbs Salmon's small run-to-run variation.",
+      "strategy_error": null,
+      "similarity": 0.9483972855848929,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Name": "Name",
+            "Length": "Length",
+            "EffectiveLength": "EffectiveLength",
+            "TPM": "TPM",
+            "NumReads": "NumReads"
+          },
+          "id_columns": [
+            "Name"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have the same orientation, so no transpose is needed. All 5 reference columns appear in the candidate with identical names. The candidate's extra columns (Rank, GeneID, GeneName, TranscriptName, TranscriptType) are left out. The transcript ID in 'Name' is unique and stays the same between runs, so it is the row key; TPM, NumReads and EffectiveLength are estimated values and are not used as keys. The task asks for the top 10 by TPM rank, so row order matters. Both tables are already sorted by TPM descending and list the same 10 transcripts in the same order, so no pre-sort is needed. The numbers themselves differ (TPM by about 8–21%), but that is a value-comparison issue, not an alignment one.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "TPM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "TPM is the main abundance measure used for ranking. The guideline requires a match within 1% RAE."
+            },
+            {
+              "name": "NumReads",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "These are Salmon's estimated read counts. The guideline's 1% RAE limit applies to all values."
+            },
+            {
+              "name": "EffectiveLength",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The effective length comes from the fragment length distribution. Small differences are expected, and the 1% RAE guideline still applies."
+            },
+            {
+              "name": "Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Transcript length comes from the annotation and should match exactly. RAE at 1% matches the guideline."
+            }
+          ],
+          "overall_reasoning": "The evaluation guideline says the same 10 top transcripts must appear (this is handled by aligning on Name) and that values must match within 1% relative absolute error. So each numeric quant column from the reference (Length, EffectiveLength, TPM, NumReads) is compared with RAE at cell_tolerance 0.01. Columns that exist only in the candidate (Rank, GeneID, GeneName, TranscriptName, TranscriptType) are not in the reference, so they are not compared. Column order does not matter. The signs of these quantities carry meaning, so none of the comparisons use absolute values.\n\nExpected outcome from the preview:\n- **Length** matches exactly.\n- **EffectiveLength** is within about 0.2% for every row except enst00000361851.1 (32.116 vs 34.912, about 8.7%), so that row will fail.\n- **TPM** differs by about 5–22% and will mostly fail.\n- **NumReads** differs on several rows by more than 1%.\n\nThese failures reflect the strict 1% guideline.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Name": "Name",
+              "Length": "Length",
+              "EffectiveLength": "EffectiveLength",
+              "TPM": "TPM",
+              "NumReads": "NumReads"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Rank",
+              "GeneID",
+              "GeneName",
+              "TranscriptName",
+              "TranscriptType"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Name"
+            ],
+            "matched_rows": 10,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "EffectiveLength",
+              "Name",
+              "Length",
+              "NumReads",
+              "TPM"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "EffectiveLength": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "Length": [
+                "int64",
+                "int64",
+                true
+              ],
+              "NumReads": [
+                "float64",
+                "float64",
+                true
+              ],
+              "TPM": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Rank', 'GeneID', 'GeneName', 'TranscriptName', 'TranscriptType']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "EffectiveLength",
+            "Length",
+            "NumReads",
+            "TPM"
+          ],
+          "filtered_columns": [
+            "EffectiveLength",
+            "Length",
+            "NumReads",
+            "TPM"
+          ],
+          "overall_similarity": 0.9483972855848929,
+          "per_column_similarities": {
+            "EffectiveLength": {
+              "similarity": 0.9892560912795805,
+              "strategy": "rae",
+              "matching_count": 9,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "NumReads": {
+              "similarity": 0.9586241520696707,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "TPM": {
+              "similarity": 0.8457088989903205,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 5,
+            "alt_cols": 10,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              5
+            ],
+            "alt_shape": [
+              10,
+              10
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -5
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "EffectiveLength": true,
+              "Name": true,
+              "Length": true,
+              "NumReads": true,
+              "TPM": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

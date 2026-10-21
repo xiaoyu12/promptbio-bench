@@ -1,0 +1,506 @@
+{
+  "id": "a-15-6",
+  "question": "Integrate RNA-Seq and WGS data to identify A-to-I RNA editing sites. Exclude sites that are present as germline variants in the WGS data. Report editing percentage and a confidence score for each candidate site.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-6/ref_answer/a_to_i_editing_sites.csv",
+      "eval_guideline": "Each editing site row must match the reference in genomic coordinates and nucleotide counts (A/C/G/T); editing_percentage must match within +/-0.1; confidence_score may vary based on scoring formula but must be a positive numeric value; variant_type label may differ (e.g. 'A->G', 'A_to_I') as long as it indicates A-to-I editing; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-6/output/a_to_i_editing_sites.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filename is identical and both files are CSV, so they hold the same A-to-I editing site results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare A-to-I RNA editing site tables (RNA-Seq pileup filtered against WGS germline variants). Each row must match the reference on genomic coordinates (chromosome, position) and nucleotide counts (A/C/G/T). editing_percentage must be within +/-0.1. confidence_score can differ because scoring formulas vary, but it must be a positive number. The variant_type label can differ (e.g. 'A->G', 'A_to_I') as long as it means A-to-I editing. Column order, row order and header labels can differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "This is a deterministic filtering task. The guideline asks for each row to match on coordinates and nucleotide counts, allows ±0.1 on editing percentage, and lets the label and column names vary, which fits approximate record-level alignment.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "chrom": "chrom",
+            "pos": "pos",
+            "ref": "ref",
+            "variant_type": "variant_type",
+            "depth": "depth",
+            "reference_reads": "reference_reads",
+            "edited_reads": "edited_reads",
+            "editing_percentage": "editing_percentage",
+            "confidence_score": "confidence_score",
+            "A_count": "A_count",
+            "C_count": "C_count",
+            "G_count": "G_count",
+            "T_count": "T_count"
+          },
+          "id_columns": [
+            "chrom",
+            "pos"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "chrom,pos",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same layout: one row per editing site, so no transpose is needed. All 13 reference columns have candidate columns with exactly the same names, so each maps 1:1. The extra candidate columns (alt, strand_inferred, binomial_pvalue, phred_score, editing_ci95_lower, wgs_status) are not used. Rows are matched on the genomic coordinates (chrom, pos). These are input-derived positions, not estimated values, and the guideline says rows must match on coordinates. The output is a set of candidate sites, not a ranked list, so row order doesn't matter. Rows are sorted by chrom and pos before comparison. The variant_type labels differ ('A_to_I_editing' vs 'A-to-I'), but the guideline treats them as equivalent. confidence_score uses a different formula in each table and only needs to be positive.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ref",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The reference base must be A for an A-to-I site, so it should match exactly."
+            },
+            {
+              "name": "variant_type",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline allows different label wording as long as it indicates A-to-I editing."
+            },
+            {
+              "name": "depth",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Integer read depth is derived from the nucleotide counts, so it must match exactly."
+            },
+            {
+              "name": "reference_reads",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Integer count equal to A_count; requires an exact match."
+            },
+            {
+              "name": "edited_reads",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Integer count equal to G_count; requires an exact match."
+            },
+            {
+              "name": "editing_percentage",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.002,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Must be within ±0.1 percentage points. A relative tolerance of 0.002 roughly matches this for typical editing levels."
+            },
+            {
+              "name": "confidence_score",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The scoring formula may differ, and the only requirement is a positive value, which RAE cannot check."
+            },
+            {
+              "name": "A_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline requires nucleotide counts to match exactly."
+            },
+            {
+              "name": "C_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline requires nucleotide counts to match exactly."
+            },
+            {
+              "name": "G_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline requires nucleotide counts to match exactly."
+            },
+            {
+              "name": "T_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline requires nucleotide counts to match exactly."
+            }
+          ],
+          "overall_reasoning": "The guideline requires each editing site (aligned on chrom/pos) to match exactly in nucleotide counts (A/C/G/T), so these count columns use RAE with tolerance 0. The derived read counts (depth, reference_reads, edited_reads) are also compared exactly. editing_percentage must be within ±0.1 percentage points. On a 0–100 scale, an RAE tolerance of 0.002 allows about 0.18 at 88.89. That is slightly looser than the absolute rule at high values and tighter at low values. ref is a single nucleotide, so it is compared by exact match. confidence_score is ignored because the scoring formula may differ; the only requirement is that it is positive, and RAE cannot test that. variant_type is ignored because its labels may differ ('A-to-I' vs 'A_to_I_editing') as long as they indicate A-to-I editing. Extra columns in the candidate are not compared.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "chrom",
+            "pos"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "chrom": "chrom",
+              "pos": "pos",
+              "ref": "ref",
+              "variant_type": "variant_type",
+              "depth": "depth",
+              "reference_reads": "reference_reads",
+              "edited_reads": "edited_reads",
+              "editing_percentage": "editing_percentage",
+              "confidence_score": "confidence_score",
+              "A_count": "A_count",
+              "C_count": "C_count",
+              "G_count": "G_count",
+              "T_count": "T_count"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "alt",
+              "strand_inferred",
+              "binomial_pvalue",
+              "phred_score",
+              "editing_ci95_lower",
+              "wgs_status"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "chrom",
+              "pos"
+            ],
+            "matched_rows": 1,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "G_count",
+              "depth",
+              "variant_type",
+              "pos",
+              "C_count",
+              "chrom",
+              "edited_reads",
+              "ref",
+              "reference_reads",
+              "A_count",
+              "editing_percentage",
+              "confidence_score",
+              "T_count"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "G_count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "depth": [
+                "int64",
+                "int64",
+                true
+              ],
+              "variant_type": [
+                "str",
+                "str",
+                true
+              ],
+              "pos": [
+                "str",
+                "str",
+                true
+              ],
+              "C_count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "chrom": [
+                "str",
+                "str",
+                true
+              ],
+              "edited_reads": [
+                "int64",
+                "int64",
+                true
+              ],
+              "ref": [
+                "str",
+                "str",
+                true
+              ],
+              "reference_reads": [
+                "int64",
+                "int64",
+                true
+              ],
+              "A_count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "editing_percentage": [
+                "float64",
+                "float64",
+                true
+              ],
+              "confidence_score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "T_count": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "chrom",
+              "pos"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['alt', 'strand_inferred', 'binomial_pvalue', 'phred_score', 'editing_ci95_lower', 'wgs_status']",
+            "Sorted both dataframes by ['chrom', 'pos']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "A_count",
+            "C_count",
+            "G_count",
+            "T_count",
+            "confidence_score",
+            "depth",
+            "edited_reads",
+            "editing_percentage",
+            "ref",
+            "reference_reads",
+            "variant_type"
+          ],
+          "filtered_columns": [
+            "A_count",
+            "C_count",
+            "G_count",
+            "T_count",
+            "depth",
+            "edited_reads",
+            "editing_percentage",
+            "ref",
+            "reference_reads"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "A_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "C_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "G_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "T_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "depth": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "edited_reads": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "editing_percentage": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.002
+              }
+            },
+            "ref": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "reference_reads": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6842105263157895,
+            "col_recall": 1.0,
+            "col_f1": 0.8125000000000001,
+            "col_jaccard": 0.6842105263157895,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 13,
+            "alt_cols": 19,
+            "col_intersection": 13
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              13
+            ],
+            "alt_shape": [
+              1,
+              19
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "G_count": true,
+              "depth": true,
+              "variant_type": true,
+              "pos": true,
+              "C_count": true,
+              "chrom": true,
+              "edited_reads": true,
+              "ref": true,
+              "reference_reads": true,
+              "A_count": true,
+              "editing_percentage": true,
+              "confidence_score": true,
+              "T_count": true
+            },
+            "common_columns": 13
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

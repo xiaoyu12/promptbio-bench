@@ -1,0 +1,563 @@
+{
+  "id": "a-6-2",
+  "question": "Infer Amplicon Sequence Variants (ASVs) and predict whether the ASVs correspond to ribosomal RNA sequences.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-2/ref_answer/ASV_seqs.len.1.ASV_tax.gtdb_R07-RS207.species.tsv",
+      "eval_guideline": "ASV sequences and Kingdom assignments must match the reference; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-6-2/output/ASV_seqs.len.1.ASV_tax.gtdb_R07-RS207.species.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical, and both are TSV taxonomy tables that assign GTDB species to the ASVs.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Infer ASVs (DADA2-style) and assign taxonomy (GTDB R07-RS207) to predict whether ASVs are rRNA sequences. Compare ASV sequences and their Kingdom assignments to the reference; column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The guideline asks for a record-level match on ASV sequences and Kingdom assignments, and it allows column order, row order and header labels to differ. That is the kind of structural alignment the approximate strategy handles. ASV inference is deterministic, so a value-by-value comparison is appropriate.",
+      "strategy_error": null,
+      "similarity": 0.21933085501858737,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "ASV_ID": "ASV_ID",
+            "Kingdom": "Kingdom",
+            "Phylum": "Phylum",
+            "Class": "Class",
+            "Order": "Order",
+            "Family": "Family",
+            "Genus": "Genus",
+            "Species": "Species",
+            "Species_exact": null,
+            "confidence": "confidence",
+            "sequence": "sequence"
+          },
+          "id_columns": [
+            "sequence"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The two tables have the same layout, so no transpose is needed. Every candidate column name matches a reference column exactly. 'Species_exact' appears only in the reference, so it has no match. Rows are matched on 'sequence', the ASV sequence itself. The guideline says sequences must match, and this is the most reliable key. ASV_ID looks like an MD5 hash of the sequence, so it would be an equivalent key, and the same ID (02b4cbe5...) appears in both tables. Row order doesn't matter because the ASVs are an unordered set. The candidate has fewer rows (84 vs 244), so rows are matched by key instead of by position.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Kingdom",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "The evaluation guideline explicitly requires Kingdom to match. It is a single categorical label (Bacteria/Archaea) that shows whether the ASV is an rRNA sequence, so exact matching is used."
+            },
+            {
+              "name": "ASV_ID",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "This is an identifier taken from the sequence, such as an md5 hash. It adds nothing beyond the sequence ID column, and naming may vary between pipelines."
+            },
+            {
+              "name": "Phylum",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Lower-rank taxonomy is not required by the guideline and depends on the database and classifier."
+            },
+            {
+              "name": "Class",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not required by the guideline. It varies with the classifier's resolution."
+            },
+            {
+              "name": "Order",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not required by the guideline. It varies with the classifier's resolution."
+            },
+            {
+              "name": "Family",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not required by the guideline. It varies with the classifier's resolution."
+            },
+            {
+              "name": "Genus",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not required by the guideline. It varies with the classifier's resolution."
+            },
+            {
+              "name": "Species",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not required by the guideline. Species-level assignments are often missing and depend on the database."
+            },
+            {
+              "name": "confidence",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "This is the classifier's confidence score. It depends on the method and is not part of the evaluation criteria."
+            }
+          ],
+          "overall_reasoning": "The guideline says only two things have to match: the ASV sequences and the Kingdom assignments. The sequences are already handled by the 'sequence' ID column, which was used to align the tables. Rows where one table has NaN show sequences that only one side inferred, so these alignment gaps already count against sequence recovery. Kingdom is the one data column scored, using exact match. A NaN on one side counts as a mismatch, which also penalises ASVs that are missing or extra. Kingdom answers the rRNA question directly: Bacteria or Archaea means the ASV was identified as a ribosomal RNA sequence. Some columns are skipped. ASV_ID is an identifier taken from the sequence, such as an md5 hash; naming schemes can differ, and it adds nothing beyond the sequence. The ranks below Kingdom (Phylum to Species) depend on the reference database and classifier version, and the guideline does not require them. The confidence column is classifier output that is not part of the evaluation.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "sequence"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "ASV_ID": "ASV_ID",
+              "Kingdom": "Kingdom",
+              "Phylum": "Phylum",
+              "Class": "Class",
+              "Order": "Order",
+              "Family": "Family",
+              "Genus": "Genus",
+              "Species": "Species",
+              "confidence": "confidence",
+              "sequence": "sequence"
+            },
+            "unmapped_ref": [
+              "Species_exact"
+            ],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sequence"
+            ],
+            "matched_rows": 59,
+            "unmapped_ref_rows": 185,
+            "unmapped_alt_rows": 25,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {},
+            "fuzzy_matched_ids": {
+              "tacgtagggtgcgagcgttaatcggaattactgggcgtaaagcgtgcgcaggcggttatgtaagacagatgtgaaatccccgggctcaacctgggaactgcatttgtgactgcatggctagagtacggtagagggggatggaattccgcgtgtagcagtgaaatgcgtagatatgcggaggaacaccgatggcgaaggcaatcccctggacctgtactgacgctcatgcacgaaagcgtggggagcaaacagg": "tacgtagggtgcaagcgttaatcggaattactgggcgtaaagcgtgcgcaggcggttatgtaagacagatgtgaaatccccgggcttaacctgggaactgcatttgtgactgcatagctagagtacggtagagggggatggaattccgcgtgtagcagtgaaatgcgtagatatgcggaggaacaccgatggcgaaggcaatcccctggacctgtactgacgctcatgcacgaaagcgtggggagcaaacagg",
+              "tacagagggtgcaagcgttaatcggatttactgggcgtaaagcgcgcgtaggtggccaattaagtcaaatgtgaaatccccgagcttaacttgggaattgcattcgatactggttggctagagtatgggagaggatggtagaattccaggtgtagcggtgaaatgcgtagagatctggaggaataccgatggcgaaggcagccatctggcctaatactgacactgaggtgcgaaagcatggggagcaaacagg": "tacagagggtgcgagcgttaatcggatttactgggcgtaaagcgtgcgtaggtggccaattaagtcaaatgtgaaatccccgagcttaacttgggaattgcattcgatactggttggctagagtatgggagaggatggtagaattccaggtgtagcggtgaaatgcgtagagatctggaggaataccgatggcgaaggcagccatctggcctaatactgacactgaggtacgaaagcatggggagcaaacagg",
+              "gacagaggtggctagcgttgttcggattcattgggtgtaaagggtgcgtaggcggtttggaaagtcagatgtgaaagcccacagctcaactgtggaaatgcatctgaaacttccagactcgagtgcgagagaggtgaagggaattcccggtgtaagggtgaaatctgcagagatcgggaggaacaccagtagcgaaggcgcttcactggctcgcaactgacgctgagtgcacgaaggcgtggggagcaaacggg": "gacagaggtggcgagcgttgttcggattcattgggtgtaaagggtgcgtaggcggtttggaaagtcagatgtgaaagcccacagctcaactgtggaattgcatctgaaacttccgaacttgagtgcgagagaggtgaagggaattcccggtgtaagggtgaaatctgcagagatcgggaggaacaccagtagcgaaggcgcttcactggttcgcaactgacgctgagtgcacgaaggcgtggggagcaaacggg",
+              "gacagaggtggctagcgttgttcggatttattgggtgtaaagggtgtgtaggcggcgagctaagtgagatgtgaaatcccggggctcaaccccggaactgcatttcatactggcttgctagagtctctgagaggcaaggggaattcccggtgtaggggtgaaatccgtagatatcgggaggaacaccagtagcgaaggcgccttgctggtggaagactgacgctgaaacacgaaagctaggggagcaaacagg": "gacagaggtggcaagcgttgttcggatttattgggtgtaaagggtgtgtaggcggcgagttaagtgagatgtgaaatcccggggctcaaccccggaactgcatttcatactggcttgctagagtctctgagaggcaaggggaattcccggtgtaggggtgaaatccgtagatatcgggaggaacaccagtagcgaaggcgccttgctggtggaagactgacgctgaaacacgaaagctaggggagcaaacagg",
+              "tacagagggtgcaagcgttaatcggaattactgggcgtaaagcgcgcgtaggtggttcgttaagttggatgtgaaatccccgggctcaacctgggaactgcattcaaaactgacgagctagagtatggtagagggtggtggaatttcctgtgtagcggtgaaatgcgtagatataggaaggaacaccagtggcgaaggcgaccacctggactgatactgacactgaggtgcgaaagcgtggggagcaaacagg": "tacgaagggtgcaagcgttaatcggaattactgggcgtaaagcgcgcgtaggtggttcagtaagttggaagtgaaatccccgggctcaacctgggaactgctttcaaaactgctgagctagagtacggtagagggtggtggaatttcctgtgtagcggtgaaatgcgtagatataggaaggaacaccagtggcgaaggcgaccacctggactgatactgacactgaggtgcgaaagcgtggggagcaaacagg",
+              "tacgaggggtgcaagcgttgttcggaattactgggcgtaaagcgtgtctaggcgggtttataagtcggttgtgaaagcccctggctcaaccagggatgtgcagccgatactgtgaatcttgagtcatggagagatgagcggaattccgggtgtagcagtgaaatgcgtagatatccggaggaacaccagaggcgaaggcggctcattggccatgtactgacgctgaagcacgaaagcgtgggtagcaaacagg": "tacgaggggtgcaagcgttgttcggaattactgggcgtaaagcgtgtctaggcgggtttataagtcagttgtgaaagcccctggctcaaccagggatgtgcagctgatactgtggatcttgagtcatggagagatgagcggaattccgagtgtagcagtgaaatgcgtagatattcggaggaacaccagaggcgaaggcggctcattggccatgaactgacgctgaagcacgaaagcgtgggtagcaaacagg"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Base-by-base comparison of the 16S sequences. Accepted matches: candidate #28 (2 differences), #1 (3), #21 (3), #31 (about 7), #29 (about 8; sibling #23 is further away), and #25 (6 differences to its chosen reference versus 7 to another, so low confidence). All other candidates are null: either no reference has a similar start (archaeal-like sequences), or the closest reference differs at 15 or more positions.",
+              "confidence": 0.7
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Kingdom",
+              "Family",
+              "Species",
+              "confidence",
+              "ASV_ID",
+              "Order",
+              "sequence",
+              "Class",
+              "Genus",
+              "Phylum"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Kingdom": [
+                "str",
+                "str",
+                true
+              ],
+              "Family": [
+                "str",
+                "str",
+                true
+              ],
+              "Species": [
+                "str",
+                "str",
+                true
+              ],
+              "confidence": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ASV_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "Order": [
+                "str",
+                "str",
+                true
+              ],
+              "sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "Class": [
+                "str",
+                "str",
+                true
+              ],
+              "Genus": [
+                "str",
+                "str",
+                true
+              ],
+              "Phylum": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference columns: ['Species_exact']",
+            "Unmapped reference rows: 185",
+            "Unmapped candidate rows: 25"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ASV_ID",
+            "Class",
+            "Family",
+            "Genus",
+            "Kingdom",
+            "Order",
+            "Phylum",
+            "Species",
+            "confidence"
+          ],
+          "filtered_columns": [
+            "Kingdom"
+          ],
+          "overall_similarity": 0.21933085501858737,
+          "per_column_similarities": {
+            "Kingdom": {
+              "similarity": 0.21933085501858737,
+              "strategy": "exact",
+              "matching_count": 59,
+              "total_count": 269,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 0.9090909090909091,
+            "col_f1": 0.9523809523809523,
+            "col_jaccard": 0.9090909090909091,
+            "ref_rows": 269,
+            "alt_rows": 269,
+            "row_intersection": 269,
+            "ref_cols": 11,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              269,
+              11
+            ],
+            "alt_shape": [
+              269,
+              10
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": 1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Kingdom": true,
+              "Family": true,
+              "Species": true,
+              "confidence": true,
+              "ASV_ID": true,
+              "Order": true,
+              "sequence": true,
+              "Class": true,
+              "Genus": true,
+              "Phylum": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.21933085501858737,
+            "ref_missing_rate": 0.09293680297397769,
+            "alt_missing_rate": 0.6877323420074349
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-2/ref_answer/ASV_table.csv",
+      "eval_guideline": "Each ASV's rRNA prediction label must match the reference; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-6-2/output/ASV_table.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical, and both are CSV ASV abundance tables.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Infer ASVs from paired-end amplicon reads and predict whether each ASV is a ribosomal RNA sequence. Match ASVs (by sequence or ID) between files and check that each ASV's rRNA prediction label matches the reference; column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for each ASV's rRNA label to match the reference, ignoring column order, row order and header names. ASV inference with DADA2-style denoising is deterministic, so the default 'approximate' strategy, which aligns the tables before comparing them, fits this record-level check.",
+      "strategy_error": null,
+      "similarity": 0.19272727272727272,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "ASV": "ASV",
+            "is_rRNA": "is_rRNA"
+          },
+          "id_columns": [
+            "ASV"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "ASV",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same layout, with one ASV per row, so no transpose is needed. The reference columns ASV and is_rRNA map exactly to candidate columns with the same names. The extra candidate columns (sampleID_1, eval_*, sequence) are not used. ASV is an MD5 hash of the sequence, so it uniquely identifies each row and is the key for matching rows. The evaluation guideline says row order doesn't matter, so the rows are sorted by ASV and treated as a set. The candidate has fewer rows (84) than the reference (244), so matching on the key is essential. Positional alignment would pair unrelated rows.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "is_rRNA",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is a binary rRNA prediction label, and the guideline asks for each ASV's label to match the reference. Exact matching on each cell fits this requirement."
+            }
+          ],
+          "overall_reasoning": "The task is judged on whether each ASV's rRNA prediction label (is_rRNA) matches the reference, so is_rRNA is the only column compared. It holds boolean-like values (True / NaN), so it is compared by exact match on each cell. The extra candidate columns (sampleID_1, eval_*, sequence) are not in the reference and are not part of the evaluation, so they are left out. ASV is the ID column and is used only to line up the rows. A missing value in the reference (NaN) may mean 'not rRNA' or 'not reported'. Exact comparison treats these values literally.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "ASV"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "ASV": "ASV",
+              "is_rRNA": "is_rRNA"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "sampleID_1",
+              "eval_bac",
+              "eval_arc",
+              "eval_mito",
+              "eval_euk",
+              "sequence"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "ASV"
+            ],
+            "matched_rows": 53,
+            "unmapped_ref_rows": 191,
+            "unmapped_alt_rows": 31,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "All identifiers are opaque 32-char hex hashes. No candidate exactly matches any reference, and hashes can't be matched on formatting or naming, so there is no basis for a confident mapping.",
+              "confidence": 0.9
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "ASV",
+              "is_rRNA"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "ASV": [
+                "str",
+                "str",
+                true
+              ],
+              "is_rRNA": [
+                "object",
+                "object",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "ASV"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['sampleID_1', 'eval_bac', 'eval_arc', 'eval_mito', 'eval_euk', 'sequence']",
+            "Unmapped reference rows: 191",
+            "Unmapped candidate rows: 31",
+            "Sorted both dataframes by ['ASV']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "is_rRNA"
+          ],
+          "filtered_columns": [
+            "is_rRNA"
+          ],
+          "overall_similarity": 0.19272727272727272,
+          "per_column_similarities": {
+            "is_rRNA": {
+              "similarity": 0.19272727272727272,
+              "strategy": "exact",
+              "matching_count": 53,
+              "total_count": 275,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.25,
+            "col_recall": 1.0,
+            "col_f1": 0.4,
+            "col_jaccard": 0.25,
+            "ref_rows": 275,
+            "alt_rows": 275,
+            "row_intersection": 275,
+            "ref_cols": 2,
+            "alt_cols": 8,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              275,
+              2
+            ],
+            "alt_shape": [
+              275,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "ASV": true,
+              "is_rRNA": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.19272727272727272,
+            "ref_missing_rate": 0.11272727272727273,
+            "alt_missing_rate": 0.6945454545454546
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

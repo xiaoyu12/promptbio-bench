@@ -1,0 +1,189 @@
+{
+  "id": "b-8-2",
+  "question": "Train a random forest regressor (n_estimators=100, random_state=42) to predict patient age from DNA methylation levels (beta values) and select the top 20 features by importance.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-2/ref_answer/top_20_features.csv",
+      "eval_guideline": "At least 18 of the 20 reported feature names must be present in the reference set; importance scores for matched features must agree within 10% relative absolute error; column order and naming may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-8-2/output/top_20_features.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (top_20_features.csv), both are CSV files, and the file holds the top 20 features the task asked for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare top-20 random forest feature importance tables (feature name, importance). At least 18 of 20 reported feature names must be in the reference set; importance scores for matched features must agree within 10% relative absolute error; column order, row order and column naming may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The random seed is fixed and the output is a small 20-row table that has to be checked one feature at a time: matching names (at least 18 of 20) and importances within 10% relative error. Approximate matching handles differences in row and column order and naming, and the tolerance absorbs small run-to-run differences.",
+      "strategy_error": null,
+      "similarity": 0.5961600925214154,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature",
+            "Importance": "Importance"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables list features in rows, so no transpose is needed. Feature and Importance match by exact name. The candidate's extra columns, Rank and Pearson_r_with_Age, have no counterpart in the reference and are left out. Rows are matched on Feature, the CpG probe ID, because the guideline compares feature membership (at least 18 of 20 must match) and checks importance only for the matched features. The candidate's ranking differs from the reference (e.g., cg01000015 is 2nd in the candidate but 8th in the reference), and the guideline never compares order. So row order is not treated as meaningful, and matching is set-based by key rather than by position.",
+          "confidence": 0.93
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Importance",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The evaluation guideline says importance scores for matched features must agree within 10% relative absolute error, so the tolerance is RAE <= 0.1. Importances are always non-negative, so the sign is not an issue."
+            }
+          ],
+          "overall_reasoning": "Feature is the ID column and is used only for alignment. Feature-name overlap (at least 18 of 20) is checked through the alignment step. Importance is the only shared data column, and the guideline sets how it should be checked: importance scores for matched features must agree within 10% relative absolute error. So Importance uses the rae strategy with cell_tolerance=0.1. The candidate's extra columns (Rank, Pearson_r_with_Age) are not in the reference, so they are not compared. Random forest importances can vary with the implementation and preprocessing, but the guideline gives the tolerance directly.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature",
+              "Importance": "Importance"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Rank",
+              "Pearson_r_with_Age"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Importance",
+              "Feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Importance": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Rank', 'Pearson_r_with_Age']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Importance"
+          ],
+          "filtered_columns": [
+            "Importance"
+          ],
+          "overall_similarity": 0.5961600925214154,
+          "per_column_similarities": {
+            "Importance": {
+              "similarity": 0.5961600925214154,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              2
+            ],
+            "alt_shape": [
+              20,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Importance": true,
+              "Feature": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,275 @@
+{
+  "id": "b-9-4",
+  "question": "Perform Cox regression with LASSO penalization on the provided dataset to select features. Use 5-fold cross-validation to tune the regularization penalty. Identify features with non-zero LASSO coefficients, then refit an unpenalized multivariable Cox model on those features. Report their hazard ratios, 95% CIs, and p-values.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-9-4/ref_answer/cox_lasso_results.tsv",
+      "eval_guideline": "Features with HR clearly deviating from 1.0 in the reference (|HR - 1| > 0.5) must be present with the same directional effect; for features present in both outputs, hazard ratios must match within 20% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-9-4/output/cox_lasso_results.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are TSVs holding the Cox LASSO results (hazard ratios, 95% CIs and p-values).",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Cox LASSO feature selection (5-fold CV) followed by unpenalized multivariable Cox refit; compare per-feature hazard ratios, 95% CIs, and p-values. Features with |HR-1|>0.5 in reference must be present with same direction; HRs for shared features must match within 20% relative error; column/row order and header labels may differ."
+      },
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "The output is a small table of per-feature results (HR, CI, p-value). The guideline's 20% tolerance and its rule for strong-effect features already cover the run-to-run noise from 5-fold CV, so comparing feature by feature with approximate matching works better than summary.",
+      "strategy_error": null,
+      "similarity": 0.30037549625848736,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "variable": "variable",
+            "logHR": "logHR",
+            "HR": "HR",
+            "p_value": "p_value",
+            "HR_lower_95": "HR_lower_95",
+            "HR_upper_95": "HR_upper_95"
+          },
+          "id_columns": [
+            "variable"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same long format, with one row per selected feature, so no transpose is needed. All six reference columns have exact name matches in the candidate. The candidate's extra columns (SE, z, lasso_coef) are ignored. Rows are matched on the feature name in 'variable', which is a stable identifier. The candidate has extra selected features (31 rows compared with 5 in the reference). The guideline only requires that reference features with strong effects appear in the candidate and that shared features have matching HRs, so the comparison works on the shared features. The guideline also says row order may differ, so row order is treated as not mattering.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "HR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline requires HR to match within 20% relative absolute error for features present in both outputs. A match within this tolerance also preserves the direction of the effect for strong-effect features."
+            },
+            {
+              "name": "logHR",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "This is a deterministic transform of HR, which is already scored. Applying RAE in log space would also be unstable for values near 0."
+            },
+            {
+              "name": "HR_lower_95",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.65,
+              "reasoning": "The guideline does not require this column, and it scales with HR."
+            },
+            {
+              "name": "HR_upper_95",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.65,
+              "reasoning": "The guideline does not require this column, and it scales with HR."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.65,
+              "reasoning": "The guideline does not require this column. Extremely small p-values (e.g., 1e-23 to 1e-29) can differ by orders of magnitude between implementations."
+            }
+          ],
+          "overall_reasoning": "The evaluation guideline names one quantitative criterion: hazard ratios for features present in both outputs must match within 20% relative absolute error. Strong-effect features in the reference (|HR - 1| > 0.5) must also appear with the same direction. Both requirements are covered by comparing HR cell by cell with RAE at a tolerance of 0.2. An HR that falls within 20% of a reference HR far from 1 also has the same direction. Rows where the reference is NaN are features the reference LASSO did not select. The candidate's extra selected features should therefore not count against it there. The guideline only constrains HR, so the other columns are not scored. logHR is derived from HR and would double-count it. The CI bounds also scale with HR, and the guideline does not mention them. Very small p-values vary by orders of magnitude between implementations, so they would only add noise.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "variable"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "variable": "variable",
+              "logHR": "logHR",
+              "HR": "HR",
+              "p_value": "p_value",
+              "HR_lower_95": "HR_lower_95",
+              "HR_upper_95": "HR_upper_95"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "SE",
+              "z",
+              "lasso_coef"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "variable"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 26,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "logHR",
+              "HR_upper_95",
+              "variable",
+              "p_value",
+              "HR_lower_95",
+              "HR"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "logHR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HR_upper_95": [
+                "float64",
+                "float64",
+                true
+              ],
+              "variable": [
+                "str",
+                "str",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HR_lower_95": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HR": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['SE', 'z', 'lasso_coef']",
+            "Unmapped candidate rows: 26"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "HR",
+            "HR_lower_95",
+            "HR_upper_95",
+            "logHR",
+            "p_value"
+          ],
+          "filtered_columns": [
+            "HR"
+          ],
+          "overall_similarity": 0.30037549625848736,
+          "per_column_similarities": {
+            "HR": {
+              "similarity": 0.30037549625848736,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.2
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6666666666666666,
+            "col_recall": 1.0,
+            "col_f1": 0.8,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 31,
+            "alt_rows": 31,
+            "row_intersection": 31,
+            "ref_cols": 6,
+            "alt_cols": 9,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              31,
+              6
+            ],
+            "alt_shape": [
+              31,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "logHR": true,
+              "HR_upper_95": true,
+              "variable": true,
+              "p_value": true,
+              "HR_lower_95": true,
+              "HR": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.16129032258064516,
+            "ref_missing_rate": 0.8387096774193549,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

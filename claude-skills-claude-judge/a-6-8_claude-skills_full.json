@@ -1,0 +1,340 @@
+{
+  "id": "a-6-8",
+  "question": "Count aligned reads per gene from the provided BAM file using featureCounts with the provided GFF annotation file.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-8/ref_answer/SAMPLE1_PE.featureCounts.tsv",
+      "eval_guideline": "Each gene's raw read count must match the reference exactly; metadata header lines and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-6-8/output/SAMPLE1_PE.featureCounts.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames match exactly (SAMPLE1_PE.featureCounts.tsv), and both are TSV featureCounts output for the same input BAM.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare featureCounts gene-level read count tables. Match rows by gene ID (Geneid); each gene's raw read count must match the reference exactly. Metadata/comment header lines (e.g., '# Program:featureCounts' line) and column order may differ; sample count column name may differ in path formatting."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "featureCounts is deterministic, and the guideline asks for each gene's count to match exactly while allowing metadata headers and column order to differ. Approximate handles that structural variation and still compares counts record by record.",
+      "strategy_error": null,
+      "similarity": 0.796262320659026,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Geneid": "Geneid",
+            "Chr": "Chr",
+            "Start": "Start",
+            "End": "End",
+            "Strand": "Strand",
+            "Length": "Length",
+            "SAMPLE1_PE.sorted.bam": "SAMPLE1_PE.sorted.bam"
+          },
+          "id_columns": [
+            "Geneid"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are featureCounts outputs with the same column names, so they don't need transposing and each column maps to the column with the same name. Geneid is unique per gene and comes straight from the GFF annotation, so it is the key used to match rows. The guideline says column order may differ, and a per-gene count table has no meaningful row order, so rows are matched by Geneid and compared as an unordered set. The count column, SAMPLE1_PE.sorted.bam, is the value being compared. The preview shows the candidate's counts are much lower than the reference's, for example 69 vs 145. That is a real difference in the values and does not affect how the tables line up.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "SAMPLE1_PE.sorted.bam",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "These are the main output: raw integer read counts per gene, which must match the reference exactly. Zero tolerance is used."
+            },
+            {
+              "name": "Chr",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Contig/chromosome taken from the GFF. It should be identical."
+            },
+            {
+              "name": "Start",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Feature start coordinate from the annotation, an integer that should match exactly."
+            },
+            {
+              "name": "End",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Feature end coordinate from the annotation, an integer that should match exactly."
+            },
+            {
+              "name": "Strand",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Strand taken from the annotation. It should be identical."
+            },
+            {
+              "name": "Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Gene length computed from the annotation, an integer that should match exactly."
+            }
+          ],
+          "overall_reasoning": "The task is gene-level read counting with featureCounts, so the column that matters is the per-gene raw count, SAMPLE1_PE.sorted.bam. The guideline says counts must match exactly, so I compare it with RAE at cell_tolerance 0: a cell only counts as a match when the RAE is 0. Chr, Start, End, Strand and Length are annotation metadata that come straight from the GFF and should be identical. I check them with exact matching for strings and zero-tolerance RAE for integers, as a sanity check that the same annotation and features were used. Geneid is the alignment key and is left out of the comparison.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "Geneid"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Geneid": "Geneid",
+              "Chr": "Chr",
+              "Start": "Start",
+              "End": "End",
+              "Strand": "Strand",
+              "Length": "Length",
+              "SAMPLE1_PE.sorted.bam": "SAMPLE1_PE.sorted.bam"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Geneid"
+            ],
+            "matched_rows": 8950,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Start",
+              "Chr",
+              "Geneid",
+              "SAMPLE1_PE.sorted.bam",
+              "End",
+              "Length",
+              "Strand"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Start": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Chr": [
+                "str",
+                "str",
+                true
+              ],
+              "Geneid": [
+                "str",
+                "str",
+                true
+              ],
+              "SAMPLE1_PE.sorted.bam": [
+                "int64",
+                "int64",
+                true
+              ],
+              "End": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Length": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Strand": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Chr",
+            "End",
+            "Length",
+            "SAMPLE1_PE.sorted.bam",
+            "Start",
+            "Strand"
+          ],
+          "filtered_columns": [
+            "Chr",
+            "End",
+            "Length",
+            "SAMPLE1_PE.sorted.bam",
+            "Start",
+            "Strand"
+          ],
+          "overall_similarity": 0.796262320659026,
+          "per_column_similarities": {
+            "Chr": {
+              "similarity": 0.7707262569832403,
+              "strategy": "exact",
+              "matching_count": 6898,
+              "total_count": 8950,
+              "error": null,
+              "details": {}
+            },
+            "End": {
+              "similarity": 0.7784793434389574,
+              "strategy": "rae",
+              "matching_count": 6898,
+              "total_count": 8950,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Length": {
+              "similarity": 0.8598111058469448,
+              "strategy": "rae",
+              "matching_count": 6902,
+              "total_count": 8950,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "SAMPLE1_PE.sorted.bam": {
+              "similarity": 0.7069232252959122,
+              "strategy": "rae",
+              "matching_count": 5727,
+              "total_count": 8950,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Start": {
+              "similarity": 0.7771647186460842,
+              "strategy": "rae",
+              "matching_count": 6898,
+              "total_count": 8950,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Strand": {
+              "similarity": 0.8844692737430168,
+              "strategy": "exact",
+              "matching_count": 7916,
+              "total_count": 8950,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 8950,
+            "alt_rows": 8950,
+            "row_intersection": 8950,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              8950,
+              7
+            ],
+            "alt_shape": [
+              8950,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Start": true,
+              "Chr": true,
+              "Geneid": true,
+              "SAMPLE1_PE.sorted.bam": true,
+              "End": true,
+              "Length": true,
+              "Strand": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

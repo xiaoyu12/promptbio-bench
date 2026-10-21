@@ -1,0 +1,747 @@
+{
+  "id": "a-2-8",
+  "question": "Run GSEA on ranked gene list to identify the most enriched gene sets of biological processes. Use the provided GO_Biological_Process_2021 gene set library (data/GO_Biological_Process_2021.gmt) with min_size=15 and max_size=500. Report the full enrichment results and the top 10 significantly enriched gene sets.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_result.csv",
+      "eval_guideline": "All gene-set records must match the reference in GO ID (parsed from the Term string, e.g. GO:0002181) and enrichment direction; NES may vary by 5% relative absolute error and FDR q-val by 10% relative absolute error due to permutation; term name formatting, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-2-8/output/gsea_result.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename and CSV format; both hold the full GSEA enrichment results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare GSEA prerank results (GO_Biological_Process_2021, min_size=15, max_size=500). Match gene-set records by GO ID parsed from the Term string (e.g. GO:0002181), regardless of how the term name is formatted. Each record must match the reference's enrichment direction (sign of NES). NES may differ by up to 5% relative absolute error and FDR q-val by up to 10% relative absolute error, because GSEA uses permutations. Column order, row order and extra columns may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "GSEA permutations add some randomness, but the guideline requires matching each gene set by GO ID and direction, with fixed tolerances for NES and FDR. Value-by-value table alignment with approximate fits this better than comparing distributions with summary.",
+      "strategy_error": null,
+      "similarity": 0.9678226686679094,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Name": "Name",
+            "Term": "Term",
+            "ES": "ES",
+            "NES": "NES",
+            "NOM p-val": "NOM p-val",
+            "FDR q-val": "FDR q-val",
+            "FWER p-val": "FWER p-val",
+            "Tag %": "Tag %",
+            "Gene %": "Gene %",
+            "Lead_genes": "Lead_genes"
+          },
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Term",
+          "check_permutation": true,
+          "reasoning": "No transpose is needed: both tables are standard GSEA prerank outputs with the same 10 columns in long format, so the column mapping is 1:1 by name. Rows should be matched on Term, but a direct string match will fail. The reference prefixes every term with 'GO_Biological_Process_2021.gmt__' and the candidate does not. The guideline says records should be matched by the GO ID parsed from Term (e.g. GO:0002181), so Term should be normalized to the GO ID (regex 'GO:\\d+') before joining. Do not join on NES or ES, because those values come from permutations and vary between runs. Row order is not meaningful: both tables hold the full set of 2861 results, and their order shifts slightly because of permutation variance in NES and FDR (for example, GO:2000310 is row 0 in the candidate but row 4 in the reference). So rows should be compared as an unordered set, and sorting by the normalized GO ID gives a stable order.",
+          "confidence": 0.85
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "The guideline sets 5% RAE for NES. The sign is kept because it encodes enrichment direction, which must match."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline sets 10% RAE for FDR q-val, allowing for permutation variability."
+            },
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not named in the guideline. Direction is already checked through the sign of NES."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Depends on permutation and is not part of the evaluation criteria."
+            },
+            {
+              "name": "FWER p-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Depends on permutation and is not part of the evaluation criteria."
+            },
+            {
+              "name": "Name",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "A constant run label ('prerank') that carries no information."
+            },
+            {
+              "name": "Tag %",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "An auxiliary leading-edge statistic not required by the guideline."
+            },
+            {
+              "name": "Gene %",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "An auxiliary statistic that can differ through small rounding differences, and it is not required."
+            },
+            {
+              "name": "Lead_genes",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Extra detail not required by the guideline, which allows extra columns to differ."
+            }
+          ],
+          "overall_reasoning": "The rows are aligned on Term, so the GO ID is already matched through alignment. The evaluation guideline names three checks: enrichment direction, NES within 5% relative absolute error (RAE), and FDR q-val within 10% RAE.\n\n- **NES:** compared by RAE with a 0.05 tolerance. Its sign shows enrichment direction, so a sign flip produces a large RAE and fails the check.\n- **FDR q-val:** compared by RAE with a 0.1 tolerance, because permutation testing makes it vary from run to run.\n- **Other columns ignored:** the guideline does not name them, and they are either permutation-dependent (NOM p-val, FWER p-val), formatting or auxiliary columns (Name, Tag %, Gene %, Lead_genes), or redundant with NES for direction (ES).",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Name": "Name",
+              "Term": "Term",
+              "ES": "ES",
+              "NES": "NES",
+              "NOM p-val": "NOM p-val",
+              "FDR q-val": "FDR q-val",
+              "FWER p-val": "FWER p-val",
+              "Tag %": "Tag %",
+              "Gene %": "Gene %",
+              "Lead_genes": "Lead_genes"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "matched_rows": 2861,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {
+              "Term": {
+                "ref_prefix": "GO_Biological_Process_2021.gmt__",
+                "ref_suffix": ")",
+                "alt_prefix": "",
+                "alt_suffix": ")"
+              }
+            },
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Lead_genes",
+              "Name",
+              "NOM p-val",
+              "ES",
+              "FDR q-val",
+              "FWER p-val",
+              "Gene %",
+              "Term",
+              "NES",
+              "Tag %"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Lead_genes": [
+                "str",
+                "str",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FWER p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene %": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Tag %": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Term"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Term']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "filtered_columns": [
+            "FDR q-val",
+            "NES"
+          ],
+          "overall_similarity": 0.9678226686679094,
+          "per_column_similarities": {
+            "FDR q-val": {
+              "similarity": 0.9414198556194459,
+              "strategy": "rae",
+              "matching_count": 2432,
+              "total_count": 2861,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "NES": {
+              "similarity": 0.994225481716373,
+              "strategy": "rae",
+              "matching_count": 2856,
+              "total_count": 2861,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 2861,
+            "alt_rows": 2861,
+            "row_intersection": 2861,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              2861,
+              10
+            ],
+            "alt_shape": [
+              2861,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Lead_genes": true,
+              "Name": true,
+              "NOM p-val": true,
+              "ES": true,
+              "FDR q-val": true,
+              "FWER p-val": true,
+              "Gene %": true,
+              "Term": true,
+              "NES": true,
+              "Tag %": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_top10_result.csv",
+      "eval_guideline": "Top-10 gene sets must match the reference in GO ID (parsed from the Term string, e.g. GO:0002181) and enrichment direction; NES may vary by 5% relative absolute error and ranking may shift by +/-2 positions; term name formatting and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-2-8/output/gsea_top10_result.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename and CSV format; both hold the top 10 enriched gene sets.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the top-10 GSEA enriched GO Biological Process gene sets. Parse the GO ID from the Term string (e.g. GO:0002181) and match rows by it. Enrichment direction (sign of NES) must agree, NES may differ by up to 5% relative absolute error, and rank may shift by +/-2 positions. Term name formatting and column order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "GSEA uses permutations, so results vary a little between runs. But this output is a small top-10 table, so it should be compared row by row with approximate matching, not with summary statistics. The guideline's tolerances (5% NES, +/-2 rank) and its rule to match rows on parsed GO IDs are passed to the comparison as the question.",
+      "strategy_error": null,
+      "similarity": 0.9978846827991475,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Name": "Name",
+            "Term": "Term",
+            "ES": "ES",
+            "NES": "NES",
+            "NOM p-val": "NOM p-val",
+            "FDR q-val": "FDR q-val",
+            "FWER p-val": "FWER p-val",
+            "Tag %": "Tag %",
+            "Gene %": "Gene %",
+            "Lead_genes": "Lead_genes"
+          },
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 10 column names, so each column maps to itself and no transpose is needed. Rows should be matched on Term, but only after reducing it to the GO ID in parentheses (e.g. GO:0002181). The reference Term carries a 'GO_Biological_Process_2021.gmt__' library prefix that the candidate lacks, so comparing the raw strings would match nothing. Name is the constant 'prerank' in every row, so it can't identify rows. ES, NES and the other numeric columns are computed scores and shouldn't be used as keys. The guideline allows ranks to shift by ±2 positions, so rows are matched by GO ID rather than by position: 7 of the 10 sets appear in both tables but in a different order (rows 0–5 are shuffled). Rows are therefore treated as order-insensitive, and the ±2 rank tolerance is checked afterwards. Three reference sets (GO:0043113, GO:0010882, GO:0006613 is shared; GO:0043113 and GO:0010882 are not) are missing from the candidate top 10. The candidate has GO:2000811 and GO:0038096 in their place, so the overlap is partial.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "The guideline says NES may vary by up to 5% relative absolute error. The sign is kept because it encodes enrichment direction."
+            },
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "ES is deterministic given the ranking. Comparing it checks direction and magnitude, and a 5% tolerance is consistent with the NES rule."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Depends on random permutations and is not in the evaluation criteria."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Depends on random permutations and is not in the evaluation criteria."
+            },
+            {
+              "name": "FWER p-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Depends on random permutations and is not in the evaluation criteria."
+            },
+            {
+              "name": "Name",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Always 'prerank', so it carries no information."
+            },
+            {
+              "name": "Tag %",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "A descriptive leading-edge statistic that is not in the evaluation criteria."
+            },
+            {
+              "name": "Gene %",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Formatted as a percentage string that differs only by rounding, and not in the evaluation criteria."
+            },
+            {
+              "name": "Lead_genes",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "The guideline does not mention it, and it may vary between implementations."
+            }
+          ],
+          "overall_reasoning": "Rows are matched on Term, which holds the GO ID. Some terms appear only in the reference top-10 and others only in the candidate's, so the rows filled with NaN will count against membership in the top 10, as the guideline intends. The guideline asks for three things: matching GO ID, matching enrichment direction, and NES within 5% relative absolute error. So NES is the main column, compared by RAE with a 0.05 tolerance and with the sign kept. Keeping the sign means a reversed direction counts as a mismatch. ES is also compared at 5% RAE as a check on direction and magnitude; the ES values agree to within about 0.01%. The p-value, FDR and FWER columns come from random permutations and are not part of the evaluation, so they are ignored. Name is a constant (\"prerank\"). Tag % and Gene % are descriptive and differ only by rounding. Lead_genes is not in the guideline. All three of these are ignored. The ±2 rank shift is allowed implicitly, since there is no rank column and rows are matched by GO ID rather than by position.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Name": "Name",
+              "Term": "Term",
+              "ES": "ES",
+              "NES": "NES",
+              "NOM p-val": "NOM p-val",
+              "FDR q-val": "FDR q-val",
+              "FWER p-val": "FWER p-val",
+              "Tag %": "Tag %",
+              "Gene %": "Gene %",
+              "Lead_genes": "Lead_genes"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "matched_rows": 8,
+            "unmapped_ref_rows": 2,
+            "unmapped_alt_rows": 2,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {
+              "Term": {
+                "ref_prefix": "GO_Biological_Process_2021.gmt__",
+                "ref_suffix": ")",
+                "alt_prefix": "",
+                "alt_suffix": ")"
+              }
+            },
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "GO IDs and term names differ completely; neither candidate matches 'receptor clustering' (GO:0043113) or 'regulation of cardiac muscle contraction by calcium ion signaling' (GO:0010882).",
+              "confidence": 0.97
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Lead_genes",
+              "Name",
+              "NOM p-val",
+              "ES",
+              "FDR q-val",
+              "FWER p-val",
+              "Gene %",
+              "Term",
+              "NES",
+              "Tag %"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Lead_genes": [
+                "str",
+                "str",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FWER p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene %": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Tag %": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 2",
+            "Unmapped candidate rows: 2"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "filtered_columns": [
+            "ES",
+            "NES"
+          ],
+          "overall_similarity": 0.9978846827991475,
+          "per_column_similarities": {
+            "ES": {
+              "similarity": 0.9999498536619853,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "NES": {
+              "similarity": 0.9958195119363098,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 12,
+            "alt_rows": 12,
+            "row_intersection": 12,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              12,
+              10
+            ],
+            "alt_shape": [
+              12,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Lead_genes": true,
+              "Name": true,
+              "NOM p-val": true,
+              "ES": true,
+              "FDR q-val": true,
+              "FWER p-val": true,
+              "Gene %": true,
+              "Term": true,
+              "NES": true,
+              "Tag %": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.6666666666666666,
+            "ref_missing_rate": 0.16666666666666666,
+            "alt_missing_rate": 0.16666666666666666
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

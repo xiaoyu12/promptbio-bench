@@ -1,0 +1,493 @@
+{
+  "id": "a-9-7",
+  "question": "Analyze V and J gene usage from BCR sequences.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-9-7/ref_answer/j_gene_usage_summary.csv",
+      "eval_guideline": "Each J gene's count and frequency must match the reference within 0.1% relative absolute error; column order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-9-7/output/j_gene_usage_summary.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSVs holding the J gene usage summary.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Analyze J gene usage from TRUST4 BCR sequences. Compare per-J-gene count and frequency; each must match the reference within 0.1% relative absolute error. Column order and extra columns may differ; row order may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a deterministic count of J genes from a TRUST4 table, and the guideline asks for a gene-by-gene match within a tight tolerance while letting column order and extra columns differ. That makes approximate, which aligns records, the right fit.",
+      "strategy_error": null,
+      "similarity": 0.75,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "j_gene": "j_gene",
+            "count": "count",
+            "frequency": "frequency"
+          },
+          "id_columns": [
+            "j_gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "j_gene",
+          "check_permutation": true,
+          "reasoning": "Both tables are long-format J-gene usage tables, so no transpose is needed. The three reference columns (j_gene, count, frequency) have exact name matches in the candidate. The extra candidate columns (productive_count, read_count, read_frequency) are ignored, as the guideline allows. Rows are keyed on j_gene because the guideline compares results per J gene, so row order doesn't matter. Sorting by j_gene and checking for permutations is a safe extra step. Key mismatch: the reference gives J genes at allele level (e.g., IGHJ6*02 and IGHJ6*03 are separate rows), while the candidate drops the alleles (IGHJ4, IGHJ6) and merges IGHJ6*02 and IGHJ6*03 into one row (count 17). Because the identifiers don't match exactly, no rows will pair. This is a real difference in output detail, not a formatting issue, so the keys should not be normalized to hide it.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Integer counts for each J gene must match within 0.1% RAE, as the guideline says. With small integers this works out to an exact match."
+            },
+            {
+              "name": "frequency",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Frequencies must match within 0.1% RAE, as the guideline says. This still allows for small differences from floating-point rounding."
+            }
+          ],
+          "overall_reasoning": "The task requires each J gene's count and frequency to match the reference within 0.1% relative absolute error, so both reference columns are compared with RAE and cell_tolerance=0.001. The candidate's extra columns (productive_count, read_count, read_frequency) are not in the reference, and the guideline allows extra columns, so they are skipped. In the preview, ighj3*02, ighj4*02 and ighj5*02 match. ighj6*02 does not (17 vs 8), and ighj6*03 is missing (NaN). The candidate seems to have merged ighj6 alleles, which this comparison will catch.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "j_gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "j_gene": "j_gene",
+              "count": "count",
+              "frequency": "frequency"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "productive_count",
+              "read_count",
+              "read_frequency"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "j_gene"
+            ],
+            "matched_rows": 4,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {
+              "ighj6": "ighj6*02",
+              "ighj4": "ighj4*02",
+              "ighj3": "ighj3*02",
+              "ighj5": "ighj5*02"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Matched each gene name to its allele-level reference ID. ighj4, ighj3 and ighj5 each have only one allele in the reference list. ighj6 has two possible alleles (*02 and *03); chose *02, the most common allele, so that match is less certain.",
+              "confidence": 0.8
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "frequency",
+              "count",
+              "j_gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [
+              "count"
+            ],
+            "conversion_details": {
+              "frequency": [
+                "float64",
+                "float64",
+                true
+              ],
+              "count": [
+                "int64",
+                "float64",
+                false
+              ],
+              "j_gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "j_gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['productive_count', 'read_count', 'read_frequency']",
+            "Unmapped reference rows: 1",
+            "Failed to convert 1 column(s)",
+            "Sorted both dataframes by ['j_gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "count",
+            "frequency"
+          ],
+          "filtered_columns": [
+            "count",
+            "frequency"
+          ],
+          "overall_similarity": 0.75,
+          "per_column_similarities": {
+            "count": {
+              "similarity": 0.75,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "frequency": {
+              "similarity": 0.75,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 3,
+            "alt_cols": 6,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              3
+            ],
+            "alt_shape": [
+              5,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 0.6666666666666666,
+            "dtype_matches": {
+              "frequency": true,
+              "count": false,
+              "j_gene": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.8,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.2
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-9-7/ref_answer/v_gene_usage_summary.csv",
+      "eval_guideline": "Each V gene's count and frequency must match the reference within 0.1% relative absolute error; column order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-9-7/output/v_gene_usage_summary.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSVs holding the V gene usage summary.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare V gene usage summary tables derived from TRUST4 BCR output: for each V gene, count and frequency must match the reference within 0.1% relative absolute error; column order and extra columns may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a deterministic count of V gene usage from TRUST4 output, so each gene's values should be checked one by one. Approximate matching does that, allows the column reordering and extra columns the guideline permits, and keeps numbers within its 0.1% relative tolerance.",
+      "strategy_error": null,
+      "similarity": 0.9629629629629629,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "v_gene": "v_gene",
+            "count": "count",
+            "frequency": "frequency"
+          },
+          "id_columns": [
+            "v_gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "v_gene",
+          "check_permutation": true,
+          "reasoning": "Both tables have rows as V genes and columns as attributes, so no transpose is needed. The three reference columns (v_gene, count, frequency) have exact name matches in the candidate. The candidate's extra columns (productive_count, read_count, read_frequency) are ignored, as the guideline allows. v_gene identifies each row, and the guideline compares values per V gene, so rows are matched by v_gene rather than by position. Row order doesn't matter (this is a usage table, not a ranked list), so the permutation check is on and both tables are sorted by v_gene before comparing. Caveat: the reference uses allele-level names (e.g., IGHV3-11*04) while the candidate uses gene-level names with alleles collapsed (e.g., IGHV3-11 = 6, which equals the reference's 4 for *04 plus 2 for *01). Exact matching on v_gene will therefore leave many rows unmatched unless the allele suffix (*NN) is removed and reference counts and frequencies are summed per gene first. This difference in naming level is a real content difference, not just a structural one.",
+          "confidence": 0.6
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "The guideline requires each V gene's count to be within 0.1% relative absolute error. Counts are integers, so this effectively requires an exact match."
+            },
+            {
+              "name": "frequency",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "The guideline requires each frequency to be within 0.1% RAE. That tolerance still allows for small floating-point rounding differences."
+            }
+          ],
+          "overall_reasoning": "The task is to compare V gene usage, with each gene aligned on v_gene. The guideline says count and frequency must match the reference within 0.1% relative absolute error, so both columns use RAE with cell_tolerance 0.001. Extra candidate columns (productive_count, read_count, read_frequency) are not in the reference, so they are left out. Some candidate rows have NaN values or different counts, for example ighv311*01 and ighv311*04. These look like allele merging or misassignment differences, and the RAE threshold will correctly count them as mismatches.",
+          "overall_confidence": 0.92,
+          "id_columns": [
+            "v_gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "v_gene": "v_gene",
+              "count": "count",
+              "frequency": "frequency"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "productive_count",
+              "read_count",
+              "read_frequency"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "v_gene"
+            ],
+            "matched_rows": 27,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {
+              "ighv372": "ighv372*01",
+              "ighv3691": "ighv3691*01",
+              "ighv1nl1": "ighv1nl1*01",
+              "ighv12": "ighv12*04",
+              "ighv118": "ighv118*01",
+              "ighv311": "ighv311*01",
+              "ighv341": "ighv341*02",
+              "ighv366": "ighv366*01",
+              "ighv321": "ighv321*08",
+              "ighv13": "ighv13*01",
+              "ighv551": "ighv551*01",
+              "ighv348": "ighv348*02",
+              "ighv459": "ighv459*01",
+              "ighv146": "ighv146*01",
+              "ighv169": "ighv169*01",
+              "ighv349": "ighv349*02",
+              "ighv319": "ighv319*01",
+              "ighv374": "ighv374*01",
+              "ighv371": "ighv371*01",
+              "ighv323": "ighv323*01",
+              "ighv3nl1": "ighv3nl1*01",
+              "ighv4382": "ighv4382*01",
+              "ighv347": "ighv347*01",
+              "ighv461": "ighv461*01",
+              "ighv313": "ighv313*01",
+              "ighv270": "ighv270*01",
+              "ighv352": "ighv352*01"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Each candidate is an IGHV gene name with no allele suffix. I matched it to the reference that has the same gene name plus an allele suffix (*NN). ighv311 has two possible references (*01 and *04). I picked *01 by convention, which leaves ighv311*04 unused.",
+              "confidence": 0.95
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "frequency",
+              "v_gene",
+              "count"
+            ],
+            "converted_columns": [],
+            "failed_columns": [
+              "count"
+            ],
+            "conversion_details": {
+              "frequency": [
+                "float64",
+                "float64",
+                true
+              ],
+              "v_gene": [
+                "str",
+                "str",
+                true
+              ],
+              "count": [
+                "int64",
+                "float64",
+                false
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "v_gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['productive_count', 'read_count', 'read_frequency']",
+            "Unmapped reference rows: 1",
+            "Failed to convert 1 column(s)",
+            "Sorted both dataframes by ['v_gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "count",
+            "frequency"
+          ],
+          "filtered_columns": [
+            "count",
+            "frequency"
+          ],
+          "overall_similarity": 0.9629629629629629,
+          "per_column_similarities": {
+            "count": {
+              "similarity": 0.9629629629629629,
+              "strategy": "rae",
+              "matching_count": 26,
+              "total_count": 27,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "frequency": {
+              "similarity": 0.9629629629629629,
+              "strategy": "rae",
+              "matching_count": 26,
+              "total_count": 27,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 28,
+            "alt_rows": 28,
+            "row_intersection": 28,
+            "ref_cols": 3,
+            "alt_cols": 6,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              28,
+              3
+            ],
+            "alt_shape": [
+              28,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 0.6666666666666666,
+            "dtype_matches": {
+              "frequency": true,
+              "v_gene": true,
+              "count": false
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9642857142857143,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.03571428571428571
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

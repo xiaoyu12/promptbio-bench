@@ -1,0 +1,184 @@
+{
+  "id": "b-1-4",
+  "question": "Discretize each numeric variable into 5 equal-width bins. Then, calculate the entropy (in bits, log base 2) for each variable based on the frequency distribution of its binned values. Return the results sorted in descending order of entropy.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-1-4/ref_answer/binned_entropy.csv",
+      "eval_guideline": "Entropy values per feature must match the reference within +/-0.01; rows must be in descending order of entropy; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-1-4/output/binned_entropy.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSVs, which fits a table of binned entropy values per variable.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-feature entropy tables (5 equal-width bins, entropy in bits). Entropy values per feature must match the reference within +/-0.01; rows must be in descending order of entropy; column order and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "Equal-width binning and entropy are deterministic, and the result is a small per-feature table. The guideline allows a ±0.01 numeric tolerance and lets column order and headers differ, so approximate (value-by-value alignment) is the right fit.",
+      "strategy_error": null,
+      "similarity": 0.9999998209631004,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "feature": "feature",
+            "entropy": "entropy"
+          },
+          "id_columns": [
+            "feature"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have the same layout: 20 rows of feature/entropy, so no transpose is needed. The column names match exactly and are mapped one-to-one. Each feature name is unique, so 'feature' is the row key; entropy is a computed value and is not used as a key. The guideline requires rows in descending order of entropy, so row order matters and no pre-sort is applied, which keeps the candidate's own order for checking. Entropy values are compared within a tolerance of ±0.01.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "entropy",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.005,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Entropy for each feature must match the reference within ±0.01. Values range from about 0.34 to 2.32, so a relative tolerance of 0.005 corresponds closely to that absolute tolerance."
+            }
+          ],
+          "overall_reasoning": "The only data column is 'entropy'. 'feature' is the ID column and is used only for alignment. Each entropy value is a deterministic number, so I compare it cell by cell with RAE. The guideline allows an absolute error of ±0.01. Entropy here can only fall between 0 and log2(5) ≈ 2.32, so that absolute limit works out to a relative error of about 0.0043 at the largest value and about 0.029 at the smallest (~0.34). I set a relative tolerance of 0.005, which stays close to the absolute ±0.01 allowance for most values and still tolerates small floating-point differences. Row order cannot be checked after alignment by feature. The preview shows the candidate values matching the reference exactly.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "feature": "feature",
+              "entropy": "entropy"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "feature"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "entropy",
+              "feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "entropy": [
+                "float64",
+                "float64",
+                true
+              ],
+              "feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "entropy"
+          ],
+          "filtered_columns": [
+            "entropy"
+          ],
+          "overall_similarity": 0.9999998209631004,
+          "per_column_similarities": {
+            "entropy": {
+              "similarity": 0.9999998209631004,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.005
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              2
+            ],
+            "alt_shape": [
+              20,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "entropy": true,
+              "feature": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

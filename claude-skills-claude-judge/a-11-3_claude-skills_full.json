@@ -1,0 +1,194 @@
+{
+  "id": "a-11-3",
+  "question": "Analyze PPI network to identify top 5 hub genes using degree centrality.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-3/ref_answer/hub_gene.csv",
+      "eval_guideline": "The 5 hub gene records must match the reference in identity and degree. The last gene can be either PTEN or EGFR, as they have the same Degree value.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-11-3/output/hub_gene.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named hub_gene.csv and are CSVs. The candidate is the only output and matches the task of finding the top hub genes.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare top 5 hub genes by degree centrality from a PPI network. The 5 hub gene records must match the reference in gene identity and degree value; row/column order may differ. The 5th gene may be either PTEN or EGFR since they share the same degree value."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "Degree centrality is deterministic, and the output is a small table of 5 gene/degree records that must match on identity and degree. Approximate handles column and row reordering. The question parameter passes on the PTEN/EGFR tie rule.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "Degree": "Degree"
+          },
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene",
+          "check_permutation": true,
+          "reasoning": "Both tables use genes as rows, so no transpose is needed. The reference columns Gene and Degree have exact matches in the candidate. The candidate's extra columns (Degree_Centrality, Weighted_Degree, Rank) are not in the reference and are left out. Gene is a unique gene symbol, so it is used as the row key. Degree is a computed value and is not used as a key. The guideline asks for a match on gene identity and degree, not on exact order. BRCA1, MYC and AKT1 all have degree 4, so their order among themselves is arbitrary, and the 5th gene can be either PTEN or EGFR. For these reasons the rows are treated as a set: row order is ignored, a permutation check is run, and rows are sorted by Gene before comparison. Note: if the candidate lists PTEN where the reference has EGFR, matching on Gene will leave those two rows unpaired. The scorer should allow this tie as the guideline says.",
+          "confidence": 0.92
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Degree",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Degree is an integer count that must match the reference exactly. RAE with a 0.01 tolerance requires an exact match for small integers."
+            }
+          ],
+          "overall_reasoning": "The task is to find the top 5 hub genes by degree centrality. Gene identity is already checked during alignment on the Gene ID column. The only reference column left to score is Degree, an integer count. Degrees must match exactly, so Degree uses RAE with a tight tolerance (0.01). Because the values are small integers, this works as an exact match. The candidate's extra columns (Degree_Centrality, Weighted_Degree, Rank) have no reference counterpart, so they are not scored. Either PTEN or EGFR is acceptable as the 5th gene, and that is handled by how the rows are aligned.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "Degree": "Degree"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Degree_Centrality",
+              "Weighted_Degree",
+              "Rank"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene",
+              "Degree"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "Degree": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Degree_Centrality', 'Weighted_Degree', 'Rank']",
+            "Sorted both dataframes by ['Gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Degree"
+          ],
+          "filtered_columns": [
+            "Degree"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Degree": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 2,
+            "alt_cols": 5,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              2
+            ],
+            "alt_shape": [
+              5,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene": true,
+              "Degree": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

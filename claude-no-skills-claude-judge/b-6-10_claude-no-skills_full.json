@@ -1,0 +1,197 @@
+{
+  "id": "b-6-10",
+  "question": "Apply CCA to find linear relationships between two sets of variables. Compute the maximum number of canonical components (min of the number of variables in each set). Report the canonical correlations.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-6-10/ref_answer/canonical_correlations.csv",
+      "eval_guideline": "Canonical correlation values per component must match the reference within +/-1e-3; column order and label naming may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-6-10/output/canonical_correlations.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files have the same name, canonical_correlations.csv, and both are CSV files. Each one holds the CCA canonical correlations the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Apply CCA to find linear relationships between two sets of variables (X and Y), computing min(n_vars_X, n_vars_Y) canonical components, and report the canonical correlations. Canonical correlation values per component must match the reference within +/-1e-3 (absolute); column order and label naming may differ. Match components by their order (component 1, 2, ...; correlations typically sorted in descending order)."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "CCA is deterministic and produces a small table of canonical correlations. The guideline asks for a value-by-value match within +/-1e-3 and allows column order and labels to differ, so approximate is the right fit.",
+      "strategy_error": null,
+      "similarity": 0.9999956504908551,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Component": "Component",
+            "Canonical_Correlation": "Canonical_Correlation"
+          },
+          "id_columns": [],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have 8 rows, one per canonical component, and neither needs transposing. Both reference columns have a candidate column with the same name. The candidate's extra columns (squared correlation, Wilks lambda, chi-square, DF, p-value) are not in the reference and should be ignored. The Component labels use different formats (integers 1-8 in the reference, strings 'CC1'-'CC8' in the candidate), so keying on them directly would fail. The guideline also says label naming may differ. Both tables list components in the same order (component 1 to 8, with correlation decreasing), so rows should be matched by position and no sorting is needed. Row order matters because component index is defined by rank. Sorting on the computed correlation values is avoided because they are measured outputs. The candidate's correlations match the reference within 1e-3, e.g. 0.996627 vs 0.996623 and 0.979946 vs 0.979933.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Canonical_Correlation",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "This is the main output of the task. The guideline sets an absolute tolerance of ±1e-3. Because the values are between 0 and 1, a relative tolerance of 1e-3 is at least as strict as that. Canonical correlations are non-negative, so the sign is not a convention and compare_abs stays false."
+            },
+            {
+              "name": "Component",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is only a component index. The guideline says label naming may differ (the candidate has 'CC1' and the reference has 1), and the rows are already aligned by index."
+            }
+          ],
+          "overall_reasoning": "The task asks only for the canonical correlations, so Canonical_Correlation is the one column that matters. The rows are aligned by index, and both tables list components 1–8 in descending order of correlation. Component is ignored because the evaluation guideline allows label naming to differ: the candidate uses 'CC1' and the reference uses 1, but they mean the same component. The extra candidate columns (squared correlation, Wilks' lambda, chi-square, DF, p-value) are not in the reference, so they are not compared. Canonical_Correlation uses RAE with a cell_tolerance of 1e-3. The values lie between 0.04 and 1, so a relative error of 1e-3 is never looser than the guideline's absolute ±1e-3, and the two are nearly equal for the large correlations. The candidate values agree with the reference to about 1e-5 absolute (largest difference about 1.6e-5 relative, at CC3), so the plan should pass all eight components.",
+          "overall_confidence": 0.92,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Component": "Component",
+              "Canonical_Correlation": "Canonical_Correlation"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Squared_Canonical_Correlation",
+              "Wilks_Lambda",
+              "Chi_Square",
+              "DF",
+              "P_value"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Component",
+              "Canonical_Correlation"
+            ],
+            "converted_columns": [],
+            "failed_columns": [
+              "Component"
+            ],
+            "conversion_details": {
+              "Component": [
+                "int64",
+                "str",
+                false
+              ],
+              "Canonical_Correlation": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Squared_Canonical_Correlation', 'Wilks_Lambda', 'Chi_Square', 'DF', 'P_value']",
+            "Failed to convert 1 column(s)"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Canonical_Correlation",
+            "Component"
+          ],
+          "filtered_columns": [
+            "Canonical_Correlation"
+          ],
+          "overall_similarity": 0.9999956504908551,
+          "per_column_similarities": {
+            "Canonical_Correlation": {
+              "similarity": 0.9999956504908551,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2857142857142857,
+            "col_recall": 1.0,
+            "col_f1": 0.4444444444444445,
+            "col_jaccard": 0.2857142857142857,
+            "ref_rows": 8,
+            "alt_rows": 8,
+            "row_intersection": 8,
+            "ref_cols": 2,
+            "alt_cols": 7,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              8,
+              2
+            ],
+            "alt_shape": [
+              8,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -5
+          },
+          "dtypes": {
+            "dtype_match_rate": 0.5,
+            "dtype_matches": {
+              "Component": false,
+              "Canonical_Correlation": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

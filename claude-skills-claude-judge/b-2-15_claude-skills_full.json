@@ -1,0 +1,525 @@
+{
+  "id": "b-2-15",
+  "question": "Convert the given VCF file into CSV format, with each column representing a specific variant attribute. Use the schema defined in the VCF header.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-15/ref_answer/variants.csv",
+      "eval_guideline": "Variant records must match the reference; float field values within +/-0.001; row order, column order, and additional columns beyond the required set may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-15/output/variants.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named variants.csv and are CSV files, which is the conversion output this task asks for. It is the only candidate file.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Convert VCF to CSV with columns for variant attributes per VCF header schema. Variant records must match the reference; float field values within +/-0.001; row order, column order, and additional columns beyond the required set may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "This is a deterministic VCF-to-CSV conversion. The guideline asks for record-level matching with a float tolerance of ±0.001 and allows rows and columns to be in a different order, which is the case approximate matching handles.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "CHROM": "CHROM",
+            "POS": "POS",
+            "ID": "ID",
+            "REF": "REF",
+            "ALT": "ALT",
+            "QUAL": "QUAL",
+            "FILTER": "FILTER",
+            "FORMAT": null,
+            "SAMPLE1": null,
+            "AC": "AC",
+            "AN": "AN",
+            "AF": "AF",
+            "DP": "DP",
+            "MQ": "MQ",
+            "FS": "FS",
+            "SOR": "SOR"
+          },
+          "id_columns": [
+            "CHROM",
+            "POS",
+            "REF",
+            "ALT"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "CHROM,POS,REF,ALT",
+          "check_permutation": true,
+          "reasoning": "The two tables are oriented the same way: each row is one variant, so no transpose is needed. These columns have the same name in both tables and map directly: the fixed VCF columns (CHROM, POS, ID, REF, ALT, QUAL, FILTER) and the INFO fields (AC, AN, AF, DP, MQ, FS, SOR). The reference keeps FORMAT and the raw SAMPLE1 string (e.g. 'GT:AD:DP:GQ:PL' / '0/1:23,23:46:86:157,1,114'). The candidate splits the sample data into SAMPLE1_GT, SAMPLE1_AD, SAMPLE1_DP, SAMPLE1_GQ and SAMPLE1_PL and has no FORMAT column. No single candidate column matches these two reference columns, so both are mapped to null. The same information is still there, just split across columns. The candidate's extra columns are allowed under the evaluation guideline. Rows are matched on the standard variant key CHROM+POS+REF+ALT. This is more reliable than ID, which can be '.' or missing. The guideline says row order doesn't matter, so the plan checks whether one table is a reordering of the other and sorts by the key first.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The variant identifier (rsID) must match exactly."
+            },
+            {
+              "name": "FILTER",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The filter status is a single label, so it must match exactly."
+            },
+            {
+              "name": "QUAL",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "QUAL is a whole number in this data, so it must match exactly."
+            },
+            {
+              "name": "AC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The allele count is a whole number, so it must match exactly."
+            },
+            {
+              "name": "AN",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The total allele number is a whole number, so it must match exactly."
+            },
+            {
+              "name": "DP",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The depth is a whole number, so it must match exactly."
+            },
+            {
+              "name": "AF",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.005,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The allele frequency is a decimal between 0 and 1 with 3 decimal places. A relative tolerance of 0.005 roughly matches the ±0.001 limit for typical values."
+            },
+            {
+              "name": "MQ",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Mapping quality is a decimal (about 30 to 65) with 1 decimal place. A small relative tolerance lets tiny float differences pass while any real difference fails."
+            },
+            {
+              "name": "FS",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "FS (Fisher strand) is a decimal with 1 decimal place. A small relative tolerance is used, in line with the ±0.001 guideline."
+            },
+            {
+              "name": "SOR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "SOR (strand odds ratio) is a decimal with 1 decimal place. A small relative tolerance is used, in line with the ±0.001 guideline."
+            }
+          ],
+          "overall_reasoning": "This task converts a VCF file to CSV, so every variant attribute has to match the reference. CHROM, POS, REF and ALT are the alignment keys and are left out of the comparison.\n\n**Columns compared:**\n- **ID and FILTER (text):** compared by exact match. They are single labels, not lists that would need splitting on a delimiter.\n- **QUAL, AC, AN and DP (whole numbers):** compared by relative error with zero tolerance, which works as an exact match.\n- **AF, MQ, FS and SOR (decimals):** compared by relative error with small tolerances. These are meant to roughly match the guideline's ±0.001 limit, which is an absolute difference.\n  - AF values are around 0.1 to 1 and are written to 3 decimal places. A tolerance of 0.005 relative error covers ±0.001 at those values.\n  - MQ, FS and SOR are written to 1 decimal place. A tolerance of 0.001 relative error means any real difference in a value fails, while tiny float differences still pass.\n\n**Columns not compared:** The reference keeps FORMAT and SAMPLE1 as raw columns, while the candidate splits the sample into SAMPLE1_* columns. These are extra columns, and the guideline allows extra columns beyond the required set, so they are not scored.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "CHROM",
+            "POS",
+            "REF",
+            "ALT"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "CHROM": "CHROM",
+              "POS": "POS",
+              "ID": "ID",
+              "REF": "REF",
+              "ALT": "ALT",
+              "QUAL": "QUAL",
+              "FILTER": "FILTER",
+              "AC": "AC",
+              "AN": "AN",
+              "AF": "AF",
+              "DP": "DP",
+              "MQ": "MQ",
+              "FS": "FS",
+              "SOR": "SOR"
+            },
+            "unmapped_ref": [
+              "FORMAT",
+              "SAMPLE1"
+            ],
+            "unmapped_alt": [
+              "SAMPLE1_GT",
+              "SAMPLE1_AD",
+              "SAMPLE1_DP",
+              "SAMPLE1_GQ",
+              "SAMPLE1_PL"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "CHROM",
+              "POS",
+              "REF",
+              "ALT"
+            ],
+            "matched_rows": 100,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "REF",
+              "QUAL",
+              "DP",
+              "CHROM",
+              "AN",
+              "POS",
+              "FILTER",
+              "FS",
+              "AF",
+              "MQ",
+              "AC",
+              "SOR",
+              "ALT",
+              "ID"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "REF": [
+                "str",
+                "str",
+                true
+              ],
+              "QUAL": [
+                "int64",
+                "int64",
+                true
+              ],
+              "DP": [
+                "int64",
+                "int64",
+                true
+              ],
+              "CHROM": [
+                "str",
+                "str",
+                true
+              ],
+              "AN": [
+                "int64",
+                "int64",
+                true
+              ],
+              "POS": [
+                "str",
+                "str",
+                true
+              ],
+              "FILTER": [
+                "str",
+                "str",
+                true
+              ],
+              "FS": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AF": [
+                "float64",
+                "float64",
+                true
+              ],
+              "MQ": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AC": [
+                "int64",
+                "int64",
+                true
+              ],
+              "SOR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ALT": [
+                "str",
+                "str",
+                true
+              ],
+              "ID": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "CHROM",
+              "POS",
+              "REF",
+              "ALT"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['FORMAT', 'SAMPLE1']",
+            "Unmapped candidate columns: ['SAMPLE1_GT', 'SAMPLE1_AD', 'SAMPLE1_DP', 'SAMPLE1_GQ', 'SAMPLE1_PL']",
+            "Sorted both dataframes by ['CHROM', 'POS', 'REF', 'ALT']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AC",
+            "AF",
+            "AN",
+            "DP",
+            "FILTER",
+            "FS",
+            "ID",
+            "MQ",
+            "QUAL",
+            "SOR"
+          ],
+          "filtered_columns": [
+            "AC",
+            "AF",
+            "AN",
+            "DP",
+            "FILTER",
+            "FS",
+            "ID",
+            "MQ",
+            "QUAL",
+            "SOR"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "AC": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "AF": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 0.005
+              }
+            },
+            "AN": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "DP": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "FILTER": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {}
+            },
+            "FS": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "ID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {}
+            },
+            "MQ": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "QUAL": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "SOR": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.7368421052631579,
+            "col_recall": 0.875,
+            "col_f1": 0.7999999999999999,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 100,
+            "alt_rows": 100,
+            "row_intersection": 100,
+            "ref_cols": 16,
+            "alt_cols": 19,
+            "col_intersection": 14
+          },
+          "shape": {
+            "ref_shape": [
+              100,
+              16
+            ],
+            "alt_shape": [
+              100,
+              19
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "REF": true,
+              "QUAL": true,
+              "DP": true,
+              "CHROM": true,
+              "AN": true,
+              "POS": true,
+              "FILTER": true,
+              "FS": true,
+              "AF": true,
+              "MQ": true,
+              "AC": true,
+              "SOR": true,
+              "ALT": true,
+              "ID": true
+            },
+            "common_columns": 14
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

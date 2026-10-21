@@ -1,0 +1,190 @@
+{
+  "id": "b-2-12",
+  "question": "Classify each column in the dataset as: continuous, categorical, binary (exactly 2 unique values), datetime, or ordinal (ordered labels such as education levels).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-12/ref_answer/data_types.csv",
+      "eval_guideline": "Unambiguous column types (binary, datetime, continuous) must match the reference; ordinal vs. categorical is an acceptable alternative classification for boundary columns; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-2-12/output/data_types.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named data_types.csv and both are CSV, so they match on name and format. This is also the column type classification output the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-column data type classifications (continuous, categorical, binary, datetime, ordinal). Unambiguous types (binary, datetime, continuous) must match the reference; ordinal vs. categorical is an acceptable alternative for boundary columns. Column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "This is a deterministic classification table where each column's type is compared row by row. The guideline allows column order, row order and header labels to differ, and it accepts ordinal or categorical for boundary columns, so LLM-planned approximate alignment with the task context is the right fit.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "column_name": "column_name",
+            "data_type": "data_type"
+          },
+          "id_columns": [
+            "column_name"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables list one row per dataset column (28 rows each), so no transpose is needed. The reference columns 'column_name' and 'data_type' match the candidate's columns of the same names exactly. The candidate's extra columns (pandas_dtype, n_unique, n_missing, example_values, rationale) are metadata and are left out. Rows are matched on 'column_name', which uniquely identifies each dataset column. Row order doesn't matter because the guideline says column order and row order may differ.",
+          "confidence": 0.96
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "data_type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is a single label per row from a fixed set of types, so it is compared with exact equality. Swaps between ordinal and categorical are acceptable under the guideline, but exact matching will still count them as mismatches. Expect only a few of these, on borderline columns."
+            }
+          ],
+          "overall_reasoning": "The task is to give each dataset column a type label. column_name is the ID used for alignment, so it is left out of the comparison. The only reference data column is data_type, a categorical label from a small fixed set: continuous, categorical, binary, datetime, ordinal. It is compared with exact matching, cell by cell. The candidate also has extra columns (pandas_dtype, n_unique, n_missing, example_values, rationale) that the reference does not have, so they are not compared. The guideline accepts ordinal or categorical for borderline columns, but exact matching cannot give partial credit for that. A few such mismatches may therefore lower the score slightly even though the guideline allows them. The unambiguous types (binary, datetime, continuous) must match exactly.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "column_name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "column_name": "column_name",
+              "data_type": "data_type"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "pandas_dtype",
+              "n_unique",
+              "n_missing",
+              "example_values",
+              "rationale"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "column_name"
+            ],
+            "matched_rows": 28,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "column_name",
+              "data_type"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "column_name": [
+                "str",
+                "str",
+                true
+              ],
+              "data_type": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['pandas_dtype', 'n_unique', 'n_missing', 'example_values', 'rationale']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "data_type"
+          ],
+          "filtered_columns": [
+            "data_type"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "data_type": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 28,
+              "total_count": 28,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2857142857142857,
+            "col_recall": 1.0,
+            "col_f1": 0.4444444444444445,
+            "col_jaccard": 0.2857142857142857,
+            "ref_rows": 28,
+            "alt_rows": 28,
+            "row_intersection": 28,
+            "ref_cols": 2,
+            "alt_cols": 7,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              28,
+              2
+            ],
+            "alt_shape": [
+              28,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -5
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "column_name": true,
+              "data_type": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

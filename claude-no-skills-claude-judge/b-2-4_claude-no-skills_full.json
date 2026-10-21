@@ -1,0 +1,202 @@
+{
+  "id": "b-2-4",
+  "question": "Reshape the wide format gene expression into long format with sample, gene and expression columns.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-4/ref_answer/gene_expression_long.csv",
+      "eval_guideline": "All sample-gene-expression rows must match the reference, including rows where expression is missing; row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-2-4/output/gene_expression_long.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSVs. This file is the long-format reshape output the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Reshape the wide format gene expression into long format with sample, gene and expression columns. All sample-gene-expression rows must match the reference, including rows where expression is missing (NA/empty); row and column order may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "This is a deterministic wide-to-long reshape, and the guideline asks for every sample-gene-expression row to match, including rows with missing values. It also says row and column order may differ, and approximate handles that kind of reordering.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "sample": "sample",
+            "gene": "gene",
+            "expression": "expression"
+          },
+          "id_columns": [
+            "sample",
+            "gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sample,gene",
+          "check_permutation": true,
+          "reasoning": "Both tables are already in long format and have the same column names (sample, gene, expression), so no transpose is needed and the columns map one-to-one. Each row is identified by the pair of sample and gene. The candidate lists genes in a different order within each sample (BRCA1, TP53, EGFR, MYC, KRAS instead of alphabetical), and the guideline says row order doesn't matter. So rows are matched on the sample+gene key and sorted by sample and gene before comparison, and the check is whether one table is a reordering of the other. Expression is the value being compared, not part of the key. Rows where expression is missing (NaN) must still be present in both tables.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "Reshaping only moves values around and does not change them, so each cell must match the reference exactly. Matching is cell by cell using relative absolute error, with a 1e-6 tolerance to absorb float noise. Values are 2-decimal expression levels ranging from about 9 to over 1000. A NaN in both files should count as a match, as the guideline requires. A correlation measure would not work here because it would hide wrong values in individual cells."
+            }
+          ],
+          "overall_reasoning": "This is a wide-to-long reshape. The rows are aligned on the ID columns sample and gene, so expression is the only column left to compare. A reshape should copy values exactly, so expression is compared cell by cell using relative absolute error with a tight tolerance (1e-6). This only allows for float rounding and representation noise. The guideline requires rows with missing expression to match too, so the comparison should treat a NaN in both files as a match.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "sample",
+            "gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "sample": "sample",
+              "gene": "gene",
+              "expression": "expression"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample",
+              "gene"
+            ],
+            "matched_rows": 2500,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "sample",
+              "expression",
+              "gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "sample": [
+                "str",
+                "str",
+                true
+              ],
+              "expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sample",
+              "gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['sample', 'gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "expression"
+          ],
+          "filtered_columns": [
+            "expression"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2344,
+              "total_count": 2344,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 2500,
+            "alt_rows": 2500,
+            "row_intersection": 2500,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2500,
+              3
+            ],
+            "alt_shape": [
+              2500,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "sample": true,
+              "expression": true,
+              "gene": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0624,
+            "alt_missing_rate": 0.0624
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

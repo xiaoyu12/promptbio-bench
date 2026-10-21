@@ -1,0 +1,186 @@
+{
+  "id": "b-10-10",
+  "question": "Given the clustering results from a single-cell RNA-seq dataset and the corresponding known cell type labels, compute Cohen's kappa, the Adjusted Rand Index (ARI), and Normalized Mutual Information (NMI) to evaluate the agreement between the clustering labels and the biological annotations. Before computing Cohen's kappa, align cluster integer labels to true cell-type labels using the Hungarian algorithm (optimal assignment) to account for the arbitrary permutation of cluster identifiers. ARI and NMI are permutation-invariant and do not require alignment.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-10/ref_answer/clustering_metrics.csv",
+      "eval_guideline": "All three metric values must match the reference within +/-0.001; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-10-10/output/clustering_metrics.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named clustering_metrics.csv and are CSVs. The candidate is the only agent output and holds the requested clustering metrics.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare clustering evaluation metrics (Cohen's kappa after Hungarian alignment, ARI, NMI) computed from clustering labels vs known cell types. All three metric values must match the reference within +/-0.001; row order, column order, and header labels may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "This task is deterministic and produces a small results table of three metrics. Approximate compares the values one by one using the guideline's +/-0.001 tolerance, and it allows row order, column order and header labels to differ.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Metric": "Metric",
+            "Score": "Score"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same long format (Metric, Score), so no transpose is needed and the columns map directly by name. The metric labels refer to the same things but are written differently: Cohen_Kappa vs Cohen's Kappa, Adjusted_Rand_Index vs ARI, and Normalized_Mutual_Information vs NMI. Matching rows on the exact Metric strings would therefore fail. Both tables already list the metrics in the same order (Kappa, ARI, NMI), so rows are paired by position. Sorting is not needed: sorting the names alphabetically would also give the same order in both tables. Row order has no meaning here, so a permutation check is enabled. Scores are compared with a tolerance of ±0.001.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Metric",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "These are only labels, and they are named differently in each file (abbreviations vs full names). The task allows header labels to differ, and the rows already line up by index in the same metric order."
+            },
+            {
+              "name": "Score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The task requires each metric value to match within ±0.001. The values are about 1, so a relative absolute error tolerance of 0.001 is about the same as the stated absolute tolerance."
+            }
+          ],
+          "overall_reasoning": "The rows line up by index, and in both tables the metrics come in the same order: Cohen's kappa, ARI, then NMI. The Metric column uses different names in each file ('Cohen_Kappa' vs \"Cohen's Kappa\", 'Adjusted_Rand_Index' vs 'ARI', and so on). The task says header labels may differ, so an exact string match would fail for no real reason. I set the Metric column to ignore. The Score column is the one that matters: the task requires each metric to match within ±0.001. All three metrics are close to 1, so a relative absolute error tolerance of 0.001 works out to about the same as an absolute ±0.001 check.",
+          "overall_confidence": 0.9,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Metric": "Metric",
+              "Score": "Score"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Score"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Score": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Metric",
+            "Score"
+          ],
+          "filtered_columns": [
+            "Score"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Score": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              2
+            ],
+            "alt_shape": [
+              3,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Score": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

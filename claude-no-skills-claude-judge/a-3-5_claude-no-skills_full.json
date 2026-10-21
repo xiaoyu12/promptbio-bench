@@ -1,0 +1,699 @@
+{
+  "id": "a-3-5",
+  "question": "Predict alternative splicing events from RNA-Seq data using rMATS.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-5/ref_answer/A3SS.MATS.JC.txt",
+      "eval_guideline": "Records must match the reference in chromosome, position, strand, and per-sample junction counts; PSI values must match within +/-0.01; p-value and FDR must match within +/-0.01; column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-3-5/output/A3SS.MATS.JC.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename. Both are rMATS A3SS junction-count output tables (.txt).",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.88; reasoning: Tab-delimited header line matching rMATS alternative splicing output (A3SS/A5SS JunctionCountOnly table): ID, GeneID, geneSymbol, chr, strand, longExonStart_0base, longExonEnd, shortES, shortEE, flankingES, flankingEE, IJC/SJC counts, PValue, FDR, IncLevel columns. Only the header is present, but the tab-separated column structure indicates TSV."
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare rMATS A3SS.MATS.JC.txt outputs: records must match on chromosome, positions (longExon/shortES/shortEE/flanking coordinates), strand, and per-sample junction counts (IJC/SJC); PSI (IncLevel) values within +/-0.01; PValue and FDR within +/-0.01; column order and row order may differ; ID column may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "rMATS is a deterministic tool, and the guideline asks for each record to match on coordinates and counts, with ±0.01 numeric tolerances and column order allowed to differ. Approximate alignment of the TSV fits this.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "note": "Reference and candidate both contain no data records"
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-5/ref_answer/A5SS.MATS.JC.txt",
+      "eval_guideline": null,
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-3-5/output/A5SS.MATS.JC.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename. Both are rMATS A5SS junction-count output tables (.txt).",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.9; reasoning: Tab-delimited header row matching rMATS alternative splicing output (A5SS/A3SS columns: longExonStart_0base, shortES, IJC_SAMPLE_1, SJC_SAMPLE_1, IncLevelDifference, etc.). Only the header is present, but the structure is clearly tab-separated tabular data."
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare rMATS A5SS.MATS.JC.txt alternative 5' splice site event tables. Match events by gene ID, chromosome, strand and exon coordinates (longExonStart/End, shortES/EE, flankingES/EE) rather than by the arbitrary event ID or row order. Then check that the junction counts (IJC/SJC per sample), IncLevel values, PValue/FDR and IncLevelDifference agree within minor numeric tolerance."
+      },
+      "strategy_confidence": 0.72,
+      "strategy_reasoning": "No eval guideline was given, so the tsv format default applies. rMATS is deterministic for a fixed version and parameter set, but event IDs and row order can differ between runs, so approximate alignment on event coordinates is the right fit.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "note": "Reference and candidate both contain no data records"
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-5/ref_answer/SE.MATS.JC.txt",
+      "eval_guideline": null,
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-3-5/output/SE.MATS.JC.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename. Both are rMATS skipped-exon junction-count output tables (.txt).",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "txt",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare rMATS skipped-exon (SE.MATS.JC.txt) outputs from sample_1.bam vs sample_2.bam. Match events by gene ID and exon coordinates (exonStart_0base, exonEnd, upstream/downstream exon coordinates, strand, chr), not by the arbitrary event ID. Junction counts (IJC/SJC), IncLevels, IncLevelDifference, PValue and FDR should agree within small numeric tolerance. Row and column order may differ."
+      },
+      "strategy_confidence": 0.72,
+      "strategy_reasoning": "There's no eval guideline, so I used the TSV default. rMATS is a deterministic tool and gives one record per skipped-exon event, so the right check is record-level approximate matching on event coordinates. That allows rows and columns in a different order, different event IDs and small numeric differences.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "chr",
+            "strand",
+            "exonStart_0base",
+            "exonEnd",
+            "upstreamES",
+            "upstreamEE",
+            "downstreamES",
+            "downstreamEE"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are rMATS skipped-exon (SE) outputs with the same 23 columns in the same order, so no transpose or column mapping is needed. The 'ID' column is a numeric index that rMATS assigns, and it can change between runs. Instead, each splicing event is keyed by its exon coordinates: chr, strand, exonStart_0base, exonEnd, upstreamES, upstreamEE, downstreamES, downstreamEE. These coordinates come from the annotation or junctions. They are not estimated values, so they should match exactly between runs. Junction counts, PValue, FDR and IncLevel are computed values and are not used as keys. Splicing events form an unordered set, so row order doesn't matter and the tables are checked as permutations of each other.",
+          "confidence": 0.93
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "GeneID",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Gene annotation label; should match exactly."
+            },
+            {
+              "name": "geneSymbol",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Gene symbol annotation; should match exactly."
+            },
+            {
+              "name": "ID",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Arbitrary rMATS event index, depends on run/ordering."
+            },
+            {
+              "name": "ID.1",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Duplicate arbitrary event index column."
+            },
+            {
+              "name": "IJC_SAMPLE_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Inclusion junction counts; deterministic integers, tight tolerance."
+            },
+            {
+              "name": "SJC_SAMPLE_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Skipping junction counts; deterministic integers, tight tolerance."
+            },
+            {
+              "name": "IJC_SAMPLE_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Inclusion junction counts; deterministic integers, tight tolerance."
+            },
+            {
+              "name": "SJC_SAMPLE_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Skipping junction counts; deterministic integers, tight tolerance."
+            },
+            {
+              "name": "IncFormLen",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Effective inclusion form length; determined by read length/event, should match closely."
+            },
+            {
+              "name": "SkipFormLen",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Effective skipping form length; should match closely."
+            },
+            {
+              "name": "PValue",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Statistical test p-value can vary slightly between optimisation runs or versions, so the tolerance is moderate."
+            },
+            {
+              "name": "FDR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Adjusted p-value; moderate tolerance for numerical variation."
+            },
+            {
+              "name": "IncLevel1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "PSI for sample 1, a ratio rounded to 3 decimals; moderate tolerance."
+            },
+            {
+              "name": "IncLevel2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "PSI for sample 2, a ratio rounded to 3 decimals; moderate tolerance."
+            },
+            {
+              "name": "IncLevelDifference",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Delta PSI is small in magnitude, so rounding inflates the relative error and the tolerance is looser. The sign is kept because it gives the direction of the effect."
+            }
+          ],
+          "overall_reasoning": "This is the rMATS output for skipped-exon events, joined on the exon coordinate ID columns. There is only one row, so Pearson and Spearman correlation would be undefined. I used cell-by-cell relative absolute error (RAE) for every numerical column instead.\n\n- **Junction counts and form lengths:** IJC/SJC and IncFormLen/SkipFormLen are deterministic integers from read counting. They get a tight tolerance of 0.01.\n- **PValue and FDR:** rMATS computes these by numerical optimisation, so they can drift slightly between versions or runs. They get a moderate tolerance of 0.05.\n- **Inclusion levels (IncLevel1, IncLevel2):** These are ratios rounded to 3 decimals, so they get a tolerance of 0.05.\n- **IncLevelDifference:** The value is small (-0.023), so a 0.001 rounding difference alone gives an RAE of about 4%. Its tolerance is a looser 0.1. The sign is kept because it shows the direction of the effect.\n- **Gene annotation (GeneID, geneSymbol):** Compared as exact strings.\n- **Ignored columns (ID, ID.1):** These are arbitrary event indices that depend on the run.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "chr",
+            "strand",
+            "exonStart_0base",
+            "exonEnd",
+            "upstreamES",
+            "upstreamEE",
+            "downstreamES",
+            "downstreamEE"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "chr",
+              "strand",
+              "exonStart_0base",
+              "exonEnd",
+              "upstreamES",
+              "upstreamEE",
+              "downstreamES",
+              "downstreamEE"
+            ],
+            "matched_rows": 1,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "upstreamES",
+              "FDR",
+              "exonStart_0base",
+              "exonEnd",
+              "IncLevel1",
+              "PValue",
+              "geneSymbol",
+              "upstreamEE",
+              "downstreamEE",
+              "SkipFormLen",
+              "downstreamES",
+              "ID",
+              "SJC_SAMPLE_1",
+              "IncLevelDifference",
+              "IJC_SAMPLE_1",
+              "SJC_SAMPLE_2",
+              "strand",
+              "GeneID",
+              "IJC_SAMPLE_2",
+              "ID.1",
+              "IncFormLen",
+              "chr",
+              "IncLevel2"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "upstreamES": [
+                "str",
+                "str",
+                true
+              ],
+              "FDR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "exonStart_0base": [
+                "str",
+                "str",
+                true
+              ],
+              "exonEnd": [
+                "str",
+                "str",
+                true
+              ],
+              "IncLevel1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PValue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "geneSymbol": [
+                "str",
+                "str",
+                true
+              ],
+              "upstreamEE": [
+                "str",
+                "str",
+                true
+              ],
+              "downstreamEE": [
+                "str",
+                "str",
+                true
+              ],
+              "SkipFormLen": [
+                "int64",
+                "int64",
+                true
+              ],
+              "downstreamES": [
+                "str",
+                "str",
+                true
+              ],
+              "ID": [
+                "int64",
+                "int64",
+                true
+              ],
+              "SJC_SAMPLE_1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IncLevelDifference": [
+                "float64",
+                "float64",
+                true
+              ],
+              "IJC_SAMPLE_1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "SJC_SAMPLE_2": [
+                "int64",
+                "int64",
+                true
+              ],
+              "strand": [
+                "str",
+                "str",
+                true
+              ],
+              "GeneID": [
+                "str",
+                "str",
+                true
+              ],
+              "IJC_SAMPLE_2": [
+                "int64",
+                "int64",
+                true
+              ],
+              "ID.1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "IncFormLen": [
+                "int64",
+                "int64",
+                true
+              ],
+              "chr": [
+                "str",
+                "str",
+                true
+              ],
+              "IncLevel2": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "FDR",
+            "GeneID",
+            "ID",
+            "ID.1",
+            "IJC_SAMPLE_1",
+            "IJC_SAMPLE_2",
+            "IncFormLen",
+            "IncLevel1",
+            "IncLevel2",
+            "IncLevelDifference",
+            "PValue",
+            "SJC_SAMPLE_1",
+            "SJC_SAMPLE_2",
+            "SkipFormLen",
+            "geneSymbol"
+          ],
+          "filtered_columns": [
+            "FDR",
+            "GeneID",
+            "IJC_SAMPLE_1",
+            "IJC_SAMPLE_2",
+            "IncFormLen",
+            "IncLevel1",
+            "IncLevel2",
+            "IncLevelDifference",
+            "PValue",
+            "SJC_SAMPLE_1",
+            "SJC_SAMPLE_2",
+            "SkipFormLen",
+            "geneSymbol"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "FDR": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "GeneID": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "IJC_SAMPLE_1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "IJC_SAMPLE_2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "IncFormLen": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "IncLevel1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "IncLevel2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "IncLevelDifference": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "PValue": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "SJC_SAMPLE_1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "SJC_SAMPLE_2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "SkipFormLen": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "geneSymbol": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 23,
+            "alt_cols": 23,
+            "col_intersection": 23
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              23
+            ],
+            "alt_shape": [
+              1,
+              23
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "upstreamES": true,
+              "FDR": true,
+              "exonStart_0base": true,
+              "exonEnd": true,
+              "IncLevel1": true,
+              "PValue": true,
+              "geneSymbol": true,
+              "upstreamEE": true,
+              "downstreamEE": true,
+              "SkipFormLen": true,
+              "downstreamES": true,
+              "ID": true,
+              "SJC_SAMPLE_1": true,
+              "IncLevelDifference": true,
+              "IJC_SAMPLE_1": true,
+              "SJC_SAMPLE_2": true,
+              "strand": true,
+              "GeneID": true,
+              "IJC_SAMPLE_2": true,
+              "ID.1": true,
+              "IncFormLen": true,
+              "chr": true,
+              "IncLevel2": true
+            },
+            "common_columns": 23
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

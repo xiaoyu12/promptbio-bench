@@ -1,0 +1,193 @@
+{
+  "id": "b-10-1",
+  "question": "Train a Random Forest classifier (n_estimators=100, random_state=42) to classify tumor vs. normal samples (treating tumor as the positive class). Evaluate performance using 5-fold cross-validation. Report mean accuracy, precision, and recall for the positive (tumor) class.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-1/ref_answer/cv_results.csv",
+      "eval_guideline": "Each metric's Mean value must match the reference within +/-0.05; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-10-1/output/cv_results.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files have the same name (cv_results.csv) and the same CSV format, and both hold the cross-validation results the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare 5-fold CV results of a Random Forest (n_estimators=100, random_state=42) tumor vs normal classifier. Each metric's mean value (accuracy, precision, recall for the tumor class) must match the reference within +/-0.05; row order, column order, and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a small results table with only a few metrics (mean accuracy, precision and recall). It should be compared value by value with the guideline's ±0.05 tolerance, which absorbs CV/RF run-to-run noise. Approximate matching also handles the allowed differences in row order, column order and header labels.",
+      "strategy_error": null,
+      "similarity": 0.9999761122202683,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Metric": "Metric",
+            "Mean": "Mean"
+          },
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use the same long format, with one row per metric, so no transpose is needed. The reference columns Metric and Mean match the candidate's columns exactly. The candidate's extra columns (SD and Fold_1 to Fold_5) are not in the reference and are left out. Rows are matched on the categorical Metric label (Accuracy, Precision, Recall). The guideline says row order doesn't matter, so the check is order-independent.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Mean",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.055,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "The core output is cross-validated mean metrics. The guideline allows ±0.05 absolute. For values of about 0.83–0.92, a relative tolerance of about 0.055 is close to that limit. Signs carry meaning, so absolute-value comparison is off."
+            }
+          ],
+          "overall_reasoning": "The task asks for mean accuracy, precision and recall across 5-fold CV. Only the 'Mean' column is in the reference, so it is the only column compared. Metric is the ID column and is used only for alignment. The candidate's extra columns (SD, Fold_1–Fold_5) are not in the reference, so they are left out. The guideline allows an absolute difference of ±0.05. Mean values range from about 0.83 to 0.92, so 0.05 absolute is roughly 0.054–0.060 as a relative error. RAE with cell_tolerance 0.055 approximates the absolute rule, though it is slightly stricter for accuracy and recall. The candidate values (0.888, 0.91932, 0.829758) match the reference almost exactly.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Metric": "Metric",
+              "Mean": "Mean"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "SD",
+              "Fold_1",
+              "Fold_2",
+              "Fold_3",
+              "Fold_4",
+              "Fold_5"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Mean",
+              "Metric"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Mean": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Metric": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['SD', 'Fold_1', 'Fold_2', 'Fold_3', 'Fold_4', 'Fold_5']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Mean"
+          ],
+          "filtered_columns": [
+            "Mean"
+          ],
+          "overall_similarity": 0.9999761122202683,
+          "per_column_similarities": {
+            "Mean": {
+              "similarity": 0.9999761122202683,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.055
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.25,
+            "col_recall": 1.0,
+            "col_f1": 0.4,
+            "col_jaccard": 0.25,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 2,
+            "alt_cols": 8,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              2
+            ],
+            "alt_shape": [
+              3,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Mean": true,
+              "Metric": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

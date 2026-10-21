@@ -1,0 +1,260 @@
+{
+  "id": "b-5-9",
+  "question": "Calculate the gap statistic for K-means clustering with k values from 1 to 20, using 10 Monte Carlo reference datasets and random_state=42. For each k, compare the log within-cluster dispersion to that of uniform reference datasets drawn from the observed feature ranges. Identify the optimal k as the smallest k where gap(k) >= gap(k+1) - s(k+1) (where s(k+1) is the standard error) and report the gap values and standard errors for each k.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-9/ref_answer/gap_statistic.tsv",
+      "eval_guideline": "Gap values and standard errors must match the reference within +/-0.05; column labels and whitespace may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-5-9/output/gap_statistic.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are TSV files. Each one holds the gap values and standard errors for every k.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare gap statistic tables for K-means k=1..20 (10 Monte Carlo references, random_state=42). For each k, the gap values and standard errors must match the reference within +/-0.05. Column labels and whitespace may differ. Also check that the optimal k is the same, if it is reported."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The output is a small table with one gap value and one standard error for each k. The guideline gives an explicit ±0.05 tolerance, so comparing the table value by value with approximate works best. The tolerance covers Monte Carlo noise, and the seed is fixed. Summary isn't a good fit because it compares distributions of many values and can't judge about 20 rows.",
+      "strategy_error": null,
+      "similarity": 0.8790583288338373,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "k": "k",
+            "Gap Value": "Gap Value",
+            "Std Error": "Std Error"
+          },
+          "id_columns": [
+            "k"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "k",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same layout, with one row for each k from 1 to 20, so no transpose is needed. The reference columns k, Gap Value and Std Error match candidate columns of the same names exactly. The candidate's extra columns (log_W, mean_log_W_ref, sd_log_W_ref) have no counterpart in the reference and are left out. k is an integer input parameter that uniquely identifies each row, so it is the ID key. Each row is a result for one k, not a ranking, so row order doesn't matter, but sorting by k keeps the rows in a consistent order.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Gap Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.015,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.82,
+              "reasoning": "This is the main output, and the guideline allows ±0.05 absolute. Gap values are about 0.9–3.45, so a relative tolerance of 0.015 matches ±0.05 near the top of the range. The observed differences (≤0.03) fall within it."
+            },
+            {
+              "name": "Std Error",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "The guideline allows ±0.05 absolute, but standard errors are only about 0.02–0.04. That makes the allowed relative error over 100%. A relative tolerance of 1.0 covers Monte Carlo variation from the reference datasets and stays close to the guideline."
+            }
+          ],
+          "overall_reasoning": "The task asks for the gap value and standard error at each k, and both must be within ±0.05 absolute of the reference. Rows are aligned on k, which is not compared. The extra candidate columns (log_W, mean_log_W_ref, sd_log_W_ref) are not in the reference, so they are left out. The RAE strategy only takes a relative tolerance, so each ±0.05 absolute limit is converted using that column's value range. Gap values run from about 0.9 to 3.45, so a relative tolerance of 0.015 equals roughly ±0.05 at the high end and is a little stricter at k=1. The preview shows candidate differences of at most about 0.03, which pass. Standard errors are about 0.017–0.04, so ±0.05 absolute is more than 100% relative. A relative tolerance of 1.0 still allows the expected Monte Carlo variation in these small values (for example 0.017 vs 0.032 at k=10).",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "k"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "k": "k",
+              "Gap Value": "Gap Value",
+              "Std Error": "Std Error"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "log_W",
+              "mean_log_W_ref",
+              "sd_log_W_ref"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "k"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "k",
+              "Std Error",
+              "Gap Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "k": [
+                "str",
+                "str",
+                true
+              ],
+              "Std Error": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gap Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "k"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['log_W', 'mean_log_W_ref', 'sd_log_W_ref']",
+            "Sorted both dataframes by ['k']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Gap Value",
+            "Std Error"
+          ],
+          "filtered_columns": [
+            "Gap Value",
+            "Std Error"
+          ],
+          "overall_similarity": 0.8790583288338373,
+          "per_column_similarities": {
+            "Gap Value": {
+              "similarity": 0.9945269539761419,
+              "strategy": "rae",
+              "matching_count": 18,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.015
+              }
+            },
+            "Std Error": {
+              "similarity": 0.7635897036915327,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 1.0
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 3,
+            "alt_cols": 6,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              3
+            ],
+            "alt_shape": [
+              20,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "k": true,
+              "Std Error": true,
+              "Gap Value": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-9/ref_answer/optimal_k.txt",
+      "eval_guideline": "Must contain a single integer equal to the reference optimal cluster count.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-5-9/output/optimal_k.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are plain-text files that report the optimal k.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.6; reasoning: The content is only the number '10'. It's readable plain text but too short to match any structured or bioinformatics format, so by default it's classified as 'text'."
+      },
+      "strategy": "numeric",
+      "parameters": {
+        "tolerance": 0
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a single integer (optimal k), and the guideline requires an exact match to the reference. Numeric comparison with zero tolerance checks the value strictly while ignoring formatting differences.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "ref_value": 10.0,
+        "alt_value": 10.0,
+        "rae_similarity": 1.0,
+        "rae": 0.0,
+        "tolerance": 0
+      },
+      "comparison_error": null
+    }
+  ]
+}

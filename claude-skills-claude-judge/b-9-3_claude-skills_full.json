@@ -1,0 +1,291 @@
+{
+  "id": "b-9-3",
+  "question": "Perform univariable Cox proportional hazards regression on the provided dataset (with time-to-event and censoring indicators) - fit one Cox model per feature. Apply Benjamini-Hochberg FDR correction. Identify features significantly associated with survival (FDR < 0.05).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-9-3/ref_answer/cox_results.csv",
+      "eval_guideline": "Each feature row's HR must match the reference within 1% relative absolute error; p-value and FDR must match within +/-0.001; Significant flag must match exactly; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-9-3/output/cox_results.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames are identical (cox_results.csv), and both paths point to CSV files holding the Cox regression results for the task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Univariable Cox proportional hazards regression per feature with Benjamini-Hochberg FDR correction. Align rows by feature name. HR must match within 1% relative error; p-value and FDR must match within +/-0.001; Significant flag (FDR < 0.05) must match exactly. Column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "Univariable Cox regression with BH correction is deterministic, and the guideline asks for each feature's values to match within set tolerances (HR 1% relative, p/FDR ±0.001, exact Significant flag), while row order, column order and headers may differ. That is what approximate comparison handles.",
+      "strategy_error": null,
+      "similarity": 0.9999887745540272,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature",
+            "HR": "HR",
+            "p_value": "p_value",
+            "FDR": "FDR",
+            "Significant": "Significant"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Feature",
+          "check_permutation": true,
+          "reasoning": "Both tables have one row per feature and the same orientation, so no transpose is needed. All 5 reference columns have exact name matches in the candidate. The candidate's extra columns (coef, CI bounds, z, logrank_p, PH_test_p) are left out. 'Feature' (Gene_N) uniquely identifies each row and is the key for matching. The candidate is sorted by p-value and the reference is partly in a different order. The guideline says row order may differ, so order doesn't matter. Rows are sorted by Feature before comparing.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "HR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline explicitly asks for HR to be within 1% relative absolute error."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "The guideline uses an absolute tolerance of ±0.001, which this strategy cannot express. A 1% relative tolerance is used instead: it matches ±0.001 for p-values near 1 and is stricter for small ones. In the preview the differences are tiny (about 1e-4 relative or less)."
+            },
+            {
+              "name": "FDR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Handled the same way as p_value: a 1% relative tolerance stands in for the guideline's ±0.001 absolute tolerance. FDR values in the preview differ by about 3e-5 relative."
+            },
+            {
+              "name": "Significant",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The FDR < 0.05 significance flag must match exactly, as the guideline requires."
+            }
+          ],
+          "overall_reasoning": "The task asks for univariable Cox regression with Benjamini-Hochberg FDR correction. The reference has four output columns: HR, p_value, FDR and Significant. The candidate's extra columns (coef, the 95% CI bounds, z, logrank_p and PH_test_p) are not in the reference, so they are not compared.\n\n- **HR:** compared by relative absolute error (RAE) with a 1% tolerance, as the guideline states.\n- **p_value and FDR:** the guideline uses an absolute tolerance of ±0.001, but only a relative (RAE) strategy is available here. A 1% relative tolerance is a reasonable stand-in. For p-values below about 0.1 it is stricter than ±0.001, and near 1 it is roughly the same. In the preview, the differences between candidate and reference are well under 0.1% relative, even for the extremely small p-value of gene1.\n- **Significant:** a boolean that must match exactly.\n\nAll columns are compared with their sign kept (compare_abs is off).",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature",
+              "HR": "HR",
+              "p_value": "p_value",
+              "FDR": "FDR",
+              "Significant": "Significant"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "coef",
+              "HR_lower95",
+              "HR_upper95",
+              "z",
+              "logrank_p",
+              "PH_test_p"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 50,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "HR",
+              "Significant",
+              "FDR",
+              "p_value",
+              "Feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "HR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Significant": [
+                "bool",
+                "bool",
+                true
+              ],
+              "FDR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Feature"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['coef', 'HR_lower95', 'HR_upper95', 'z', 'logrank_p', 'PH_test_p']",
+            "Sorted both dataframes by ['Feature']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "FDR",
+            "HR",
+            "Significant",
+            "p_value"
+          ],
+          "filtered_columns": [
+            "FDR",
+            "HR",
+            "Significant",
+            "p_value"
+          ],
+          "overall_similarity": 0.9999887745540272,
+          "per_column_similarities": {
+            "FDR": {
+              "similarity": 0.999988338951139,
+              "strategy": "rae",
+              "matching_count": 50,
+              "total_count": 50,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "HR": {
+              "similarity": 0.9999971350298063,
+              "strategy": "rae",
+              "matching_count": 50,
+              "total_count": 50,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Significant": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 50,
+              "total_count": 50,
+              "error": null,
+              "details": {}
+            },
+            "p_value": {
+              "similarity": 0.9999696242351637,
+              "strategy": "rae",
+              "matching_count": 50,
+              "total_count": 50,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.45454545454545453,
+            "col_recall": 1.0,
+            "col_f1": 0.625,
+            "col_jaccard": 0.45454545454545453,
+            "ref_rows": 50,
+            "alt_rows": 50,
+            "row_intersection": 50,
+            "ref_cols": 5,
+            "alt_cols": 11,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              50,
+              5
+            ],
+            "alt_shape": [
+              50,
+              11
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "HR": true,
+              "Significant": true,
+              "FDR": true,
+              "p_value": true,
+              "Feature": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

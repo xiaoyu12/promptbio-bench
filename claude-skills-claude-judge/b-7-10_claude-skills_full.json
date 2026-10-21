@@ -1,0 +1,186 @@
+{
+  "id": "b-7-10",
+  "question": "Implement self-training with SVM to classify cell types. Use a 70/30 train-test split, then treat only 20% of the training set as labeled and the remaining 80% as unlabeled. Iteratively add predictions with confidence >= 0.8 back to the labeled pool and retrain, for up to 10 iterations. Report the initial test accuracy (before self-training) and the final test accuracy.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-10/ref_answer/self_training_results.csv",
+      "eval_guideline": "Initial and final test accuracy must each be within +/-0.05 of the reference; final accuracy should be greater than or equal to the initial accuracy; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-10/output/self_training_results.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filename self_training_results.csv is identical in both, and both are CSV files with self-training results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Self-training SVM for cell-type classification (70/30 split, 20% labeled, confidence >= 0.8, up to 10 iterations). Compare the initial and final test accuracy values: each must be within +/-0.05 of the reference, and final accuracy should be >= initial accuracy. Row and column order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a small results table with only two values (initial and final accuracy), so they should be compared one by one. The guideline's ±0.05 tolerance covers the run-to-run noise from the random splits.",
+      "strategy_error": null,
+      "similarity": 0.7498873626179208,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": {
+            "Metric": "Metric",
+            "Value": "Value"
+          },
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are in long Metric/Value format with the same column names, so no transpose is needed and the columns map one-to-one. Rows should be matched by the Metric name, not by position. The candidate has 11 extra diagnostic rows (iterations, sample counts and others) that can be ignored. Some metric names differ in wording and need semantic matching: 'Initial_Accuracy' → 'Initial_Test_Accuracy', 'Final_Test_Accuracy' → 'Final_Test_Accuracy' (exact match), and 'Improvement' → 'Accuracy_Change'. Row order does not matter, per the evaluation guideline.",
+          "confidence": 0.85
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.056,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Scalar metric values where absolute closeness matters. The task allows ±0.05 absolute on accuracies of about 0.9, which is a relative tolerance of about 0.056. Rows that are NaN in the reference have no reference value and can't be scored."
+            }
+          ],
+          "overall_reasoning": "There is only one data column to compare: Value. Metric is the ID column, so it is used for alignment only. The reference has values for just three metrics: initialaccuracy (0.893), finaltestaccuracy (0.925) and improvement (0.032). The other reference rows (thresholds, sample counts, iterations, pseudo-label accuracy) are NaN, so they carry no reference value and can't be scored. The guideline requires each accuracy to be within ±0.05 of the reference, in absolute terms. With accuracies around 0.89–0.93, that works out to a relative error of about 0.05/0.89 ≈ 0.056. I therefore use rae with cell_tolerance 0.056, which approximates the absolute ±0.05 window for the accuracy rows. The improvement row is a derived difference with a small magnitude, so relative error will be strict there. That is acceptable because it follows directly from the two accuracies. The plan cannot check the separate requirement that final accuracy be at least the initial accuracy. In the candidate, final is 0.8817 and initial is 0.83, so that requirement holds. Spot check against this tolerance: initialaccuracy differs by 0.063 and fails, while finaltestaccuracy differs by 0.043 and passes.",
+          "overall_confidence": 0.7,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 11,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {
+              "accuracychange": "improvement",
+              "initialtestaccuracy": "initialaccuracy"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "initialtestaccuracy is the same as initialaccuracy. accuracychange (the difference between final and initial accuracy) is the same as improvement. The other candidates have no matching reference.",
+              "confidence": 0.85
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate rows: 11"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.7498873626179208,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.7498873626179208,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.056
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 14,
+            "alt_rows": 14,
+            "row_intersection": 14,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              14,
+              2
+            ],
+            "alt_shape": [
+              14,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.21428571428571427,
+            "ref_missing_rate": 0.7857142857142857,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

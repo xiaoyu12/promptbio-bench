@@ -1,0 +1,359 @@
+{
+  "id": "a-9-3",
+  "question": "Determine HLA class I alleles (HLA-A, HLA-B, HLA-C) from the provided BAM file.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-9-3/ref_answer/HLA_result.tsv",
+      "eval_guideline": "HLA allele calls at 4-digit resolution must match the reference for all six loci (A1, A2, B1, B2, C1, C2); column order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-9-3/output/HLA_result.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (HLA_result.tsv) and both are TSV files. This is the only candidate, and it matches the HLA typing task.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Determine HLA class I alleles (HLA-A, HLA-B, HLA-C) from a BAM file. Compare the HLA allele calls for all six loci (A1, A2, B1, B2, C1, C2) at 4-digit (2-field) resolution, e.g. A*02:01. Truncate higher-resolution calls such as A*02:01:01 to 2 fields. Ignore differences in the 'HLA-' prefix and in the order of the two alleles within a locus. Column order and extra columns (e.g. reads or objective scores) may differ."
+      },
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "The guideline asks for a match on each allele call at 4-digit resolution across six loci, and says column order and extra columns may differ. That fits approximate, a table comparison that tolerates layout differences, with the question telling it to compare alleles at 2-field resolution.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "A1": "A1",
+            "A2": "A2",
+            "B1": "B1",
+            "B2": "B2",
+            "C1": "C1",
+            "C2": "C2",
+            "Reads": "Reads",
+            "Objective": "Objective"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are in the same layout, so no transpose is needed. All 8 reference columns have an exact match by name in the candidate. The candidate's extra 'sample' column has no reference counterpart and is ignored, which the guideline allows. Each table has one row (one sample), so rows are matched by position (id_columns = []). The allele columns hold the values being checked, so they shouldn't double as join keys. Reads and Objective are computed values that vary between runs, so they are mapped but not used as keys. The evaluation depends only on the six 4-digit allele calls (A1–C2), which match exactly here.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "A1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is a 4-digit HLA-A allele call, which must match the reference exactly."
+            },
+            {
+              "name": "A2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is a 4-digit HLA-A allele call, which must match the reference exactly."
+            },
+            {
+              "name": "B1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is a 4-digit HLA-B allele call, which must match the reference exactly."
+            },
+            {
+              "name": "B2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is a 4-digit HLA-B allele call, which must match the reference exactly."
+            },
+            {
+              "name": "C1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is a 4-digit HLA-C allele call, which must match the reference exactly."
+            },
+            {
+              "name": "C2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is a 4-digit HLA-C allele call, which must match the reference exactly."
+            },
+            {
+              "name": "Reads",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is a run-dependent read-support diagnostic. It is not part of the grading criteria."
+            },
+            {
+              "name": "Objective",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is a run-dependent ILP objective score from OptiType. It is not part of the grading criteria."
+            }
+          ],
+          "overall_reasoning": "The task only grades the six HLA class I allele calls (A1, A2, B1, B2, C1, C2) at 4-digit resolution, so each of these columns is compared by exact string match (for example, 'A*01:01'). Reads and Objective are OptiType's read support and ILP objective score. These are run diagnostics that shift with the tool version, alignment and random effects (1129 vs 1155 here), and the guideline does not require them to match, so both are ignored. The candidate's extra 'sample' column is not in the reference and is left out. One limitation: exact matching scores each column on its own, so the same two alleles listed in swapped order within a locus (A1 and A2 reversed) would count as a mismatch. This doesn't affect the current data, where the order is the same in both tables.",
+          "overall_confidence": 0.93,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "A1": "A1",
+              "A2": "A2",
+              "B1": "B1",
+              "B2": "B2",
+              "C1": "C1",
+              "C2": "C2",
+              "Reads": "Reads",
+              "Objective": "Objective"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "sample"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "A2",
+              "C2",
+              "C1",
+              "B2",
+              "Objective",
+              "Reads",
+              "B1",
+              "A1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "A2": [
+                "str",
+                "str",
+                true
+              ],
+              "C2": [
+                "str",
+                "str",
+                true
+              ],
+              "C1": [
+                "str",
+                "str",
+                true
+              ],
+              "B2": [
+                "str",
+                "str",
+                true
+              ],
+              "Objective": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Reads": [
+                "float64",
+                "float64",
+                true
+              ],
+              "B1": [
+                "str",
+                "str",
+                true
+              ],
+              "A1": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['sample']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "A1",
+            "A2",
+            "B1",
+            "B2",
+            "C1",
+            "C2",
+            "Objective",
+            "Reads"
+          ],
+          "filtered_columns": [
+            "A1",
+            "A2",
+            "B1",
+            "B2",
+            "C1",
+            "C2"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "A1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "A2": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "B1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "B2": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "C1": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "C2": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8888888888888888,
+            "col_recall": 1.0,
+            "col_f1": 0.9411764705882353,
+            "col_jaccard": 0.8888888888888888,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 8,
+            "alt_cols": 9,
+            "col_intersection": 8
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              8
+            ],
+            "alt_shape": [
+              1,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "A2": true,
+              "C2": true,
+              "C1": true,
+              "B2": true,
+              "Objective": true,
+              "Reads": true,
+              "B1": true,
+              "A1": true
+            },
+            "common_columns": 8
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "b-6-5",
+  "question": "Apply t-SNE to single-cell RNA-seq data with perplexity=30, 1000 iterations, and random_state=42. Visualize the 2D embedding, coloring cells by known cell type labels.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-6-5/ref_answer/tsne_embedding.png",
+      "eval_guideline": "Scatter plot must show cells colored by cell type with distinct cluster separation; color legend labels must match the reference; exact coordinates and orientation may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-6-5/output/tsne_embedding.png",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files have the same name and are PNG images of the t-SNE embedding plot.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a PNG image of a t-SNE plot. t-SNE is stochastic, and the guideline says exact coordinates and orientation may differ, so the plot should be judged on meaning: cells colored by cell type, clear cluster separation, and legend labels that match the reference.",
+      "strategy_error": null,
+      "similarity": 0.6,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "partially equivalent",
+        "confidence": 0.7,
+        "explanation": "Both images are 2D t-SNE scatter plots of the same kind of dataset: about 500 cells in five types, labelled CellType_1 to CellType_5. Both titles give perplexity=30 and 1000 iterations. The legend labels match; the candidate only adds \"(n=100)\" to each one. Different colours and axis-label wording (\"t-SNE 1\" vs \"t-SNE Dim1\") are presentation choices.\n\nWhat matches:\n- Five cell types, with the same label names.\n- Cells are coloured by type, and each type forms its own region.\n- Both meet the basic guideline: a coloured scatter plot with clusters by cell type and matching legend labels.\n\nWhat differs:\n- **How well the clusters separate.** In the reference, the clusters are loose and blend into each other. They form a continuous cloud with clear overlap at the edges (for example, CellType_2 runs into CellType_5 and CellType_3), and several cells sit inside the wrong cluster (CellType_1 cells near CellType_4, CellType_4 and CellType_5 cells scattered elsewhere). In the candidate, the five clusters are compact, round and completely apart, with wide empty gaps and almost no mixing.\n- **Axis ranges.** The reference spans about ±12. The candidate spans about −15 to 15 on the x-axis and −21 to 25 on the y-axis.\n- **Neighbouring clusters.** In the reference, the clusters sit in a ring where each type borders the next (1–2–5–3–4–1). The candidate arranges them differently. This matters less, because t-SNE does not preserve global layout.\n\nAssessment: This much difference in overlap points to different preprocessing (for example, scaling, normalisation or a PCA step) or a different data input. Turning the plot or flipping its orientation would not remove it. The candidate does satisfy the guideline's requirements of distinct clusters and matching labels. However, it shows a much cleaner picture than the reference, which suggests only moderate separation with real mixing between types. I rate it partially equivalent."
+      },
+      "comparison_error": null
+    }
+  ]
+}

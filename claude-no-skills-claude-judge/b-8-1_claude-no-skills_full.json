@@ -1,0 +1,186 @@
+{
+  "id": "b-8-1",
+  "question": "Apply LASSO regression (alpha=0.1) to the dataset to perform feature selection. Identify and return the non-zero coefficient features.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-1/ref_answer/lasso_features.csv",
+      "eval_guideline": "All selected feature names must match the reference exactly; coefficient values must match within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-8-1/output/lasso_features.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named lasso_features.csv and are CSVs. The candidate is the only output file, and it holds the LASSO-selected features the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "LASSO regression (alpha=0.1) feature selection: compare the selected non-zero coefficient features. Feature names must match exactly; coefficient values must match within 1% relative absolute error; column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "LASSO with a fixed alpha is deterministic and gives a small table of features with their coefficients. The guideline asks for exact feature names and per-value numeric tolerance, and allows row/column order and headers to differ, which fits approximate value-by-value matching.",
+      "strategy_error": null,
+      "similarity": 0.9590906673814077,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature",
+            "Coefficient": "Coefficient"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same column names, so the columns map one-to-one and no transpose is needed. Each row is one feature, so I match rows by the Feature name. The Coefficient values are computed by the model and may differ slightly between runs, so they are not used to match rows. The guideline says row order may differ, so order is ignored and a permutation check is used. The candidate has 34 rows and the reference has 35, so one selected feature is probably missing from the candidate. Matching by Feature name will show which one.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Coefficient",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline asks for coefficients to match within 1% relative absolute error, so this uses RAE with a 0.01 tolerance. Signs are kept because a LASSO coefficient's sign is meaningful."
+            }
+          ],
+          "overall_reasoning": "Feature is the ID column and is only used to line the rows up. Features that don't match between the two files are handled when the rows are aligned. That leaves Coefficient as the only data column to score. The guideline sets a 1% relative absolute error limit, so I'm using RAE with cell_tolerance=0.01. Signs are kept, because a coefficient's sign tells you which way the feature affects the outcome. The preview shows differences above 1% in many rows (feature1 about 1.7%, feature10 about 3.5%, feature21 about 10%). Following the guideline as written, those rows will count as mismatches.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature",
+              "Coefficient": "Coefficient"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 34,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Coefficient",
+              "Feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Coefficient": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 1"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Coefficient"
+          ],
+          "filtered_columns": [
+            "Coefficient"
+          ],
+          "overall_similarity": 0.9590906673814077,
+          "per_column_similarities": {
+            "Coefficient": {
+              "similarity": 0.9590906673814077,
+              "strategy": "rae",
+              "matching_count": 7,
+              "total_count": 34,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 35,
+            "alt_rows": 35,
+            "row_intersection": 35,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              35,
+              2
+            ],
+            "alt_shape": [
+              35,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Coefficient": true,
+              "Feature": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9714285714285714,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.02857142857142857
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

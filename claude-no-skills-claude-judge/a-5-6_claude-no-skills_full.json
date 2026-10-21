@@ -1,0 +1,300 @@
+{
+  "id": "a-5-6",
+  "question": "Given a folder of single-cell RNA-seq expression data output by cellranger, identify the top 10 marker genes per cluster (filtered to avg_log2FC > 1) compared to all other cells.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-5-6/ref_answer/top10_markers.tsv",
+      "eval_guideline": "Top 10 marker genes per cluster must match the reference in gene identity; avg_log2FC and p_val_adj values must match within 1% relative absolute error; column order, row order, and cluster label integers may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-5-6/output/top10_markers.tsv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames are identical (top10_markers.tsv), and both paths point to TSV files. The file fits the task of finding the top 10 marker genes per cluster.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare top 10 marker genes per cluster (avg_log2FC > 1, one-vs-rest) from scRNA-seq clustering. Gene identity per cluster must match; avg_log2FC and p_val_adj must match within 1% relative absolute error; column order, row order, and cluster label integers may differ (align clusters by their marker gene sets)."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for gene identities to match record by record and for numeric values to agree within 1% relative error, while allowing row, column and cluster-label order to differ. Approximate alignment handles that kind of table comparison.",
+      "strategy_error": null,
+      "similarity": 0.5609955356598454,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "p_val": "p_val",
+            "avg_log2FC": "avg_log2FC",
+            "pct.1": "pct.1",
+            "pct.2": "pct.2",
+            "p_val_adj": "p_val_adj",
+            "cluster": "cluster",
+            "gene": "gene"
+          },
+          "id_columns": [
+            "cluster",
+            "gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "cluster,gene",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 7 column names (Seurat FindAllMarkers output), just in a different order, so each column maps to itself. Neither table needs transposing; both are long-format marker tables. A marker row is identified by the pair (cluster, gene). Gene alone is not unique, because the same gene can be a top marker in more than one cluster. The numeric columns (avg_log2FC, p_val_adj, pct) are computed values, so they must not be used as keys. The guideline says row order doesn't matter, so the comparison is unordered and I sort by cluster and gene before checking for a permutation. Caveats: the guideline also says cluster integers may differ between the tables, so a downstream cluster relabeling step may be needed to match by gene overlap. The candidate also has 9 clusters (90 rows) while the reference has 7 (70 rows), so some candidate rows will have no match.",
+          "confidence": 0.72
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "avg_log2FC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline requires avg_log2FC to match within 1% RAE. The sign shows direction of enrichment, so it is kept."
+            },
+            {
+              "name": "p_val_adj",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires p_val_adj to match within 1% RAE. Relative error works even for these very small values."
+            },
+            {
+              "name": "p_val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not named in the guideline, and it repeats p_val_adj, which is p_val times a fixed correction factor."
+            },
+            {
+              "name": "pct.1",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "The guideline does not require this column to be checked."
+            },
+            {
+              "name": "pct.2",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "The guideline does not require this column to be checked."
+            }
+          ],
+          "overall_reasoning": "The rows are aligned on (cluster, gene). Any gene that is in the top-10 list of one table but not the other leaves NaNs in the other table, so differences in gene identity already lower the per-cell scores. The evaluation guideline names only avg_log2FC and p_val_adj, each to match within 1% relative absolute error. Both are compared cell by cell with RAE and cell_tolerance=0.01. Fold-change sign carries meaning, so absolute values are not used. p_val is left out because p_val_adj is p_val times a fixed Bonferroni factor, so scoring both would count the same thing twice. pct.1 and pct.2 are left out because the guideline does not ask for them.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "cluster",
+            "gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "p_val": "p_val",
+              "avg_log2FC": "avg_log2FC",
+              "pct.1": "pct.1",
+              "pct.2": "pct.2",
+              "p_val_adj": "p_val_adj",
+              "cluster": "cluster",
+              "gene": "gene"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "cluster",
+              "gene"
+            ],
+            "matched_rows": 26,
+            "unmapped_ref_rows": 44,
+            "unmapped_alt_rows": 64,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "p_val",
+              "cluster",
+              "pct.1",
+              "p_val_adj",
+              "gene",
+              "avg_log2FC",
+              "pct.2"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "p_val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "cluster": [
+                "str",
+                "str",
+                true
+              ],
+              "pct.1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p_val_adj": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene": [
+                "str",
+                "str",
+                true
+              ],
+              "avg_log2FC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pct.2": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "cluster",
+              "gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference rows: 44",
+            "Unmapped candidate rows: 64",
+            "Sorted both dataframes by ['cluster', 'gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "avg_log2FC",
+            "p_val",
+            "p_val_adj",
+            "pct.1",
+            "pct.2"
+          ],
+          "filtered_columns": [
+            "avg_log2FC",
+            "p_val_adj"
+          ],
+          "overall_similarity": 0.5609955356598454,
+          "per_column_similarities": {
+            "avg_log2FC": {
+              "similarity": 0.9106544314622987,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 26,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "p_val_adj": {
+              "similarity": 0.21133663985739212,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 33,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 134,
+            "alt_rows": 134,
+            "row_intersection": 134,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              134,
+              7
+            ],
+            "alt_shape": [
+              134,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "p_val": true,
+              "cluster": true,
+              "pct.1": true,
+              "p_val_adj": true,
+              "gene": true,
+              "avg_log2FC": true,
+              "pct.2": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.19402985074626866,
+            "ref_missing_rate": 0.47761194029850745,
+            "alt_missing_rate": 0.3283582089552239
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

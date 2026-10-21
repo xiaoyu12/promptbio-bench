@@ -1,0 +1,276 @@
+{
+  "id": "a-15-10",
+  "question": "Use the MendelianRandomization R package to test whether gene expression causally influences a phenotype, using SNPs as instrumental variables. Run both IVW and MR-Egger methods and report the results.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-10/ref_answer/mr_result_summary.csv",
+      "eval_guideline": "IVW and MR-Egger rows must be present (matched by case-insensitive method name); Beta must match within +/-0.05, SE within 20% relative absolute error, and p-values within one order of magnitude; row order and column header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-10/output/mr_result_summary.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames match exactly and both files are CSVs holding the MR results summary.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare Mendelian randomization result tables (IVW and MR-Egger). Match rows by case-insensitive method name; Beta must agree within +/-0.05, SE within 20% relative error, p-values within one order of magnitude. Row order and column header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a small, deterministic results table (IVW and MR-Egger estimates), and the guideline sets a tolerance for each value while letting row order and column headers differ. Approximate alignment handles that best.",
+      "strategy_error": null,
+      "similarity": 0.9375,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Method": "Method",
+            "Beta": "Beta",
+            "SE": "SE",
+            "P": "P"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same layout (methods as rows), so no transpose is needed. The four reference columns (Method, Beta, SE, P) match candidate columns of the same name exactly. The candidate's other columns (CIs, N_SNPs, Model, intercept, heterogeneity) have no reference counterpart and are left out. The method labels don't match as written: the reference says 'Egger' and the candidate says 'MR-Egger'. Exact matching on Method, even ignoring case, would leave the Egger row unpaired, so the plan uses positional alignment. Both tables list IVW first and then Egger, so rows pair correctly. The Beta, SE and P values are identical in both rows, which confirms this. Sorting by Method would break the pairing because 'Egger' sorts before 'IVW' but 'MR-Egger' sorts after it, so pre_sort is off. Row order has no meaning here (two estimation methods), so row_order_sensitive is false and check_permutation is true.",
+          "confidence": 0.85
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Method",
+              "data_type": "categorical",
+              "strategy": "overlap",
+              "cell_delimiter": "-",
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": 0.5,
+              "confidence": 0.75,
+              "reasoning": "Method names are matched case-insensitively and the label style can differ ('Egger' vs 'MR-Egger'). Splitting on '-' gives a Jaccard of 0.5 for that pair, so a 0.5 threshold accepts the naming variant while IVW vs IVW still scores 1."
+            },
+            {
+              "name": "Beta",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline allows ±0.05 absolute. With reference betas of about 0.36–0.55, that is roughly 9–14% relative, so the tolerance is 0.1."
+            },
+            {
+              "name": "SE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline states 20% relative absolute error, so the tolerance is 0.2."
+            },
+            {
+              "name": "P",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.9,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "The guideline allows a match within one order of magnitude. RAE can't express that exactly; a 0.9 tolerance accepts candidates up to 10× smaller, and up to 1.9× larger."
+            }
+          ],
+          "overall_reasoning": "Rows are aligned by index (IVW, then Egger). The task requires both IVW and MR-Egger estimates, so Beta, SE and P are the critical columns. I set the RAE tolerances from the evaluation guideline. For Beta the guideline allows ±0.05 absolute; the reference values are 0.36 and 0.55, so that works out to roughly 0.09–0.14 relative, and I used 0.1. For SE the guideline gives 20% relative error, so the tolerance is 0.2. For P the guideline allows one order of magnitude; RAE can only approximate that, so I used 0.9, which accepts a candidate up to 10× smaller and up to 1.9× larger. The method labels differ in style ('Egger' vs 'MR-Egger'). I compared them with token overlap, splitting on '-', with a Jaccard threshold of 0.5, so 'Egger' still matches 'MR-Egger'. Extra candidate columns such as CI, intercept and heterogeneity are not in the reference, so they are not compared.",
+          "overall_confidence": 0.85,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Method": "Method",
+              "Beta": "Beta",
+              "SE": "SE",
+              "P": "P"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "CI_lower",
+              "CI_upper",
+              "N_SNPs",
+              "Model",
+              "Intercept",
+              "Intercept_SE",
+              "Intercept_P",
+              "Heterogeneity_Q",
+              "Heterogeneity_P"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "SE",
+              "Method",
+              "Beta",
+              "P"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "SE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Method": [
+                "str",
+                "str",
+                true
+              ],
+              "Beta": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['CI_lower', 'CI_upper', 'N_SNPs', 'Model', 'Intercept', 'Intercept_SE', 'Intercept_P', 'Heterogeneity_Q', 'Heterogeneity_P']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Beta",
+            "Method",
+            "P",
+            "SE"
+          ],
+          "filtered_columns": [
+            "Beta",
+            "Method",
+            "P",
+            "SE"
+          ],
+          "overall_similarity": 0.9375,
+          "per_column_similarities": {
+            "Beta": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Method": {
+              "similarity": 0.75,
+              "strategy": "overlap",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "delimiter": "-",
+                "threshold": 0.5,
+                "valid_pairs": 2,
+                "total_pairs": 2
+              }
+            },
+            "P": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.9
+              }
+            },
+            "SE": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.2
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.3076923076923077,
+            "col_recall": 1.0,
+            "col_f1": 0.47058823529411764,
+            "col_jaccard": 0.3076923076923077,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 4,
+            "alt_cols": 13,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              4
+            ],
+            "alt_shape": [
+              2,
+              13
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -9
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "SE": true,
+              "Method": true,
+              "Beta": true,
+              "P": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

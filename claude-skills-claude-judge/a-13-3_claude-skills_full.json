@@ -1,0 +1,230 @@
+{
+  "id": "a-13-3",
+  "question": "Assemble a synthetic plasmid from dna_parts.fasta using Golden Gate cloning with BsaI, and output a circular construct map with part positions. Assemble parts in the order they appear in the file (part1_promoter -> part2_gene -> part3_terminator -> part4_backbone), digesting with BsaI (recognition site GGTCTC, cuts 1 nt downstream on the sense strand) to generate compatible overhangs for ligation.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-3/ref_answer/assembled_plasmid.csv",
+      "eval_guideline": "The assembled sequence must match the reference exactly; case and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-3/output/assembled_plasmid.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filename and .csv format; both represent the assembled plasmid part-position table.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare two Golden Gate assembly outputs: a circular plasmid construct map CSV with part names (part1_promoter, part2_gene, part3_terminator, part4_backbone), start/end coordinates, and the assembled construct sequence. The assembled sequence must match the reference exactly, ignoring case; column order and row order may differ. Part start/end coordinates must agree, and part identities must map one-to-one."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "Golden Gate assembly with a fixed part order and a defined BsaI cut rule is fully deterministic, so record-level table comparison applies; the guideline explicitly permits case and column-order differences, which is exactly what approximate's LLM-planned alignment absorbs while still enforcing an exact assembled-sequence match.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "Sequence": "Sequence",
+            "Length": "Length"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables are single-row summaries of one assembled plasmid, so no transpose is needed (reference: 1x2, candidate: 1x5 — same orientation, candidate just carries extra metadata columns Name/Topology/Num_Parts). Column alignment is enabled to take the intersection: 'Sequence' and 'Length' exist verbatim in both tables and map one-to-one; the candidate's extra descriptive columns are dropped since the reference has no counterpart and the evaluation guideline says only the assembled sequence must match (case and column order may differ). Row alignment is unnecessary because each table has exactly one row representing the same single construct — positional alignment is trivially correct and there is no stable identifier in the reference to key on ('Sequence' is the value under test and 'Length' is a derived numeric, neither suitable as a join key). For the same reason row order is not meaningful, no sorting is required, and permutation checking is pointless with a single row.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Sequence",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "The assembled plasmid sequence is the core deliverable. The guideline demands an exact match (case may differ, which exact matching normalizes), so whole-cell exact equality is used rather than partial/overlap scoring; a nearly-correct sequence still represents an incorrect assembly."
+            },
+            {
+              "name": "Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Length is an exact integer base count derived from the sequence. RAE with tolerance 0.0 enforces an exact count match; correlation strategies are meaningless with a single row. Sign is physically fixed (positive length), so compare_abs is false."
+            }
+          ],
+          "overall_reasoning": "The task requires exact reproduction of a Golden Gate assembled plasmid sequence. The evaluation guideline states the assembled sequence must match the reference exactly (case and column order may differ), so 'Sequence' is the single critical column and is scored with exact string equality. 'Length' is a derived integer base count that corroborates the assembly; it is compared with RAE at tolerance 0 so only an exact count matches. Extra candidate-only columns (Name, Topology, Num_Parts) are absent from the reference and are not compared.",
+          "overall_confidence": 0.95,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Sequence": "Sequence",
+              "Length": "Length"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Name",
+              "Topology",
+              "Num_Parts"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Length",
+              "Sequence"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Length": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Sequence": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Name', 'Topology', 'Num_Parts']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Length",
+            "Sequence"
+          ],
+          "filtered_columns": [
+            "Length",
+            "Sequence"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Sequence": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 2,
+            "alt_cols": 5,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Length": true,
+              "Sequence": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-3/ref_answer/plasmid_map.txt",
+      "eval_guideline": "Total length and per-part positional intervals must match the reference; label formatting and whitespace may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-3/output/plasmid_map.txt",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filename and .txt format; both are the circular construct map output.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.95; reasoning: This is a plain-text plasmid map report. It has a title, a total length line and a list of features with coordinate ranges. It isn't tab-delimited and isn't GFF, GenBank or any other structured bioinformatics format."
+      },
+      "strategy": "unknown",
+      "parameters": {},
+      "strategy_confidence": 0.0,
+      "strategy_reasoning": "",
+      "strategy_error": "claude -p failed (rc=1): API Error: Opus 5.5's safeguards flagged this session (https://www.anthropic.com/legal/aup). You may be seeing this for the first time: Opus 5.5 is more capable and has stronger safeguards as a result, which can sometimes flag biology-research-adjacent work. We're improving these safeguards to reduce the amount of incorrectly flagged messages. Claude Code can't respond to your last message with Opus 5.5.\n\nTry rephrasing the request in a new session or change your model.\n\nLearn more: https://support.claude.com/en/articles/8106465\n\nDetails: `[bio]`\n\nRequest ID: req_011Cg8X9M8JBurESaDmGmbJM\n\nMessage ID: msg_011Cg8X9MY7QF4yTSauhUfZC",
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.95,
+        "explanation": "Both files report a circular plasmid map produced by Golden Gate assembly of four BsaI-digested parts. Per the evaluation guideline, the decisive criteria are total length and per-part positional intervals, and these agree exactly.\n\nNUMERICAL COMPARISON (candidate/reference ratio = 1.00 for every value):\n- Total length: 440 bp vs 440 bp (ratio 1.000)\n- part1_promoter: 1-114, 114 bp vs 1-114, 114 bp (identical start, end, length)\n- part2_gene: 115-214, 100 bp vs 115-214, 100 bp (identical)\n- part3_terminator: 215-325, 111 bp vs 215-325, 111 bp (identical)\n- part4_backbone: 326-440, 115 bp vs 326-440, 115 bp (identical)\n- Number of parts: 4 implied in reference, 4 explicitly stated in candidate\nInternal consistency holds in both: 114 + 100 + 111 + 115 = 440, and intervals are contiguous and non-overlapping with 1-based inclusive coordinates spanning the full 440 bp circle.\n\nSTRUCTURE/FORMAT: The reference is a minimal header + feature list; the candidate uses a column-aligned table with a different title line and separator. These are formatting differences explicitly allowed by the guideline (label formatting and whitespace may differ). Feature names are character-for-character identical (part1_promoter, part2_gene, part3_terminator, part4_backbone) and appear in the required assembly order.\n\nADDITIONS IN CANDIDATE: assembly-order line, topology (circular), part count, 4-nt overhang columns, a digestion-details block (input lengths 121/107/118/122 bp, BsaI site at position 1, cut after 7 nt, yielding fragments 114/100/111/115 bp - each input minus the 7-nt GGTCTCN prefix, which is arithmetically consistent with the reported fragment lengths), junction-overhang listing, and sanity checks. These are supplementary provenance/QC information that supports rather than contradicts the reference numbers. The candidate flags three junctions as having non-identical overhangs (deferring to NOTES.md); this is a caveat about the input part design, not a discrepancy in the reported map, and it does not alter any coordinate or length.\n\nOMISSIONS: none - every piece of information present in the reference appears in the candidate.\n\nRATIONALE: All key information and all numerical values match exactly (ratios of 1.00 throughout), with differences confined to presentation and permissible extra detail. Equivalence 1.0. Confidence 0.95, slightly below maximum only because the candidate's added junction-mismatch warnings reference an external NOTES.md not available for review, though they do not affect the compared quantities.",
+        "ref_length": 192,
+        "alt_length": 1783
+      },
+      "comparison_error": null
+    }
+  ]
+}

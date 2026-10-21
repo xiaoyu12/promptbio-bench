@@ -53,7 +53,7 @@ from typing import Optional
 ROOT = Path(__file__).parent
 sys.path.insert(0, str(ROOT))
 
-from utils.agents import is_codex_model, load_api
+from utils.agents import is_cli_model, load_api
 from utils.logger import log_context
 from utils.match import match_output_files
 from utils.format import detect_file_signature
@@ -439,7 +439,8 @@ def main():
     parser.add_argument("--model", default="codex:gpt-5.6-sol",
                         help="LLM model for matching/strategy/comparison (default: codex:gpt-5.6-sol); "
                              "prefix with 'codex:' (e.g. codex:gpt-5.6-sol) to use the ChatGPT "
-                             "subscription via the Codex CLI instead of the API")
+                             "subscription via the Codex CLI, or 'claude:' (e.g. claude:claude-opus-5-5) "
+                             "to use the Claude subscription via the Claude Code CLI, instead of the API")
     args = parser.parse_args()
 
     result_dirs = [Path(p.strip()) for p in args.result_dir.split(",")]
@@ -456,7 +457,7 @@ def main():
             f"number of --result-dir values ({len(result_dirs)})"
         )
 
-    if not is_codex_model(args.model):
+    if not is_cli_model(args.model):
         load_api()
     # Code paths that call the LLM without being handed a model (format detection during file
     # validation) read it from here, so the whole evaluation uses --model.

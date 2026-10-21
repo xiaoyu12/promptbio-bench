@@ -1,0 +1,195 @@
+{
+  "id": "b-7-4",
+  "question": "Train a Random Forest classifier on the provided dataset using a 70/30 train-test split and compare two configurations: one using the default class weight setting and the other using balanced class weights. For each version, calculate the area under the precision-recall curve (AUPRC) on the test set and report the results.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-4/ref_answer/rf_auprc_comparison.csv",
+      "eval_guideline": "AUPRC for each configuration must match the reference within +/-0.05; both configurations must be reported; column order and label phrasing may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-4/output/rf_auprc_comparison.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files have the same name and are CSV files holding the AUPRC comparison.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare AUPRC values for a Random Forest with default class weights vs balanced class weights (70/30 split). Both configurations must be present; AUPRC must match the reference within +/-0.05; column order and label phrasing may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a small results table with two AUPRC values. A random split adds some run-to-run noise, but the guideline's ±0.05 tolerance absorbs it, so each value should be checked against the reference with approximate, not summary.",
+      "strategy_error": null,
+      "similarity": 0.9854688669936447,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Configuration": "Configuration",
+            "AUPRC": "AUPRC"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have one row per Random Forest configuration (default vs balanced class_weight), and neither needs transposing. Column mapping: Configuration->Configuration and AUPRC->AUPRC. The candidate's AUPRC column is the average-precision value, which is the standard way to compute AUPRC. The extra candidate columns (AUPRC_trapezoid, ROC_AUC, n_train and others) are ignored. The Configuration labels are worded differently ('RandomForest (default class_weight)' vs 'Default'), so matching rows on exact label text would fail. Both tables list the rows in the same order (default first, then balanced), so rows are matched by position. Sorting alphabetically would also give the same order in both tables (balanced before default), but it isn't needed. Row order has no meaning here (it's a set of two configurations), so the permutation check is enabled.",
+          "confidence": 0.85
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "AUPRC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.056,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "The guideline allows an absolute tolerance of ±0.05. On reference values of about 0.89–0.90, that equals a relative error of about 0.055 to 0.056. Each configuration's AUPRC is compared cell by cell after index alignment."
+            },
+            {
+              "name": "Configuration",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline says label phrasing may differ. The candidate uses 'Default'/'Balanced' and the reference uses longer labels. Rows are aligned by index in the same order, so an exact string match would penalise the candidate for wording alone."
+            }
+          ],
+          "overall_reasoning": "The task is judged on one thing: the AUPRC for each of the two configurations, default and balanced class weights, must be within ±0.05 of the reference. Rows line up by index, so default is row 0 and balanced is row 1 in both tables, and that matches the order of the reference rows.\n\n- **AUPRC:** compared cell by cell with relative absolute error (RAE). An absolute tolerance of 0.05 on values around 0.89–0.90 works out to a relative tolerance of about 0.055 to 0.056, so I set 0.056.\n- **Configuration:** ignored. The guideline says label phrasing may differ ('RandomForest (default class_weight)' vs 'Default'), and index alignment already ensures each configuration is matched to the right row.\n- **Extra candidate columns** (ROC_AUC, n_train and others): not compared, because the reference has no matching columns.\n\nWith these settings, the candidate's AUPRC values (0.8821 and 0.8844) pass against the reference (0.9007 and 0.8919).",
+          "overall_confidence": 0.88,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Configuration": "Configuration",
+              "AUPRC": "AUPRC"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "class_weight",
+              "AUPRC_trapezoid",
+              "ROC_AUC",
+              "n_train",
+              "n_test",
+              "test_positive_rate"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "AUPRC",
+              "Configuration"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "AUPRC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Configuration": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['class_weight', 'AUPRC_trapezoid', 'ROC_AUC', 'n_train', 'n_test', 'test_positive_rate']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AUPRC",
+            "Configuration"
+          ],
+          "filtered_columns": [
+            "AUPRC"
+          ],
+          "overall_similarity": 0.9854688669936447,
+          "per_column_similarities": {
+            "AUPRC": {
+              "similarity": 0.9854688669936447,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.056
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.25,
+            "col_recall": 1.0,
+            "col_f1": 0.4,
+            "col_jaccard": 0.25,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 2,
+            "alt_cols": 8,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              2
+            ],
+            "alt_shape": [
+              2,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "AUPRC": true,
+              "Configuration": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

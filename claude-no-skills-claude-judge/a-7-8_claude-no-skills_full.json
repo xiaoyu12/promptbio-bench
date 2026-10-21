@@ -1,0 +1,749 @@
+{
+  "id": "a-7-8",
+  "question": "Perform DIA label-free quantification using DIA-NN with the provided mzML file and reference FASTA database.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-8/ref_answer/report.tsv",
+      "eval_guideline": "Quantified precursors must match the reference in peptide sequence (Stripped.Sequence) and charge state (Precursor.Charge); intensity values (Precursor.Quantity) may differ within 10% relative absolute error across DIA-NN runs.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-7-8/output/report.tsv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both are named report.tsv, the standard DIA-NN main report in TSV format, so the filename and format match exactly.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "tsv",
+        "note": "llm: confidence: 0.9; reasoning: This is a tab-delimited header row. The column names (File.Name, Run, Protein.Group, Precursor.Id, PG.MaxLFQ, Q.Value, etc.) match a DIA-NN main report for proteomics, which is a TSV file."
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare DIA-NN report.tsv outputs: align quantified precursors by Stripped.Sequence and Precursor.Charge; precursor identities must match the reference, and Precursor.Quantity may differ within 10% relative absolute error. Row/column order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for record-level matching of precursors (Stripped.Sequence + Precursor.Charge), with a 10% relative tolerance on Precursor.Quantity. That fits approximate alignment of the tsv report, which allows for row and column reordering.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Stripped.Sequence": "Stripped.Sequence",
+            "Precursor.Charge": "Precursor.Charge",
+            "Precursor.Quantity": "Precursor.Quantity",
+            "Precursor.Id": "Precursor.Id",
+            "Modified.Sequence": "Modified.Sequence",
+            "Protein.Group": "Protein.Group",
+            "Protein.Ids": "Protein.Ids",
+            "Run": "Run",
+            "File.Name": "File.Name"
+          },
+          "id_columns": [
+            "Stripped.Sequence",
+            "Precursor.Charge"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Stripped.Sequence,Precursor.Charge",
+          "check_permutation": true,
+          "reasoning": "Both tables are DIA-NN long-format precursor reports. The reference has 57 columns and the candidate has 58, so the schemas are almost the same, probably with one extra column from a different DIA-NN version. The reference preview shows no column names, so I mapped only the core DIA-NN columns by identical name. These columns are standard in every DIA-NN report. Following the evaluation guideline, rows are matched by peptide sequence plus charge (Stripped.Sequence + Precursor.Charge), and Precursor.Quantity is compared with a 10% tolerance. No quantity columns are used as keys. A precursor report is an unordered set, so row order doesn't matter: the plan sorts by the key columns and checks for permutation. No transpose is needed. Note that the reference has 0 rows, so any candidate precursors will show up as extra rows.",
+          "confidence": 0.7
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Precursor.Quantity",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline says precursor intensities may differ by up to 10% relative absolute error between DIA-NN runs, so RAE with a 0.1 tolerance applies. The column is stored as object type but holds numeric intensities."
+            }
+          ],
+          "overall_reasoning": "The evaluation guideline says precursors must match on Stripped.Sequence and Precursor.Charge, which are the ID/alignment columns, so the matching is handled by alignment. The only value it asks to compare is Precursor.Quantity, allowing 10% relative absolute error. I compare that column as numerical with RAE and cell_tolerance=0.1, even though it is stored as object type. Every other DIA-NN output column is ignored because the guideline does not ask for them, and they can vary between runs and DIA-NN versions. That includes q-values, retention times, scores, fragment strings, file paths and protein-level quantities. In the aligned preview, the reference values for Precursor.Quantity are all NaN while the candidate has real intensities. This could mean the reference rows did not merge properly, so scores for this column may be low because of missing reference data rather than a real quantification difference.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "Stripped.Sequence",
+            "Precursor.Charge"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Stripped.Sequence": "Stripped.Sequence",
+              "Precursor.Charge": "Precursor.Charge",
+              "Precursor.Quantity": "Precursor.Quantity",
+              "Precursor.Id": "Precursor.Id",
+              "Modified.Sequence": "Modified.Sequence",
+              "Protein.Group": "Protein.Group",
+              "Protein.Ids": "Protein.Ids",
+              "Run": "Run",
+              "File.Name": "File.Name"
+            },
+            "unmapped_ref": [
+              "Protein.Names",
+              "Genes",
+              "PG.Quantity",
+              "PG.Normalised",
+              "PG.MaxLFQ",
+              "Genes.Quantity",
+              "Genes.Normalised",
+              "Genes.MaxLFQ",
+              "Genes.MaxLFQ.Unique",
+              "Q.Value",
+              "PEP",
+              "Global.Q.Value",
+              "Protein.Q.Value",
+              "PG.Q.Value",
+              "Global.PG.Q.Value",
+              "GG.Q.Value",
+              "Translated.Q.Value",
+              "Proteotypic",
+              "Precursor.Normalised",
+              "Precursor.Translated",
+              "Translated.Quality",
+              "Ms1.Translated",
+              "Quantity.Quality",
+              "RT",
+              "RT.Start",
+              "RT.Stop",
+              "iRT",
+              "Predicted.RT",
+              "Predicted.iRT",
+              "Lib.Q.Value",
+              "Lib.PG.Q.Value",
+              "Ms1.Profile.Corr",
+              "Ms1.Area",
+              "Evidence",
+              "Spectrum.Similarity",
+              "Averagine",
+              "Mass.Evidence",
+              "CScore",
+              "Decoy.Evidence",
+              "Decoy.CScore",
+              "Fragment.Quant.Raw",
+              "Fragment.Quant.Corrected",
+              "Fragment.Correlations",
+              "MS2.Scan",
+              "IM",
+              "iIM",
+              "Predicted.IM",
+              "Predicted.iIM"
+            ],
+            "unmapped_alt": [
+              "Protein.Names",
+              "Genes",
+              "PG.Quantity",
+              "PG.Normalised",
+              "PG.MaxLFQ",
+              "Genes.Quantity",
+              "Genes.Normalised",
+              "Genes.MaxLFQ",
+              "Genes.MaxLFQ.Unique",
+              "Q.Value",
+              "PEP",
+              "Global.Q.Value",
+              "Protein.Q.Value",
+              "PG.Q.Value",
+              "Global.PG.Q.Value",
+              "GG.Q.Value",
+              "Translated.Q.Value",
+              "Proteotypic",
+              "Precursor.Normalised",
+              "Precursor.Translated",
+              "Translated.Quality",
+              "Ms1.Translated",
+              "Quantity.Quality",
+              "RT",
+              "RT.Start",
+              "RT.Stop",
+              "iRT",
+              "Predicted.RT",
+              "Predicted.iRT",
+              "First.Protein.Description",
+              "Lib.Q.Value",
+              "Lib.PG.Q.Value",
+              "Ms1.Profile.Corr",
+              "Ms1.Area",
+              "Evidence",
+              "Spectrum.Similarity",
+              "Averagine",
+              "Mass.Evidence",
+              "CScore",
+              "Decoy.Evidence",
+              "Decoy.CScore",
+              "Fragment.Quant.Raw",
+              "Fragment.Quant.Corrected",
+              "Fragment.Correlations",
+              "MS2.Scan",
+              "IM",
+              "iIM",
+              "Predicted.IM",
+              "Predicted.iIM"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Stripped.Sequence",
+              "Precursor.Charge"
+            ],
+            "matched_rows": 0,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 3,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Averagine",
+              "File.Name",
+              "RT.Stop",
+              "Precursor.Id",
+              "PEP",
+              "IM",
+              "Quantity.Quality",
+              "Fragment.Correlations",
+              "PG.MaxLFQ",
+              "Genes",
+              "Genes.MaxLFQ.Unique",
+              "Lib.Q.Value",
+              "RT.Start",
+              "Lib.PG.Q.Value",
+              "Precursor.Charge",
+              "Ms1.Profile.Corr",
+              "Predicted.RT",
+              "Genes.Normalised",
+              "RT",
+              "Stripped.Sequence",
+              "Modified.Sequence",
+              "Protein.Ids",
+              "Q.Value",
+              "Precursor.Translated",
+              "Fragment.Quant.Corrected",
+              "Translated.Q.Value",
+              "PG.Normalised",
+              "PG.Q.Value",
+              "Spectrum.Similarity",
+              "Ms1.Area",
+              "Precursor.Quantity",
+              "Mass.Evidence",
+              "Fragment.Quant.Raw",
+              "GG.Q.Value",
+              "Decoy.CScore",
+              "Predicted.iIM",
+              "Precursor.Normalised",
+              "iRT",
+              "CScore",
+              "Run",
+              "Genes.MaxLFQ",
+              "Protein.Q.Value",
+              "Decoy.Evidence",
+              "Protein.Names",
+              "Genes.Quantity",
+              "Global.Q.Value",
+              "Global.PG.Q.Value",
+              "Translated.Quality",
+              "Evidence",
+              "Protein.Group",
+              "PG.Quantity",
+              "iIM",
+              "Predicted.IM",
+              "Predicted.iRT",
+              "Ms1.Translated",
+              "MS2.Scan",
+              "Proteotypic"
+            ],
+            "converted_columns": [
+              "Averagine",
+              "File.Name",
+              "RT.Stop",
+              "Precursor.Id",
+              "PEP",
+              "IM",
+              "Quantity.Quality",
+              "Fragment.Correlations",
+              "PG.MaxLFQ",
+              "Genes",
+              "Genes.MaxLFQ.Unique",
+              "Lib.Q.Value",
+              "RT.Start",
+              "Lib.PG.Q.Value",
+              "Ms1.Profile.Corr",
+              "Predicted.RT",
+              "Genes.Normalised",
+              "RT",
+              "Modified.Sequence",
+              "Protein.Ids",
+              "Q.Value",
+              "Precursor.Translated",
+              "Fragment.Quant.Corrected",
+              "Translated.Q.Value",
+              "PG.Normalised",
+              "PG.Q.Value",
+              "Spectrum.Similarity",
+              "Ms1.Area",
+              "Precursor.Quantity",
+              "Mass.Evidence",
+              "Fragment.Quant.Raw",
+              "GG.Q.Value",
+              "Decoy.CScore",
+              "Predicted.iIM",
+              "Precursor.Normalised",
+              "iRT",
+              "CScore",
+              "Run",
+              "Genes.MaxLFQ",
+              "Protein.Q.Value",
+              "Decoy.Evidence",
+              "Protein.Names",
+              "Genes.Quantity",
+              "Global.Q.Value",
+              "Global.PG.Q.Value",
+              "Translated.Quality",
+              "Evidence",
+              "Protein.Group",
+              "PG.Quantity",
+              "iIM",
+              "Predicted.IM",
+              "Predicted.iRT",
+              "Ms1.Translated",
+              "MS2.Scan",
+              "Proteotypic"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Averagine": [
+                "object",
+                "int64",
+                true
+              ],
+              "File.Name": [
+                "object",
+                "str",
+                true
+              ],
+              "RT.Stop": [
+                "object",
+                "float64",
+                true
+              ],
+              "Precursor.Id": [
+                "object",
+                "str",
+                true
+              ],
+              "PEP": [
+                "object",
+                "int64",
+                true
+              ],
+              "IM": [
+                "object",
+                "int64",
+                true
+              ],
+              "Quantity.Quality": [
+                "object",
+                "float64",
+                true
+              ],
+              "Fragment.Correlations": [
+                "object",
+                "str",
+                true
+              ],
+              "PG.MaxLFQ": [
+                "object",
+                "float64",
+                true
+              ],
+              "Genes": [
+                "object",
+                "str",
+                true
+              ],
+              "Genes.MaxLFQ.Unique": [
+                "object",
+                "float64",
+                true
+              ],
+              "Lib.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "RT.Start": [
+                "object",
+                "float64",
+                true
+              ],
+              "Lib.PG.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "Precursor.Charge": [
+                "str",
+                "str",
+                true
+              ],
+              "Ms1.Profile.Corr": [
+                "object",
+                "float64",
+                true
+              ],
+              "Predicted.RT": [
+                "object",
+                "float64",
+                true
+              ],
+              "Genes.Normalised": [
+                "object",
+                "float64",
+                true
+              ],
+              "RT": [
+                "object",
+                "float64",
+                true
+              ],
+              "Stripped.Sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "Modified.Sequence": [
+                "object",
+                "str",
+                true
+              ],
+              "Protein.Ids": [
+                "object",
+                "str",
+                true
+              ],
+              "Q.Value": [
+                "object",
+                "float64",
+                true
+              ],
+              "Precursor.Translated": [
+                "object",
+                "float64",
+                true
+              ],
+              "Fragment.Quant.Corrected": [
+                "object",
+                "str",
+                true
+              ],
+              "Translated.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "PG.Normalised": [
+                "object",
+                "float64",
+                true
+              ],
+              "PG.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "Spectrum.Similarity": [
+                "object",
+                "float64",
+                true
+              ],
+              "Ms1.Area": [
+                "object",
+                "float64",
+                true
+              ],
+              "Precursor.Quantity": [
+                "object",
+                "float64",
+                true
+              ],
+              "Mass.Evidence": [
+                "object",
+                "float64",
+                true
+              ],
+              "Fragment.Quant.Raw": [
+                "object",
+                "str",
+                true
+              ],
+              "GG.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "Decoy.CScore": [
+                "object",
+                "float64",
+                true
+              ],
+              "Predicted.iIM": [
+                "object",
+                "int64",
+                true
+              ],
+              "Precursor.Normalised": [
+                "object",
+                "float64",
+                true
+              ],
+              "iRT": [
+                "object",
+                "float64",
+                true
+              ],
+              "CScore": [
+                "object",
+                "float64",
+                true
+              ],
+              "Run": [
+                "object",
+                "str",
+                true
+              ],
+              "Genes.MaxLFQ": [
+                "object",
+                "float64",
+                true
+              ],
+              "Protein.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "Decoy.Evidence": [
+                "object",
+                "int64",
+                true
+              ],
+              "Protein.Names": [
+                "object",
+                "str",
+                true
+              ],
+              "Genes.Quantity": [
+                "object",
+                "float64",
+                true
+              ],
+              "Global.Q.Value": [
+                "object",
+                "float64",
+                true
+              ],
+              "Global.PG.Q.Value": [
+                "object",
+                "int64",
+                true
+              ],
+              "Translated.Quality": [
+                "object",
+                "float64",
+                true
+              ],
+              "Evidence": [
+                "object",
+                "float64",
+                true
+              ],
+              "Protein.Group": [
+                "object",
+                "str",
+                true
+              ],
+              "PG.Quantity": [
+                "object",
+                "float64",
+                true
+              ],
+              "iIM": [
+                "object",
+                "float64",
+                true
+              ],
+              "Predicted.IM": [
+                "object",
+                "int64",
+                true
+              ],
+              "Predicted.iRT": [
+                "object",
+                "float64",
+                true
+              ],
+              "Ms1.Translated": [
+                "object",
+                "float64",
+                true
+              ],
+              "MS2.Scan": [
+                "object",
+                "int64",
+                true
+              ],
+              "Proteotypic": [
+                "object",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Stripped.Sequence",
+              "Precursor.Charge"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['Protein.Names', 'Genes', 'PG.Quantity', 'PG.Normalised', 'PG.MaxLFQ', 'Genes.Quantity', 'Genes.Normalised', 'Genes.MaxLFQ', 'Genes.MaxLFQ.Unique', 'Q.Value', 'PEP', 'Global.Q.Value', 'Protein.Q.Value', 'PG.Q.Value', 'Global.PG.Q.Value', 'GG.Q.Value', 'Translated.Q.Value', 'Proteotypic', 'Precursor.Normalised', 'Precursor.Translated', 'Translated.Quality', 'Ms1.Translated', 'Quantity.Quality', 'RT', 'RT.Start', 'RT.Stop', 'iRT', 'Predicted.RT', 'Predicted.iRT', 'Lib.Q.Value', 'Lib.PG.Q.Value', 'Ms1.Profile.Corr', 'Ms1.Area', 'Evidence', 'Spectrum.Similarity', 'Averagine', 'Mass.Evidence', 'CScore', 'Decoy.Evidence', 'Decoy.CScore', 'Fragment.Quant.Raw', 'Fragment.Quant.Corrected', 'Fragment.Correlations', 'MS2.Scan', 'IM', 'iIM', 'Predicted.IM', 'Predicted.iIM']",
+            "Unmapped candidate columns: ['Protein.Names', 'Genes', 'PG.Quantity', 'PG.Normalised', 'PG.MaxLFQ', 'Genes.Quantity', 'Genes.Normalised', 'Genes.MaxLFQ', 'Genes.MaxLFQ.Unique', 'Q.Value', 'PEP', 'Global.Q.Value', 'Protein.Q.Value', 'PG.Q.Value', 'Global.PG.Q.Value', 'GG.Q.Value', 'Translated.Q.Value', 'Proteotypic', 'Precursor.Normalised', 'Precursor.Translated', 'Translated.Quality', 'Ms1.Translated', 'Quantity.Quality', 'RT', 'RT.Start', 'RT.Stop', 'iRT', 'Predicted.RT', 'Predicted.iRT', 'First.Protein.Description', 'Lib.Q.Value', 'Lib.PG.Q.Value', 'Ms1.Profile.Corr', 'Ms1.Area', 'Evidence', 'Spectrum.Similarity', 'Averagine', 'Mass.Evidence', 'CScore', 'Decoy.Evidence', 'Decoy.CScore', 'Fragment.Quant.Raw', 'Fragment.Quant.Corrected', 'Fragment.Correlations', 'MS2.Scan', 'IM', 'iIM', 'Predicted.IM', 'Predicted.iIM']",
+            "Unmapped candidate rows: 3",
+            "Converted 55 column(s) to match reference dtypes",
+            "Sorted both dataframes by ['Stripped.Sequence', 'Precursor.Charge']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Precursor.Quantity"
+          ],
+          "filtered_columns": [
+            "Precursor.Quantity"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "Precursor.Quantity": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.9827586206896551,
+            "col_recall": 1.0,
+            "col_f1": 0.9913043478260869,
+            "col_jaccard": 0.9827586206896551,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 57,
+            "alt_cols": 58,
+            "col_intersection": 57
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              57
+            ],
+            "alt_shape": [
+              3,
+              58
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Averagine": true,
+              "File.Name": true,
+              "RT.Stop": true,
+              "Precursor.Id": true,
+              "PEP": true,
+              "IM": true,
+              "Quantity.Quality": true,
+              "Fragment.Correlations": true,
+              "PG.MaxLFQ": true,
+              "Genes": true,
+              "Genes.MaxLFQ.Unique": true,
+              "Lib.Q.Value": true,
+              "RT.Start": true,
+              "Lib.PG.Q.Value": true,
+              "Precursor.Charge": true,
+              "Ms1.Profile.Corr": true,
+              "Predicted.RT": true,
+              "Genes.Normalised": true,
+              "RT": true,
+              "Stripped.Sequence": true,
+              "Modified.Sequence": true,
+              "Protein.Ids": true,
+              "Q.Value": true,
+              "Precursor.Translated": true,
+              "Fragment.Quant.Corrected": true,
+              "Translated.Q.Value": true,
+              "PG.Normalised": true,
+              "PG.Q.Value": true,
+              "Spectrum.Similarity": true,
+              "Ms1.Area": true,
+              "Precursor.Quantity": true,
+              "Mass.Evidence": true,
+              "Fragment.Quant.Raw": true,
+              "GG.Q.Value": true,
+              "Decoy.CScore": true,
+              "Predicted.iIM": true,
+              "Precursor.Normalised": true,
+              "iRT": true,
+              "CScore": true,
+              "Run": true,
+              "Genes.MaxLFQ": true,
+              "Protein.Q.Value": true,
+              "Decoy.Evidence": true,
+              "Protein.Names": true,
+              "Genes.Quantity": true,
+              "Global.Q.Value": true,
+              "Global.PG.Q.Value": true,
+              "Translated.Quality": true,
+              "Evidence": true,
+              "Protein.Group": true,
+              "PG.Quantity": true,
+              "iIM": true,
+              "Predicted.IM": true,
+              "Predicted.iRT": true,
+              "Ms1.Translated": true,
+              "MS2.Scan": true,
+              "Proteotypic": true
+            },
+            "common_columns": 57
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.0,
+            "ref_missing_rate": 1.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

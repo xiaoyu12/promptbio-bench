@@ -1,0 +1,282 @@
+{
+  "id": "a-11-4",
+  "question": "Run GSEA on ranked gene list against GO Biological Process gene sets. Identify the top 5 enriched gene sets by absolute NES score.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-4/ref_answer/gsea_top5_result.csv",
+      "eval_guideline": "Top-5 gene sets must match the reference in term identity; NES values may vary due to permutation; row order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-11-4/output/gsea_top5_result.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (gsea_top5_result.csv) and both are CSV files. The candidate is the only file the agent produced, and it matches the task's top-5 GSEA output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "GSEA top-5 enriched GO Biological Process gene sets by absolute NES. Top-5 gene sets must match the reference in term identity; NES values may vary due to permutation; row order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a small 5-row results table, so per the small-table exception it should be compared value by value. Approximate matching can check that the GO terms are the same while ignoring row order and allowing NES to vary from permutation noise, as the guideline says.",
+      "strategy_error": null,
+      "similarity": 0.9916607882728463,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Term": "Term",
+            "ES": "ES",
+            "NES": "NES",
+            "NOM p-val": "NOM p-val",
+            "FDR q-val": "FDR q-val"
+          },
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Term",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same orientation, so no transpose is needed. All 5 reference columns have exact name matches in the candidate. The candidate's extra columns (FWER p-val, Tag %, Gene %, Lead_genes) are left out. The guideline says term identity is what counts, so rows are matched on Term. Term is a set membership key here, not a computed value. The guideline also says row order may differ, so row order is not treated as meaningful and a permutation check is enabled. Note that the Term strings are formatted differently. The reference uses the prefix 'GO_Biological_Process_2021__' and lowercase names, while the candidate has no prefix and uses Title Case. Matching should therefore normalize Term: strip the library prefix, ignore case, or match on the GO ID inside the parentheses (e.g. GO:0002181). After normalizing, only one term overlaps (GO:0002181, cytoplasmic translation), so the sets mostly differ. NES and p-values are permutation-dependent and should be compared loosely.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "NES is the score the task ranks by. It varies with permutations, so I allow a 10% relative tolerance. Sign is not ignored because it shows the direction of enrichment. Rows where only one table has the term will count as mismatches, which reflects whether the terms match."
+            },
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "ES is deterministic for a given ranking and gene set. Allowing 5% covers small differences in gene-set versions or preprocessing."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The value is 0 throughout and is limited by the number of permutations. Relative error is undefined at zero and the column is not needed for the task."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "FDR depends heavily on the permutation count and random seed. The task only asks for term identity and the NES ranking."
+            }
+          ],
+          "overall_reasoning": "The main test is whether the candidate found the same top-5 GO BP terms as the reference. Rows are aligned on Term. The tables share only 1 of the 9 aligned terms (cytoplasmictranslation). Every other row has NaN on one side, so comparing the value columns will penalise those mismatched terms. NES matters most because the task ranks by it. The guideline says NES can shift between permutation runs, so I use RAE with a loose 10% tolerance. ES is computed deterministically from the ranking, so it uses RAE with a tighter 5% tolerance. Both p-value columns are ignored. NOM p-val is 0 throughout, which makes relative error meaningless. FDR q-val depends heavily on permutations and the number of permutations run. The extra candidate columns (FWER, Tag %, Gene %, Lead_genes) are not in the reference, so they are not compared.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Term": "Term",
+              "ES": "ES",
+              "NES": "NES",
+              "NOM p-val": "NOM p-val",
+              "FDR q-val": "FDR q-val"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "FWER p-val",
+              "Tag %",
+              "Gene %",
+              "Lead_genes"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "matched_rows": 1,
+            "unmapped_ref_rows": 4,
+            "unmapped_alt_rows": 4,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {
+              "Term": {
+                "ref_prefix": "GO_Biological_Process_2021__",
+                "ref_suffix": ")",
+                "alt_prefix": "",
+                "alt_suffix": ")"
+              }
+            },
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "GO IDs differ for all candidates. The Fc-gamma phagocytosis term (GO:0038096) is a narrower child of the Fc receptor signaling pathway (GO:0038093), not the same entity. No other candidates have a related reference term.",
+              "confidence": 0.85
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Term",
+              "FDR q-val",
+              "NOM p-val",
+              "ES",
+              "NES"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Term"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['FWER p-val', 'Tag %', 'Gene %', 'Lead_genes']",
+            "Unmapped reference rows: 4",
+            "Unmapped candidate rows: 4",
+            "Sorted both dataframes by ['Term']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "NES",
+            "NOM p-val"
+          ],
+          "filtered_columns": [
+            "ES",
+            "NES"
+          ],
+          "overall_similarity": 0.9916607882728463,
+          "per_column_similarities": {
+            "ES": {
+              "similarity": 0.9934163879081807,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "NES": {
+              "similarity": 0.989905188637512,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5555555555555556,
+            "col_recall": 1.0,
+            "col_f1": 0.7142857142857143,
+            "col_jaccard": 0.5555555555555556,
+            "ref_rows": 9,
+            "alt_rows": 9,
+            "row_intersection": 9,
+            "ref_cols": 5,
+            "alt_cols": 9,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              9,
+              5
+            ],
+            "alt_shape": [
+              9,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Term": true,
+              "FDR q-val": true,
+              "NOM p-val": true,
+              "ES": true,
+              "NES": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.1111111111111111,
+            "ref_missing_rate": 0.4444444444444444,
+            "alt_missing_rate": 0.4444444444444444
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

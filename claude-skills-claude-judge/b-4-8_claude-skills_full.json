@@ -1,0 +1,275 @@
+{
+  "id": "b-4-8",
+  "question": "Use the Jonckheere-Terpstra trend test to evaluate whether mutation burden increases significantly across ordered tumor grades (I -> IV).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-4-8/ref_answer/trend_test_results.csv",
+      "eval_guideline": "J statistic and Z statistic must match within 0.1% relative absolute error; trend significance call must match; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-4-8/output/trend_test_results.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named trend_test_results.csv and are CSVs, and this is the only candidate. It fits the Jonckheere-Terpstra trend test task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Jonckheere-Terpstra trend test of mutation burden across ordered tumor grades I->IV. Compare J statistic and Z statistic within 0.1% relative absolute error; the trend significance call (significant/not, direction) must match. Column order and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The Jonckheere-Terpstra test is deterministic and produces a small results table (J, Z, significance), so values are compared one by one. The guideline sets a 0.1% relative tolerance and allows column order and headers to differ.",
+      "strategy_error": null,
+      "similarity": 0.9999904176009485,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "Test": "Test",
+            "J_Statistic": "J_Statistic",
+            "Z_Statistic": "Z_Statistic",
+            "P_Value": "P_Value",
+            "Significant_Trend": "Significant_Trend"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables hold a single summary row from the Jonckheere-Terpstra test and have the same orientation, so no transpose is needed. All 5 reference columns have exact matches in the candidate. The candidate's extra columns (Alternative, Group_Order, N, Expected_J, Variance_J, Alpha) are left out. With only one row, matching by position is enough, so no ID key or sorting is needed. The evaluation compares J_Statistic, Z_Statistic and Significant_Trend.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "J_Statistic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "The guideline requires J to match within 0.1% relative error."
+            },
+            {
+              "name": "Z_Statistic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "The guideline requires Z to match within 0.1% relative error. The candidate differs by about 0.003%, which is within the limit."
+            },
+            {
+              "name": "Significant_Trend",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "The guideline says the trend significance call must match, so this yes/no value needs an exact match."
+            },
+            {
+              "name": "P_Value",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The reference value was rounded to 0.0, so relative error doesn't work for it. The guideline doesn't require it, and the Significant_Trend check already covers it."
+            },
+            {
+              "name": "Test",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "This is a descriptive label that the guideline doesn't ask to check."
+            }
+          ],
+          "overall_reasoning": "The guideline names three things to check: the J statistic, the Z statistic and the trend significance call. J_Statistic and Z_Statistic use relative absolute error with a 0.001 cutoff, which is the 0.1% the guideline allows. Here J matches exactly, and Z is off by about 0.003% (10.727508 vs 10.727816), most likely from a small difference in how the variance was computed. Significant_Trend is a yes/no call, so it is treated as categorical and must match exactly. P_Value is skipped. The reference rounded it to 0.0 while the candidate reports 3.77e-27, so a relative error check would wrongly fail it even though both are extremely small. The guideline also doesn't require it, and the significance call already covers it. Test is just a label and the guideline doesn't ask for it, so it is skipped too. The extra candidate columns (Alternative, Group_Order, N, Expected_J, Variance_J, Alpha) have no counterpart in the reference and are left out.",
+          "overall_confidence": 0.93,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Test": "Test",
+              "J_Statistic": "J_Statistic",
+              "Z_Statistic": "Z_Statistic",
+              "P_Value": "P_Value",
+              "Significant_Trend": "Significant_Trend"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Alternative",
+              "Group_Order",
+              "N",
+              "Expected_J",
+              "Variance_J",
+              "Alpha"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Test",
+              "J_Statistic",
+              "Significant_Trend",
+              "Z_Statistic",
+              "P_Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Test": [
+                "str",
+                "str",
+                true
+              ],
+              "J_Statistic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Significant_Trend": [
+                "bool",
+                "bool",
+                true
+              ],
+              "Z_Statistic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P_Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Alternative', 'Group_Order', 'N', 'Expected_J', 'Variance_J', 'Alpha']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "J_Statistic",
+            "P_Value",
+            "Significant_Trend",
+            "Test",
+            "Z_Statistic"
+          ],
+          "filtered_columns": [
+            "J_Statistic",
+            "Significant_Trend",
+            "Z_Statistic"
+          ],
+          "overall_similarity": 0.9999904176009485,
+          "per_column_similarities": {
+            "J_Statistic": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "Significant_Trend": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            },
+            "Z_Statistic": {
+              "similarity": 0.9999712528028456,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.45454545454545453,
+            "col_recall": 1.0,
+            "col_f1": 0.625,
+            "col_jaccard": 0.45454545454545453,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 5,
+            "alt_cols": 11,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              5
+            ],
+            "alt_shape": [
+              1,
+              11
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Test": true,
+              "J_Statistic": true,
+              "Significant_Trend": true,
+              "Z_Statistic": true,
+              "P_Value": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

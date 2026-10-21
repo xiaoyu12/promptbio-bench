@@ -1,0 +1,258 @@
+{
+  "id": "a-5-4",
+  "question": "Identify spatially variable genes (FDR < 0.05) in the provided spatial gene expression data using Moran's I spatial autocorrelation.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-5-4/ref_answer/spatially_variable_genes.csv",
+      "eval_guideline": "Gene records and their Moran's I (I_stat), p-value (pval_norm), and FDR (pval_norm_fdr_bh) values must match the reference within 1% relative absolute error; output must include a gene name column (gene_name); column order and row order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-5-4/output/spatially_variable_genes.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames are identical and both files are CSVs. The file is the spatially variable genes output the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare spatially variable gene tables (Moran's I, FDR < 0.05). Align rows by gene_name. I_stat, pval_norm and pval_norm_fdr_bh must match the reference within 1% relative absolute error. Column order and row order may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The guideline asks for each gene's values to match within a 1% tolerance, and column and row order may differ. Moran's I with normal-approximation p-values (pval_norm) and BH FDR is deterministic, so a row-by-row approximate comparison keyed on gene_name fits better than a summary comparison.",
+      "strategy_error": null,
+      "similarity": 0.9472469296628754,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "gene_name": "gene_name",
+            "I_stat": "I_stat",
+            "pval_norm": "pval_norm",
+            "var_norm": null,
+            "pval_norm_fdr_bh": "pval_norm_fdr_bh"
+          },
+          "id_columns": [
+            "gene_name"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are in gene-per-row long format, so no transpose is needed. The column names match exactly for gene_name, I_stat, pval_norm and pval_norm_fdr_bh. The candidate has no var_norm column, so that column maps to null; it is not one of the evaluated metrics anyway. gene_name is the unique row ID and is used as the key. Row order is not meaningful because the guideline says row order may differ, so the rows are matched by gene_name as a permutation. The candidate has 5557 rows and the reference has 5600, so some genes (e.g. LEP) are missing from the candidate. Key-based matching handles this without misaligning the other rows.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "I_stat",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "This is the main Moran's I statistic. The guideline requires a 1% relative absolute error, so cell_tolerance is 0.01. In the preview, values agree to about 0.1%."
+            },
+            {
+              "name": "pval_norm",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires p-values to match within 1% RAE. When both values are exactly 0, they count as matching. Small differences in I_stat get magnified in very small p-values, so some genes may fail."
+            },
+            {
+              "name": "pval_norm_fdr_bh",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires the BH-adjusted FDR to match within 1% RAE. Candidate values are consistently lower than the reference, which may mean the correction was run over a different set of tests. These are real differences that the comparison should catch."
+            }
+          ],
+          "overall_reasoning": "The evaluation guideline sets the rule: I_stat, pval_norm and pval_norm_fdr_bh must each match the reference within 1% relative absolute error. All three are float64, so each one uses RAE with cell_tolerance=0.01. gene_name is the alignment key and is left out of the comparison. var_norm is only in the reference and the task doesn't ask for it, so it is not compared.\n\nWhat the preview shows:\n- **I_stat:** values differ by about 0.1%, well inside the tolerance.\n- **pval_norm:** values differ by about 1–9%, so some genes will fail the 1% check.\n- **pval_norm_fdr_bh:** candidate values are consistently about 10–20% lower. This may come from a different multiple-testing setup, such as correcting over a different number of genes. These are real differences, and the 1% tolerance should flag them.\n\nSigns are meaningful here (Moran's I can be negative), so compare_abs is false for every column.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "gene_name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "gene_name": "gene_name",
+              "I_stat": "I_stat",
+              "pval_norm": "pval_norm",
+              "pval_norm_fdr_bh": "pval_norm_fdr_bh"
+            },
+            "unmapped_ref": [
+              "var_norm"
+            ],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "gene_name"
+            ],
+            "matched_rows": 5404,
+            "unmapped_ref_rows": 196,
+            "unmapped_alt_rows": 153,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "No candidate matches a reference identifier, either directly after ignoring case and punctuation or through a known alternative or older gene name. The candidates are mostly genes active in most cells; the references are mostly tissue-specific genes and unnamed or non-coding entries (ac/al/linc). All candidates map to null.",
+              "confidence": 0.9
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "I_stat",
+              "gene_name",
+              "pval_norm_fdr_bh",
+              "pval_norm"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "I_stat": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene_name": [
+                "str",
+                "str",
+                true
+              ],
+              "pval_norm_fdr_bh": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pval_norm": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference columns: ['var_norm']",
+            "Unmapped reference rows: 196",
+            "Unmapped candidate rows: 153"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "I_stat",
+            "pval_norm",
+            "pval_norm_fdr_bh"
+          ],
+          "filtered_columns": [
+            "I_stat",
+            "pval_norm",
+            "pval_norm_fdr_bh"
+          ],
+          "overall_similarity": 0.9472469296628754,
+          "per_column_similarities": {
+            "I_stat": {
+              "similarity": 0.998992003505189,
+              "strategy": "rae",
+              "matching_count": 5404,
+              "total_count": 5404,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "pval_norm": {
+              "similarity": 0.979332548224513,
+              "strategy": "rae",
+              "matching_count": 2164,
+              "total_count": 5433,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "pval_norm_fdr_bh": {
+              "similarity": 0.863416237258924,
+              "strategy": "rae",
+              "matching_count": 362,
+              "total_count": 5433,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 0.8,
+            "col_f1": 0.888888888888889,
+            "col_jaccard": 0.8,
+            "ref_rows": 5753,
+            "alt_rows": 5753,
+            "row_intersection": 5753,
+            "ref_cols": 5,
+            "alt_cols": 4,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              5753,
+              5
+            ],
+            "alt_shape": [
+              5753,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": 1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "I_stat": true,
+              "gene_name": true,
+              "pval_norm_fdr_bh": true,
+              "pval_norm": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9393359986094212,
+            "ref_missing_rate": 0.02659482009386407,
+            "alt_missing_rate": 0.03406918129671476
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

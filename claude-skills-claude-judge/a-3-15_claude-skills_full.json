@@ -1,0 +1,221 @@
+{
+  "id": "a-3-15",
+  "question": "Merge the TPM data from two Salmon output files into a single file.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-15/ref_answer/merged_tpm.tsv",
+      "eval_guideline": "Per-transcript TPM values for both samples must match within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-15/output/merged_tpm.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named merged_tpm.tsv and are TSVs, so the name and format are an exact match. The candidate is the only output produced for merging the TPM values from the two Salmon files.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Merge the TPM data from two Salmon output files (ERR2675443, ERR2675450) into a single table. Per-transcript TPM values for both samples must match within 1% relative absolute error; row and column order may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "Merging TPM values is a deterministic task that compares records one by one. The guideline asks for per-transcript TPM values within 1% relative error and allows rows and columns in any order, which is what approximate alignment handles.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Name": "Name",
+            "ERR2675443_TPM": "ERR2675443_TPM",
+            "ERR2675450_TPM": "ERR2675450_TPM"
+          },
+          "id_columns": [
+            "Name"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Name",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same column names and shape (99x3), so no transpose is needed and each column maps to itself. The transcript ID ('Name') is unique, comes straight from the input files, and identifies each row, so it is the key for matching rows. The rows are in a different order (the reference is sorted by ID, the candidate keeps the Salmon output order), and the guideline says order may differ. So row order does not matter, both tables are sorted by Name, and the permutation check is on. TPM values are compared within 1% relative error.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ERR2675443_TPM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is the TPM column for one sample. The guideline asks for each transcript's value to match within 1% relative absolute error, so it uses cell-by-cell RAE with a tolerance of 0.01."
+            },
+            {
+              "name": "ERR2675450_TPM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is the TPM column for the second sample. It uses the same 1% RAE per-cell tolerance that the evaluation guideline sets."
+            }
+          ],
+          "overall_reasoning": "The task merges Salmon TPM values from two samples into one file. Both data columns, ERR2675443_TPM and ERR2675450_TPM, matter equally. The Name column is the transcript ID used to align rows, so it is left out of the comparison. The guideline asks for per-transcript TPM values to match within 1% relative absolute error, so each column is compared cell by cell using RAE with a tolerance of 0.01. Many values are zero; these should count as matching when both files have zero.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Name": "Name",
+              "ERR2675443_TPM": "ERR2675443_TPM",
+              "ERR2675450_TPM": "ERR2675450_TPM"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Name"
+            ],
+            "matched_rows": 99,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "ERR2675450_TPM",
+              "ERR2675443_TPM",
+              "Name"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "ERR2675450_TPM": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ERR2675443_TPM": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Name"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Name']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ERR2675443_TPM",
+            "ERR2675450_TPM"
+          ],
+          "filtered_columns": [
+            "ERR2675443_TPM",
+            "ERR2675450_TPM"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "ERR2675443_TPM": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 99,
+              "total_count": 99,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "ERR2675450_TPM": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 99,
+              "total_count": 99,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 99,
+            "alt_rows": 99,
+            "row_intersection": 99,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              99,
+              3
+            ],
+            "alt_shape": [
+              99,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "ERR2675450_TPM": true,
+              "ERR2675443_TPM": true,
+              "Name": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

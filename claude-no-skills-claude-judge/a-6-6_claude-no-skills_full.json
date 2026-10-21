@@ -1,0 +1,280 @@
+{
+  "id": "a-6-6",
+  "question": "Using the provided 16S rRNA amplicon sequence variant (ASV) table, calculate alpha diversity indices (Shannon, Simpson, and Chao1) for each sample.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-6/ref_answer/AlphaDiversity_results.csv",
+      "eval_guideline": "Shannon, Simpson, and Chao1 values must match the reference within 0.1% relative absolute error; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-6-6/output/AlphaDiversity_results.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are CSV files holding the per-sample alpha diversity results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-sample alpha diversity indices (Shannon, Simpson, Chao1) calculated from a 16S ASV table. Values must match the reference within 0.1% relative absolute error; row order, column order, and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The alpha diversity calculation is deterministic, and the result is one row of values per sample. The guideline asks for a value-by-value match within 0.1% relative error and allows rows, columns and headers to differ, so approximate is the right fit.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "sample_id": "sample_id",
+            "group": "group",
+            "Shannon": "Shannon",
+            "Simpson": "Simpson",
+            "Chao1": "Chao1"
+          },
+          "id_columns": [
+            "sample_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sample_id",
+          "check_permutation": true,
+          "reasoning": "Both tables have one row per sample, so no transpose is needed. The reference columns (sample_id, group, Shannon, Simpson, Chao1) appear in the candidate under the same names. The candidate's extra columns (Observed, se.chao1, InvSimpson, Total_reads) have no match in the reference and are dropped. Rows are matched on sample_id, which is unique per sample (an SRR accession). The guideline says row order may differ, so rows are treated as an unordered set and sorted by sample_id before comparison.",
+          "confidence": 0.96
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Shannon",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Core output. The guideline requires a match within 0.1% relative absolute error."
+            },
+            {
+              "name": "Simpson",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "Core output. The guideline requires a match within 0.1% relative absolute error. Values follow the 1-D convention in both files."
+            },
+            {
+              "name": "Chao1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "Core output, an integer-like richness estimate. The guideline requires a match within 0.1% relative absolute error."
+            },
+            {
+              "name": "group",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Sample metadata, not one of the indices the task asks for. It is not part of the evaluation guideline."
+            }
+          ],
+          "overall_reasoning": "The task asks for three alpha diversity indices for each sample: Shannon, Simpson and Chao1. The evaluation guideline sets a 0.1% relative absolute error limit, so each of these numerical columns uses the \"rae\" strategy with cell_tolerance=0.001. The group column is sample metadata that isn't required by the task, so it is skipped. Extra columns that appear only in the candidate (Observed, se.chao1, InvSimpson, Total_reads) are not in the reference and are not compared. sample_id is used only for alignment.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "sample_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "sample_id": "sample_id",
+              "group": "group",
+              "Shannon": "Shannon",
+              "Simpson": "Simpson",
+              "Chao1": "Chao1"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Observed",
+              "se.chao1",
+              "InvSimpson",
+              "Total_reads"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample_id"
+            ],
+            "matched_rows": 25,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "sample_id",
+              "Simpson",
+              "group",
+              "Chao1",
+              "Shannon"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "sample_id": [
+                "str",
+                "str",
+                true
+              ],
+              "Simpson": [
+                "float64",
+                "float64",
+                true
+              ],
+              "group": [
+                "str",
+                "str",
+                true
+              ],
+              "Chao1": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Shannon": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sample_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Observed', 'se.chao1', 'InvSimpson', 'Total_reads']",
+            "Sorted both dataframes by ['sample_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Chao1",
+            "Shannon",
+            "Simpson",
+            "group"
+          ],
+          "filtered_columns": [
+            "Chao1",
+            "Shannon",
+            "Simpson"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Chao1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "Shannon": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "Simpson": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5555555555555556,
+            "col_recall": 1.0,
+            "col_f1": 0.7142857142857143,
+            "col_jaccard": 0.5555555555555556,
+            "ref_rows": 25,
+            "alt_rows": 25,
+            "row_intersection": 25,
+            "ref_cols": 5,
+            "alt_cols": 9,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              25,
+              5
+            ],
+            "alt_shape": [
+              25,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "sample_id": true,
+              "Simpson": true,
+              "group": true,
+              "Chao1": true,
+              "Shannon": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

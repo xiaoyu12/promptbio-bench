@@ -10,6 +10,8 @@ Required cmdline tools:
 - (None)
 """
 
+import io
+import os
 import re
 import csv
 import json
@@ -40,6 +42,21 @@ _TRUE_STRINGS = {"true", "t", "yes", "y", "1"}
 _FALSE_STRINGS = {"false", "f", "no", "n", "0"}
 
 
+_DELIMITER_ALIASES = {"\\t": "\t", "tab": "\t", "\\\\t": "\t", "comma": ",", "semicolon": ";",
+                      "pipe": "|", "space": " ", "\\s+": r"\s+", "whitespace": r"\s+"}
+
+
+def _normalize_delimiter(delimiter: Optional[str]) -> str:
+    """Turn a delimiter as an LLM may spell it ("\\\\t", "tab", "comma") into the character itself.
+
+    A literal two-character "\\\\t" would make pandas treat the separator as a regex, which also
+    stops it from stripping quotes, so every quoted column name keeps its quote marks.
+    """
+    if not delimiter:
+        return ","
+    return _DELIMITER_ALIASES.get(delimiter.strip().lower() if delimiter.strip() else delimiter, delimiter)
+
+
 def _printed_decimals(series: Series, max_decimals: int = 10) -> int:
     """Largest number of decimal places among a float column's values (as Python prints them)."""
     decimals = 0
@@ -50,6 +67,79 @@ def _printed_decimals(series: Series, max_decimals: int = 10) -> int:
         if "." in text:
             decimals = max(decimals, len(text.split(".")[1].rstrip("0")))
     return min(decimals, max_decimals)
+
+
+def _normalize_key(series: Series, ignore_case: bool = True) -> Series:
+    """String form of a row-key column that ignores formatting-only differences.
+
+    - integral floats print as integers ("130854100.0" -> "130854100"), so a key column that
+      became float because of missing values still matches an int column;
+    - surrounding whitespace is stripped and, with ignore_case, case is ignored;
+    - in values containing letters, spaces, underscores and hyphens are dropped
+      ("Random_Forest" == "RandomForest"). Purely numeric or symbolic values ("-1", "-")
+      keep them, so -1 never collides with 1.
+    """
+    s = series
+    if pd.api.types.is_float_dtype(s):
+        nonnull = s.dropna()
+        if len(nonnull) and (nonnull == nonnull.round()).all():
+            s = s.astype("Int64")
+    s = s.astype(str).str.strip().str.replace(r"^(-?\d+)\.0+$", r"\1", regex=True)
+    if ignore_case:
+        s = s.str.lower()
+    has_letter = s.str.contains(r"[A-Za-z]", regex=True)
+    return s.where(~has_letter, s.str.replace(r"[\s_\-]+", "", regex=True))
+
+
+def _common_affix(values: List[str], suffix: bool = False) -> str:
+    """Longest prefix (or suffix) shared by every value, cut back to end on a separator."""
+    if len(values) < 2:
+        return ""
+    texts = [v[::-1] for v in values] if suffix else list(values)
+    affix = os.path.commonprefix(texts)
+    # Cut back to the last separator so "GO_..._2021.gmt__detection" keeps whole words
+    cut = max((i for i, ch in enumerate(affix) if not ch.isalnum()), default=-1)
+    affix = affix[:cut + 1] if cut >= 0 else ""
+    return affix[::-1] if suffix else affix
+
+
+def _strip_unshared_affixes(ref_raw: Series, alt_raw: Series, ref_norm: Series, alt_norm: Series,
+                            ignore_case: bool = True):
+    """Strip a prefix/suffix that every key on ONE side carries and the other side lacks.
+
+    E.g. reference terms "GO_Biological_Process_2021.gmt__regulation of ... (GO:2000310)" vs candidate
+    "regulation of ... (GO:2000310)". Only tried when fewer than half the reference keys match, and
+    kept only if it increases the number of matching keys. Returns (ref_norm, alt_norm, info) or None.
+    """
+    if not (pd.api.types.is_object_dtype(ref_raw) or pd.api.types.is_string_dtype(ref_raw)):
+        return None
+    if not (pd.api.types.is_object_dtype(alt_raw) or pd.api.types.is_string_dtype(alt_raw)):
+        return None
+    ref_keys, alt_keys = set(ref_norm.dropna()), set(alt_norm.dropna())
+    if not ref_keys or len(ref_keys & alt_keys) >= 0.5 * len(ref_keys):
+        return None
+
+    def strip(raw: Series):
+        texts = raw.dropna().astype(str).unique().tolist()
+        prefix, suffix = _common_affix(texts), _common_affix(texts, suffix=True)
+        out = raw.astype(str)
+        if prefix:
+            out = out.str[len(prefix):]
+        if suffix:
+            out = out.str[:-len(suffix)]
+        if (out.str.strip() == "").any():
+            return raw.astype(str), "", ""
+        return out, prefix, suffix
+
+    ref_s, ref_prefix, ref_suffix = strip(ref_raw)
+    alt_s, alt_prefix, alt_suffix = strip(alt_raw)
+    if not (ref_prefix or ref_suffix or alt_prefix or alt_suffix):
+        return None
+    new_ref, new_alt = _normalize_key(ref_s, ignore_case), _normalize_key(alt_s, ignore_case)
+    if len(set(new_ref.dropna()) & set(new_alt.dropna())) <= len(ref_keys & alt_keys):
+        return None
+    return new_ref, new_alt, {"ref_prefix": ref_prefix, "ref_suffix": ref_suffix,
+                              "alt_prefix": alt_prefix, "alt_suffix": alt_suffix}
 
 
 def _to_bool_series(series: Series) -> Series:
@@ -86,7 +176,9 @@ def _reverse_mapping_without_collisions(mapping: Dict[str, str], alt_cols: List[
     taken = set(rename.values())
     for col in alt_cols:
         if col not in rename and col in taken:
-            new = f"{col}_alt"
+            # Not "_alt": the row merge suffixes shared columns with "_ref"/"_alt", and
+            # "<col>_alt" would then exist twice and abort the merge.
+            new = f"{col}__candidate"
             while new in taken or new in alt_cols:
                 new += "_"
             rename[col] = new
@@ -900,10 +992,14 @@ Provide a mapping from EACH candidate identifier to its matching reference ident
                         ref_merge[col] = ref_merge[col].round(decimals)
                         alt_merge[col] = alt_merge[col].astype(float).round(decimals)
                         rounded_keys[col] = decimals
-                if ignore_case:
-                    for col in id_cols:
-                        ref_merge[col] = ref_merge[col].astype(str).str.lower()
-                        alt_merge[col] = alt_merge[col].astype(str).str.lower()
+                stripped_affixes = {}
+                for col in id_cols:
+                    ref_raw, alt_raw = ref_merge[col], alt_merge[col]
+                    ref_merge[col] = _normalize_key(ref_raw, ignore_case)
+                    alt_merge[col] = _normalize_key(alt_raw, ignore_case)
+                    affixes = _strip_unshared_affixes(ref_raw, alt_raw, ref_merge[col], alt_merge[col], ignore_case)
+                    if affixes:
+                        ref_merge[col], alt_merge[col], stripped_affixes[col] = affixes
 
                 fuzzy_matched_ids, fuzzy_meta = {}, {}
                 if fuzzy_id_match:
@@ -955,6 +1051,7 @@ Provide a mapping from EACH candidate identifier to its matching reference ident
                     "unmapped_ref_rows": unmapped_ref,
                     "unmapped_alt_rows": unmapped_alt,
                     "rounded_float_keys": rounded_keys,
+                    "stripped_key_affixes": stripped_affixes,
                     "fuzzy_matched_ids": fuzzy_matched_ids,
                     "fuzzy_match_metadata": fuzzy_meta,
                     **id_metadata,
@@ -1636,6 +1733,8 @@ Based on the task description, column dtypes, and aligned data previews, provide
             return self._get_col_equal(ref_series, alt_series)
         elif strategy == "overlap":
             delimiter = kwargs.get("delimiter")
+            if delimiter is not None:
+                delimiter = _normalize_delimiter(delimiter)
             threshold = kwargs.get("threshold", 1.0)
             return self._get_col_overlap(ref_series, alt_series, delimiter, threshold)
         elif strategy == "partition":
@@ -1668,6 +1767,32 @@ Based on the task description, column dtypes, and aligned data previews, provide
         return {"matched_rows": matched, "ref_rows": n_ref, "alt_rows": n_alt,
                 "precision": precision, "recall": recall, "f1": f1}
 
+    @staticmethod
+    def _get_row_set_overlap(ref_df: DataFrame, alt_df: DataFrame, columns: List[str]) -> Optional[Dict[str, Any]]:
+        """Precision/recall/F1 of distinct rows (tuples over `columns`), ignoring row order and position.
+
+        Rows that are entirely empty (padding added by positional alignment) are dropped first.
+        """
+        if not columns:
+            return None
+
+        def row_set(df: DataFrame) -> set:
+            sub = df[columns].dropna(how="all")
+            if sub.empty:
+                return set()
+            normalized = pd.concat([_normalize_key(sub[c]) for c in columns], axis=1)
+            return set(map(tuple, normalized.to_numpy()))
+
+        ref_rows, alt_rows = row_set(ref_df), row_set(alt_df)
+        if not ref_rows and not alt_rows:
+            return None
+        matched = len(ref_rows & alt_rows)
+        precision = matched / len(alt_rows) if alt_rows else 0.0
+        recall = matched / len(ref_rows) if ref_rows else 0.0
+        f1 = 2 * matched / (len(ref_rows) + len(alt_rows))
+        return {"columns": columns, "matched_rows": matched, "ref_rows": len(ref_rows), "alt_rows": len(alt_rows),
+                "precision": precision, "recall": recall, "f1": f1}
+
     def _calculate_similarities(self, ref_aligned: DataFrame, alt_aligned: DataFrame, plan: Dict[str, Any],
                                 row_alignment: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Calculate similarity metrics based on comparison plan.
@@ -1690,11 +1815,21 @@ Based on the task description, column dtypes, and aligned data previews, provide
         """
         def no_value_columns(note: str, compared_columns: List[str]) -> Dict[str, Any]:
             key_overlap = self._get_key_overlap(row_alignment)
-            if key_overlap is None:
+            if key_overlap is not None:
+                return {"compared_columns": compared_columns, "overall_similarity": key_overlap["f1"],
+                        "row_key_overlap": key_overlap,
+                        "notes": [note, "Scored by overlap of row keys (F1)"]}
+            # Rows were not merged on keys (positional alignment): fall back to the overlap of whole
+            # rows over the shared columns the plan did not ignore.
+            ignored = {cfg.get("name") for cfg in (plan.get("column_configs") or []) if cfg.get("strategy") == "ignore"}
+            shared = sorted(set(ref_aligned.columns) & set(alt_aligned.columns))
+            row_cols = [c for c in shared if c not in ignored] or shared
+            row_overlap = self._get_row_set_overlap(ref_aligned, alt_aligned, row_cols)
+            if row_overlap is None:
                 return {"compared_columns": compared_columns, "overall_similarity": 0.0, "notes": [note]}
-            return {"compared_columns": compared_columns, "overall_similarity": key_overlap["f1"],
-                    "row_key_overlap": key_overlap,
-                    "notes": [note, "Scored by overlap of row keys (F1)"]}
+            return {"compared_columns": compared_columns, "overall_similarity": row_overlap["f1"],
+                    "row_set_overlap": row_overlap,
+                    "notes": [note, f"Scored by overlap of whole rows on {row_cols} (F1)"]}
 
         # Get columns to compare: common columns, excluding ID columns, optionally filtered by column_configs
         common_cols = sorted(set(ref_aligned.columns) & set(alt_aligned.columns))
@@ -1924,6 +2059,22 @@ Determine:
                          reasoning="Detected via heuristic analysis",
                          confidence=0.7 if delimiter else 0.3)
 
+    @staticmethod
+    def _drop_trailing_comment_lines(file_path: str, comment: str = "#"):
+        """Return file_path unchanged, or an in-memory copy without comment lines after the first data line."""
+        with open(file_path, "r", encoding="utf-8", errors="replace") as handle:
+            lines = handle.readlines()
+        first_data = next((i for i, line in enumerate(lines)
+                           if line.strip() and not line.lstrip().startswith(comment)), None)
+        if first_data is None:
+            return file_path
+        kept = lines[:first_data + 1] + [line for line in lines[first_data + 1:]
+                                          if not line.lstrip().startswith(comment)]
+        if len(kept) == len(lines):
+            return file_path
+        logger.info(f"Dropped {len(lines) - len(kept)} trailing '{comment}' line(s) from {file_path}")
+        return io.StringIO("".join(kept))
+
     def _load_file(self, file_path: str, n_lines: int = 30, meta_dict: dict[str, Any] = None) -> DataFrame:
         """Load file as pandas DataFrame.
         
@@ -1950,7 +2101,7 @@ Determine:
 
         has_header = meta_dict.get("has_header", True)
         skip_rows = meta_dict.get("skip_rows", 0)
-        delimiter = meta_dict.get("delimiter", ",")
+        delimiter = _normalize_delimiter(meta_dict.get("delimiter", ","))
         comment_char = meta_dict.get("comment_char", None)
 
         # Handle Excel files
@@ -1975,8 +2126,15 @@ Determine:
             **({"header": None} if not has_header else {}),
             **({"skiprows": skip_rows} if skip_rows > 0 else {}),
         }
-        df = pd.read_csv(file_path, **read_kwargs)
-        
+        source = file_path
+        if not comment_char and signature.compression in (None, "none"):
+            # Comment lines can also follow the data (e.g. STAR >= 2.7.10 appends "# 2.7.11b ..." and
+            # "# Nreads ..." to Chimeric.out.junction); parsed as rows they corrupt every column's dtype.
+            # Drop '#' lines that come after the first data line. Leading '#' lines are left alone, since
+            # one may be the header (e.g. "#chrom start end").
+            source = self._drop_trailing_comment_lines(file_path, comment="#")
+        df = pd.read_csv(source, **read_kwargs)
+
         # Convert integer column names to strings when no header is present
         # This ensures consistency with downstream components (LLM plans, Pydantic models, sort lookups)
         if not has_header and any(isinstance(c, int) for c in df.columns):

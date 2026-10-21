@@ -1,0 +1,134 @@
+{
+  "id": "a-2-1",
+  "question": "Translate the gene symbols in data/gene.txt to their corresponding Ensembl gene IDs using biomaRt. Report hgnc_symbol and ensembl_gene_id, one row per gene.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-2-1/ref_answer/gene_mapping.csv",
+      "eval_guideline": "Each (hgnc_symbol, ensembl_gene_id) row must match the reference; row order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-2-1/output/gene_mapping.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames are identical (gene_mapping.csv), both are CSV, and the file matches the task's symbol-to-Ensembl-ID mapping output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare gene symbol to Ensembl gene ID mapping tables (biomaRt). Each (hgnc_symbol, ensembl_gene_id) row must match the reference; row order and extra columns may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a deterministic lookup, so each row can be checked against the reference. The guideline says row order and extra columns may differ, and approximate is the strategy that tolerates both while still matching values row by row.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "hgnc_symbol": "hgnc_symbol",
+            "ensembl_gene_id": "ensembl_gene_id"
+          },
+          "id_columns": [
+            "hgnc_symbol",
+            "ensembl_gene_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "hgnc_symbol,ensembl_gene_id",
+          "check_permutation": true,
+          "reasoning": "Both tables use the same column names, so each column maps to itself. The output is a mapping from gene symbols to Ensembl IDs, which is an unordered set of pairs. The guideline also says row order may differ. Both columns together form the row key, because each (hgnc_symbol, ensembl_gene_id) pair has to match the reference and a symbol could map to more than one Ensembl ID. No transpose is needed. Rows are sorted by the key columns so the comparison is stable.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [],
+          "overall_reasoning": "Both columns (hgnc_symbol, ensembl_gene_id) are ID columns used for alignment, and no other data columns exist. The evaluation requires each (symbol, Ensembl ID) pair to match the reference, which the alignment on both ID columns already checks. Row order and extra columns don't matter. There are no data columns to configure, so column_configs is empty and the alignment match itself is the comparison.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "hgnc_symbol",
+            "ensembl_gene_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "hgnc_symbol": "hgnc_symbol",
+              "ensembl_gene_id": "ensembl_gene_id"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "hgnc_symbol",
+              "ensembl_gene_id"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "hgnc_symbol",
+              "ensembl_gene_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "hgnc_symbol": [
+                "str",
+                "str",
+                true
+              ],
+              "ensembl_gene_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "hgnc_symbol",
+              "ensembl_gene_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['hgnc_symbol', 'ensembl_gene_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [],
+          "overall_similarity": 1.0,
+          "row_key_overlap": {
+            "matched_rows": 5,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "notes": [
+            "No columns available for comparison",
+            "Scored by overlap of row keys (F1)"
+          ]
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

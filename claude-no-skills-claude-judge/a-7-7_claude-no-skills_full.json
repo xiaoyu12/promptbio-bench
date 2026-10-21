@@ -1,0 +1,193 @@
+{
+  "id": "a-7-7",
+  "question": "Perform peptide identification on the provided DDA mzML file using the given FASTA database and report peptide-spectrum matches.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-7/ref_answer/BSA2_F1_comet_psm.tsv",
+      "eval_guideline": "The set of (spectrum_id, peptide_sequence, charge) tuples must match the reference; protein_accession may differ for shared peptides; modification notation must be present and consistent.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-7-7/output/BSA2_F1_comet_psm.tsv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Same filename and TSV format. Both are the full Comet PSM table, while the other candidate is a filtered subset of it.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare Comet peptide-spectrum match tables from a DDA mzML search. The set of (spectrum_id, peptide_sequence, charge) tuples must match the reference; protein_accession may differ for shared peptides; modification notation must be present and consistent. Column order, row order, and minor score rounding may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for a record-level match on (spectrum_id, peptide, charge) tuples, and a deterministic Comet search fits that. Approximate handles row and column reordering and lets protein accessions differ for shared peptides.",
+      "strategy_error": null,
+      "similarity": 0.07788944723618091,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "spectrum_id": "spectrum_id",
+            "peptide_sequence": "modified_peptide",
+            "charge": "charge",
+            "protein_accession": "protein_accession"
+          },
+          "id_columns": [
+            "spectrum_id",
+            "peptide_sequence",
+            "charge"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have PSMs as rows, so no transpose is needed. The reference peptide_sequence includes modification notation (e.g. C(Carbamidomethyl), M(Oxidation)). The guideline also says modification notation must be present, so I mapped peptide_sequence to the candidate's modified_peptide column rather than its plain peptide_sequence column. spectrum_id, charge and protein_accession map by exact name. The candidate's other 16 columns (scores, masses, retention time, FDR flags) have no reference counterpart and are left out. The guideline defines the comparison as a set of (spectrum_id, peptide_sequence, charge) tuples, so those three columns form the composite key and row order doesn't matter. protein_accession is allowed to differ for shared peptides, so it is not part of the key. Possible risks: the candidate has extra rows (421 vs 375), and may include decoys or PSMs that fail the 1% FDR cutoff (it has is_decoy and pass_fdr_1pct columns). The candidate preview also shows unmodified cysteines (e.g. YICDNQDTISSK) and different protein IDs (BSA, trypsin vs SORC5), so there may be little overlap.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "protein_accession",
+              "data_type": "categorical",
+              "strategy": "overlap",
+              "cell_delimiter": ";",
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.55,
+              "reasoning": "This is the only comparable data column. It tells matched tuples apart from unmatched ones, which show NaN on one side. Splitting on ';' and averaging raw Jaccard values gives partial credit for shared peptides mapped to several proteins. Accession differences are allowed by the guideline, so I use a lenient similarity rather than exact matching."
+            }
+          ],
+          "overall_reasoning": "The main thing this task checks is whether the set of (spectrum_id, peptide_sequence, charge) tuples matches the reference. Those are the ID columns, so alignment handles them. The aligned frames look like an outer join: rows where the reference protein_accession is NaN are tuples only the candidate found, and rows where the candidate columns are NaN are tuples only the reference has. protein_accession is the only shared data column, so it is the only column that can expose those unmatched tuples (NaN against a value scores 0). For this reason I keep it rather than ignore it. The guideline says protein accessions may differ for shared peptides, so I use a lenient 'overlap' strategy. Accession lists are split on ';', the separator the candidate uses for shared peptides. The '|' inside UniProt IDs is part of the ID, so I don't split on it. Raw Jaccard values are averaged with no threshold, so partial overlap of shared-peptide protein lists gets partial credit. All candidate-only columns (scores, masses, q-values, etc.) have no reference counterpart and are left out.",
+          "overall_confidence": 0.6,
+          "id_columns": [
+            "spectrum_id",
+            "peptide_sequence",
+            "charge"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "spectrum_id": "spectrum_id",
+              "peptide_sequence": "modified_peptide",
+              "charge": "charge",
+              "protein_accession": "protein_accession"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "scan",
+              "spectrum_title",
+              "peptide_sequence",
+              "uniprot_accession",
+              "exp_neutral_mass",
+              "calc_neutral_mass",
+              "comet_evalue",
+              "xcorr",
+              "delta_cn",
+              "sp_score",
+              "ions_matched",
+              "ions_total",
+              "retention_time_sec",
+              "is_decoy",
+              "q_value",
+              "pass_fdr_1pct"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "spectrum_id",
+              "peptide_sequence",
+              "charge"
+            ],
+            "matched_rows": 31,
+            "unmapped_ref_rows": 344,
+            "unmapped_alt_rows": 390,
+            "rounded_float_keys": {},
+            "stripped_key_affixes": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "protein_accession",
+              "charge",
+              "peptide_sequence",
+              "spectrum_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "protein_accession": [
+                "str",
+                "str",
+                true
+              ],
+              "charge": [
+                "str",
+                "str",
+                true
+              ],
+              "peptide_sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "spectrum_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['scan', 'spectrum_title', 'peptide_sequence', 'uniprot_accession', 'exp_neutral_mass', 'calc_neutral_mass', 'comet_evalue', 'xcorr', 'delta_cn', 'sp_score', 'ions_matched', 'ions_total', 'retention_time_sec', 'is_decoy', 'q_value', 'pass_fdr_1pct']",
+            "Unmapped reference rows: 344",
+            "Unmapped candidate rows: 390"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "protein_accession"
+          ],
+          "overall_similarity": 0.07788944723618091,
+          "row_key_overlap": {
+            "matched_rows": 31,
+            "ref_rows": 375,
+            "alt_rows": 421,
+            "precision": 0.07363420427553444,
+            "recall": 0.08266666666666667,
+            "f1": 0.07788944723618091
+          },
+          "notes": [
+            "No column similarity could be computed",
+            "Scored by overlap of row keys (F1)"
+          ],
+          "per_column_similarities": {
+            "protein_accession": {
+              "similarity": null,
+              "strategy": "overlap",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Overlap calculation failed: '>=' not supported between instances of 'float' and 'NoneType'",
+              "details": {}
+            }
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

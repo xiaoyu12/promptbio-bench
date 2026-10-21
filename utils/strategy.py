@@ -79,7 +79,7 @@ If the task involves any of the following, use 'summary' regardless of file form
 | Format | Default strategy | Override when |
 |---|---|---|
 | csv / tsv / gct / table | approximate | Stochastic task → summary; bit-identical requirement → exact |
-| txt / image | semantic | Structured text (BLAST tabular) → approximate or exact; pure numeric scalar → numeric |
+| txt / image | semantic | Structured text (BLAST tabular) → approximate or exact; pure numeric scalar → numeric (always, never semantic) |
 | fasta / fastq | exact | Assembly polishing or consensus → approximate; metagenomics or random subsampling → summary |
 | bam / sam / cram | summary | Coverage uniformity task → coverage; variant-level goal → variant |
 | bed / bedgraph / narrowPeak | approximate | Score-pattern task → correlation; total coverage goal → overlap |
@@ -91,6 +91,8 @@ If the task involves any of the following, use 'summary' regardless of file form
 ## Step 4 — Set parameters precisely
 
 **fasta exact / approximate**: Set `by_name=true` when the task produces a multi-FASTA with meaningful sequence IDs (transcript IDs, gene names, contig names). Leave `by_name=false` (default) for single-sequence outputs or content-based matching. Set `single_line=true` only when the task explicitly converts multiline → single-line FASTA; leave false otherwise.
+
+**txt numeric**: A text file holding a single number is always compared with `numeric`. Set `tolerance` from the guideline: a relative tolerance as given (e.g. "within 5%" → 0.05); a multiplicative one as N − 1 (e.g. "within two orders of magnitude" → 99, "within 2-fold" → 1). With tolerance ≥ 1 the check sets no lower bound for positive values — by design, since such a guideline is only meant to catch answers that are far too large.
 
 **tbi / bai functional**: Set `indexed_file` to the corresponding BAM/CRAM/VCF file from the task input files list.
 

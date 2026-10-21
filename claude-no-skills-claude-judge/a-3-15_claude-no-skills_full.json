@@ -1,0 +1,221 @@
+{
+  "id": "a-3-15",
+  "question": "Merge the TPM data from two Salmon output files into a single file.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-15/ref_answer/merged_tpm.tsv",
+      "eval_guideline": "Per-transcript TPM values for both samples must match within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-3-15/output/merged_tpm.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename and format (TSV). This is the merged TPM table built from the two Salmon quant.sf files.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Merge TPM values from two Salmon quant.sf files (ERR2675443, ERR2675450) into a single table keyed by transcript. Per-transcript TPM values for both samples must match within 1% relative absolute error; row and column order may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "Merging TPM columns always gives the same result, and the guideline asks for each transcript's values to match within a 1% tolerance, with rows and columns allowed in any order. That calls for approximate, record-level table matching.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Name": "Name",
+            "ERR2675443_TPM": "ERR2675443_TPM",
+            "ERR2675450_TPM": "ERR2675450_TPM"
+          },
+          "id_columns": [
+            "Name"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Name",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same column names. 'Name' holds the transcript ID, is unique, and stays the same between runs, so rows are matched on it. The TPM columns are measured values and are compared within the tolerance. The guideline says row order may differ: the reference is sorted by transcript ID and the candidate is not. Rows are sorted by Name and treated as an unordered set. No transpose is needed.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ERR2675443_TPM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This column holds TPM values for one sample. The guideline requires a match within 1% RAE, so cell_tolerance is 0.01."
+            },
+            {
+              "name": "ERR2675450_TPM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This column holds TPM values for the second sample. The guideline requires a match within 1% RAE, so cell_tolerance is 0.01."
+            }
+          ],
+          "overall_reasoning": "The task merges Salmon TPM values from two samples into one table. Both TPM columns matter equally. The guideline asks for a match within 1% relative absolute error, so each column uses RAE with cell_tolerance 0.01. Name is the ID column and is left out. TPM values are never negative, so the sign comparison stays on.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Name": "Name",
+              "ERR2675443_TPM": "ERR2675443_TPM",
+              "ERR2675450_TPM": "ERR2675450_TPM"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Name"
+            ],
+            "matched_rows": 99,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Name",
+              "ERR2675443_TPM",
+              "ERR2675450_TPM"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "ERR2675443_TPM": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ERR2675450_TPM": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Name"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Name']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ERR2675443_TPM",
+            "ERR2675450_TPM"
+          ],
+          "filtered_columns": [
+            "ERR2675443_TPM",
+            "ERR2675450_TPM"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "ERR2675443_TPM": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 99,
+              "total_count": 99,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "ERR2675450_TPM": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 99,
+              "total_count": 99,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 99,
+            "alt_rows": 99,
+            "row_intersection": 99,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              99,
+              3
+            ],
+            "alt_shape": [
+              99,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Name": true,
+              "ERR2675443_TPM": true,
+              "ERR2675450_TPM": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

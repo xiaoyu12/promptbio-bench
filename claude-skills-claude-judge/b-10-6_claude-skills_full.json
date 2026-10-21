@@ -1,0 +1,287 @@
+{
+  "id": "b-10-6",
+  "question": "Implement linear regression on the provided dataset and evaluate its performance using two distinct methods: leave-one-out cross-validation (LOOCV) and a single 80-20 train-test split. Compare the resulting error metrics from both evaluation approaches.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-10-6/ref_answer/regression_comparison.csv",
+      "eval_guideline": "LOOCV metrics must match the reference within 5% relative absolute error; train-test split metrics need only show positive R2 and self-consistent MSE, RMSE, and MAE; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-10-6/output/regression_comparison.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (regression_comparison.csv) and both are CSV files. It is also the only candidate file, and it holds the LOOCV vs. train-test comparison the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare linear regression evaluation metrics (MSE, RMSE, MAE, R2) from LOOCV and an 80-20 train-test split. LOOCV metrics are deterministic and must match the reference within 5% relative absolute error. Train-test split metrics depend on the random split, so they need not match the reference; they only need a positive R2 and MSE, RMSE and MAE that agree with each other (RMSE = sqrt(MSE)). Column order and header labels may differ."
+      },
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "The output is a small results table, so the values should be checked one by one. The LOOCV metrics are deterministic and have a 5% tolerance. The random-split metrics only need to be plausible and agree with each other, which the guideline-aware question covers. Approximate matching also allows column reordering and different header labels, as the guideline permits.",
+      "strategy_error": null,
+      "similarity": 0.9999731734405612,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Method": "Method",
+            "MSE": "MSE",
+            "RMSE": "RMSE",
+            "MAE": "MAE",
+            "R2": "R2"
+          },
+          "id_columns": [],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have the same layout: one row per evaluation method, with metrics as columns. No transpose is needed. The five reference columns (Method, MSE, RMSE, MAE, R2) match candidate columns of the same name exactly. The candidate's extra columns, N_train and N_test_total, have no reference counterpart and are left out. Method is the natural row identifier, but the labels don't match exactly: '80-20 Train-Test Split' vs 'Train-Test Split (80-20)'. Keying on Method would fail to pair the train-test rows. Both tables list the rows in the same order (LOOCV first, then the 80-20 split), and the metric values agree closely (e.g. LOOCV MSE 1.0519 vs 1.051913). So the rows are matched by position, with no sorting.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Method",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is a descriptive label and rows are already matched by index. The wording differs but the meaning is the same, so an exact match would wrongly fail."
+            },
+            {
+              "name": "MSE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline sets a 5% relative absolute error limit for LOOCV metrics."
+            },
+            {
+              "name": "RMSE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline sets a 5% relative absolute error limit for LOOCV metrics."
+            },
+            {
+              "name": "MAE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline sets a 5% relative absolute error limit for LOOCV metrics."
+            },
+            {
+              "name": "R2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline sets a 5% relative absolute error limit for LOOCV metrics. R2 is positive and close to 0.9 in both rows."
+            }
+          ],
+          "overall_reasoning": "The rows line up by index (row 0 is LOOCV, row 1 is the 80-20 split). The guideline asks for LOOCV metrics within 5% relative absolute error, so MSE, RMSE, MAE and R2 are compared with 'rae' at cell_tolerance 0.05. The tool applies one tolerance to the whole column, so the split row is held to 5% as well. That is stricter than the guideline, which only asks for a positive R2 and consistent metrics on the split. Here the candidate's split values match the reference closely anyway. The Method column holds labels only: they mean the same thing but are worded differently ('80-20 Train-Test Split' vs 'Train-Test Split (80-20)'), so it is ignored. The extra candidate columns (N_train, N_test_total) are not in the reference and are not compared.",
+          "overall_confidence": 0.85,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Method": "Method",
+              "MSE": "MSE",
+              "RMSE": "RMSE",
+              "MAE": "MAE",
+              "R2": "R2"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "N_train",
+              "N_test_total"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "R2",
+              "MAE",
+              "RMSE",
+              "MSE",
+              "Method"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "R2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "MAE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "RMSE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "MSE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Method": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['N_train', 'N_test_total']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "MAE",
+            "MSE",
+            "Method",
+            "R2",
+            "RMSE"
+          ],
+          "filtered_columns": [
+            "MAE",
+            "MSE",
+            "R2",
+            "RMSE"
+          ],
+          "overall_similarity": 0.9999731734405612,
+          "per_column_similarities": {
+            "MAE": {
+              "similarity": 0.9999633212719088,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "MSE": {
+              "similarity": 0.9999720704150463,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "R2": {
+              "similarity": 0.9999821123969274,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "RMSE": {
+              "similarity": 0.9999751896783622,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.7142857142857143,
+            "col_recall": 1.0,
+            "col_f1": 0.8333333333333333,
+            "col_jaccard": 0.7142857142857143,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 5,
+            "alt_cols": 7,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              5
+            ],
+            "alt_shape": [
+              2,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "R2": true,
+              "MAE": true,
+              "RMSE": true,
+              "MSE": true,
+              "Method": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

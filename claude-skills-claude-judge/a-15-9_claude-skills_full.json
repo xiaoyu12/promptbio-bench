@@ -1,0 +1,246 @@
+{
+  "id": "a-15-9",
+  "question": "Use R and the WGCNA package to identify co-expression modules from combined RNA and protein expression data, and test which modules are associated with disease status (the 'Disease' column in Pheno.csv). Merge the two datasets by row-binding RNA and protein features. Report the Pearson correlation of each module eigengene with Disease and its p-value.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-9/ref_answer/module_trait_correlations.csv",
+      "eval_guideline": "Correlation and Pvalue per module must match the reference within +/-0.05 if the same number of modules is found; if module counts differ, the Spearman rank correlation of ranked absolute correlations (top-N, N = min module count) must be >= 0.6 and the sign of the highest-|correlation| module must match the reference. Row order, module color labels, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-9/output/module_trait_correlations.csv",
+      "match_confidence": 0.99,
+      "match_reasoning": "Both files have the same name and are CSV files holding the module-trait correlation table.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "WGCNA module-trait table: each module eigengene's Pearson correlation with Disease and its p-value. Module color labels, row order, column order and headers may differ, so match modules by their correlation values, not by label. If both files have the same number of modules, Correlation and Pvalue must match within +/-0.05. If module counts differ, take the top-N modules by absolute correlation (N = the smaller module count); the Spearman rank correlation between the two rankings must be >= 0.6, and the module with the highest |correlation| must have the same sign in both files."
+      },
+      "strategy_confidence": 0.65,
+      "strategy_reasoning": "The output is a small module-trait results table with numeric tolerances, so values should be compared one by one with 'approximate'. 'Summary' compares distributions of many values and can't judge a handful of numbers. Because module color labels can differ, the alignment question tells the comparison to match modules by their correlation values and includes the guideline's fallback rule for when the module counts differ.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "Module": "Eigengene",
+            "Correlation": "Correlation",
+            "Pvalue": "Pvalue"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "No transpose is needed: both tables have one row per module with Correlation and Pvalue columns. The reference 'Module' column holds eigengene names in the ME-prefixed form ('MEred'), and the candidate's 'Eigengene' column uses the same form ('MEblue'), so Module maps to Eigengene. The candidate's 'Module' column (bare colour names) and 'nFeatures' column are extras and are left out. Correlation and Pvalue map directly by name. The module counts differ (10 in the reference, 3 in the candidate), and the guideline says colour labels are arbitrary and may differ. Matching rows by module name would pair modules that only happen to share a colour (blue, turquoise, grey), so rows are not keyed. Instead, the comparison should follow the guideline's fallback for unequal counts: take the top N modules ranked by absolute correlation (N = 3, the smaller count), require a Spearman rank correlation of at least 0.6, and check that the module with the highest absolute correlation has the same sign in both tables. Row order does not matter.",
+          "confidence": 0.72
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Module",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline says module colour labels may differ. Labels are arbitrary, and the module counts differ, so this column carries no information to compare."
+            },
+            {
+              "name": "Correlation",
+              "data_type": "numerical",
+              "strategy": "spearman",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "Module counts differ, so the guideline asks for a Spearman rank correlation of absolute correlations. Absolute values are used because the guideline ranks modules by |r|."
+            },
+            {
+              "name": "Pvalue",
+              "data_type": "numerical",
+              "strategy": "spearman",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "P-values are tied to |r| for a fixed sample size. With unequal module counts, comparing ranks is consistent with the guideline."
+            }
+          ],
+          "overall_reasoning": "WGCNA module colour labels are arbitrary, and the guideline says they may differ, so the Module column is ignored. Here the module counts differ: the reference has 10 modules and the candidate has 3. The guideline therefore calls for a rank-based check rather than matching each cell within ±0.05. Under that rule, the top-N ranked absolute correlations (N = min module count) must have Spearman >= 0.6, and the sign of the strongest module must match. So Correlation is compared with Spearman on absolute values, and Pvalue with Spearman, since it tracks |r| inversely and its ranks carry the same information. RAE with a tight tolerance would only make sense if both runs found the same number of modules, which they did not. The extra candidate columns (Module__candidate, nFeatures) are not in the reference and are not compared. The plan cannot directly check the guideline's separate condition that the highest-|r| module has the same sign. In this data that condition fails: the reference's strongest module, MEyellow at 0.338, is positive, while the candidate's, MEturquoise at -0.228, is negative.",
+          "overall_confidence": 0.6,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Module": "Eigengene",
+              "Correlation": "Correlation",
+              "Pvalue": "Pvalue"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Module",
+              "nFeatures"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Module",
+              "Correlation",
+              "Pvalue"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Module": [
+                "str",
+                "str",
+                true
+              ],
+              "Correlation": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Pvalue": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Module', 'nFeatures']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Correlation",
+            "Module",
+            "Pvalue"
+          ],
+          "filtered_columns": [
+            "Correlation",
+            "Pvalue"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "Correlation": {
+              "similarity": 0.0,
+              "strategy": "spearman",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Correlation calculation failed",
+              "details": {}
+            },
+            "Pvalue": {
+              "similarity": 0.0,
+              "strategy": "spearman",
+              "matching_count": null,
+              "total_count": null,
+              "error": "Correlation calculation failed",
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 0.3,
+            "row_f1": 0.4615384615384615,
+            "row_jaccard": 0.3,
+            "col_precision": 0.6,
+            "col_recall": 1.0,
+            "col_f1": 0.7499999999999999,
+            "col_jaccard": 0.6,
+            "ref_rows": 10,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 3,
+            "alt_cols": 5,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              3
+            ],
+            "alt_shape": [
+              3,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 7,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Module": true,
+              "Correlation": true,
+              "Pvalue": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-9/ref_answer/wgcna_module_trait_heatmap.png",
+      "eval_guideline": "Color grid of module-trait correlations with numeric values overlaid in each cell; axis labels, color scheme, and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-9/output/wgcna_module_trait_heatmap.png",
+      "match_confidence": 0.99,
+      "match_reasoning": "Both files have the same name and are PNG images of the WGCNA module-trait heatmap.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The output is a PNG heatmap, and the guideline asks for a qualitative visual check: a color grid of module-trait correlations with numeric values in each cell, with styling allowed to differ. Semantic comparison is the right fit for that.",
+      "strategy_error": null,
+      "similarity": 0.25,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "not equivalent",
+        "confidence": 0.85,
+        "explanation": "Both images are WGCNA module-trait heatmaps of the same type. Each has a single Disease column, module color bars on the left, and correlation values printed in each cell. The format follows the guideline, but the data are quite different.\n\n**Reference:** It shows 10 module eigengenes: red, brown, blue, yellow, magenta, pink, black, green, turquoise and grey. Their correlations with Disease run from -0.25 to 0.34:\n- red 0.21\n- brown -0.082\n- blue 0.2\n- yellow 0.34\n- magenta 0.076\n- pink 0.27\n- black -0.21\n- green -0.25\n- turquoise -0.15\n- grey 0.22\n\nThe strongest positive association is yellow (0.34), and the strongest negative ones are green (-0.25) and black (-0.21).\n\n**Candidate:** It shows only 3 modules, with p-values in parentheses:\n- blue -0.12 (p=0.6)\n- turquoise -0.23 (p=0.3)\n- grey 0.045 (p=0.9)\n\n**Comparison:**\n- **Number of modules:** The candidate found 3 modules instead of 10, so module detection gave a very different result. The likely causes are a different soft-threshold power, minimum module size, merge cutoff, or preprocessing.\n- **Values for the shared modules:**\n  - Blue changes direction: +0.2 in the reference, -0.12 in the candidate.\n  - Turquoise has the same sign but a different size: -0.15 vs -0.23.\n  - Grey differs in size: 0.22 vs 0.045.\n- **Missing modules:** Yellow, pink, green and black, the reference's most disease-associated modules, do not appear in the candidate.\n- **Presentation:** The candidate includes p-values and the reference does not. Colorbar scales and styling also differ, but those are acceptable presentation differences.\n\nThe two plots are the same kind of figure, but the module structure and correlation values differ substantially. Their scientific message about which modules relate to disease is therefore different."
+      },
+      "comparison_error": null
+    }
+  ]
+}

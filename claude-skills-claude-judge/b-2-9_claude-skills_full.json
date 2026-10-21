@@ -1,0 +1,285 @@
+{
+  "id": "b-2-9",
+  "question": "Create a rolling window analysis with window size 5 to calculate moving averages for time series data.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-9/ref_answer/rolling_window_averages.csv",
+      "eval_guideline": "Moving average values must match the reference within +/-0.01 for rows with a full window of 5 data points; the first 4 rows may have NaN or partial-window averages (computed with fewer than 5 points); row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-9/output/rolling_window_averages.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (rolling_window_averages.csv), and both are CSV files. The file fits the task of computing rolling averages.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Rolling window analysis (window size 5) computing moving averages for time series data. Moving average values must match the reference within +/-0.01 for rows with a full 5-point window; the first 4 rows may be NaN or partial-window averages; row order, column order, and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a deterministic rolling-mean calculation, and the guideline asks for each value to match within ±0.01 while allowing row order, column order and headers to differ. That fits the default 'approximate' strategy for CSV files, which compares record by record and tolerates those layout differences.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Date": "Date",
+            "Value": "Value",
+            "Measurement": "Measurement",
+            "Value_MA5": "Value_MA5",
+            "Measurement_MA5": "Measurement_MA5"
+          },
+          "id_columns": [
+            "Date"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Date",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same shape and identical column names, so each column maps to itself and no transpose is needed. Date is a unique timestamp copied straight from the input, so it is a stable row key. The guideline says row order may differ, so rows are matched on Date and sorted by Date before comparison. The first 4 rows differ as expected: the candidate has NaN and the reference has partial-window averages, and the guideline allows both. The full-window values from row 5 onward match.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value_MA5",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is the main moving-average output. The guideline allows ±0.01 absolute error; with values around 100–130, that is a relative error of about 1e-4. The first 4 warm-up rows (NaN or partial window) may not match, but they are only a small fraction of rows."
+            },
+            {
+              "name": "Measurement_MA5",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is the main moving-average output. The guideline allows ±0.01 absolute error; with values around 80–110, that is a relative error of about 1e-4. The first 4 warm-up rows are handled as for Value_MA5."
+            },
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This raw input series should match the reference exactly; it is a check that the data was passed through intact."
+            },
+            {
+              "name": "Measurement",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This raw input series should match the reference exactly; it is a check that the data was passed through intact."
+            }
+          ],
+          "overall_reasoning": "The task is a 5-point rolling moving average, so Value_MA5 and Measurement_MA5 are the main outputs. The guideline allows an absolute error of ±0.01. These values are roughly 80–140, so that equals a relative error of about 1e-4. The MA columns therefore use RAE with cell_tolerance 1e-4, which matches the guideline closely and is slightly lenient. The first 4 rows may legitimately be NaN or partial-window averages; here the candidate has NaN and the reference has partial averages. Those rows may count as mismatches if NaNs are not skipped. That is only 4 of 200 rows (about 2%) per MA column, which is acceptable, though not ideal. Value and Measurement are copies of the input data and should match almost exactly, so they are checked with a tight RAE tolerance as a sanity check.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Date"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Date": "Date",
+              "Value": "Value",
+              "Measurement": "Measurement",
+              "Value_MA5": "Value_MA5",
+              "Measurement_MA5": "Measurement_MA5"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Date"
+            ],
+            "matched_rows": 200,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Measurement",
+              "Date",
+              "Measurement_MA5",
+              "Value_MA5",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Measurement": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Date": [
+                "str",
+                "str",
+                true
+              ],
+              "Measurement_MA5": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Value_MA5": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Date"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Date']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Measurement",
+            "Measurement_MA5",
+            "Value",
+            "Value_MA5"
+          ],
+          "filtered_columns": [
+            "Measurement",
+            "Measurement_MA5",
+            "Value",
+            "Value_MA5"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Measurement": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 200,
+              "total_count": 200,
+              "error": null,
+              "details": {
+                "tolerance": 0.0001
+              }
+            },
+            "Measurement_MA5": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 196,
+              "total_count": 196,
+              "error": null,
+              "details": {
+                "tolerance": 0.0001
+              }
+            },
+            "Value": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 200,
+              "total_count": 200,
+              "error": null,
+              "details": {
+                "tolerance": 0.0001
+              }
+            },
+            "Value_MA5": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 196,
+              "total_count": 196,
+              "error": null,
+              "details": {
+                "tolerance": 0.0001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 200,
+            "alt_rows": 200,
+            "row_intersection": 200,
+            "ref_cols": 5,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              200,
+              5
+            ],
+            "alt_shape": [
+              200,
+              5
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Measurement": true,
+              "Date": true,
+              "Measurement_MA5": true,
+              "Value_MA5": true,
+              "Value": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.99,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.01
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

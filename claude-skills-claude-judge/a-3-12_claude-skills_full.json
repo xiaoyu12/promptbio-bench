@@ -1,0 +1,481 @@
+{
+  "id": "a-3-12",
+  "question": "Perform target prediction for the miRNAs using TargetScan.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-12/ref_answer/PredictedTargets.txt",
+      "eval_guideline": "Each miRNA-target pair must match the reference with matching site_type; scores must match within +/-0.001; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-12/output/PredictedTargets.txt",
+      "match_confidence": 0.97,
+      "match_reasoning": "Same filename (PredictedTargets.txt) and the same tab-delimited text format. Both are the TargetScan prediction output.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "txt",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "TargetScan miRNA target prediction: each miRNA-target pair (miRNA family/gene/UTR) must match the reference with the same site_type; numeric scores must match within +/-0.001; row and column order may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "TargetScan prediction is deterministic, and the guideline asks for record-level matching of miRNA-target pairs and site_type, with a numeric tolerance and row/column order allowed to differ. That makes the default approximate strategy the right fit.",
+      "strategy_error": null,
+      "similarity": 0.8651315789473685,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "a_Gene_ID": "Gene_ID",
+            "miRNA_family_ID": "miRNA_family",
+            "species_ID": "species_ID",
+            "MSA_start": "MSA_start",
+            "MSA_end": "MSA_end",
+            "UTR_start": "UTR_start",
+            "UTR_end": "UTR_end",
+            "Group_num": "Group_num",
+            "Site_type": "site_type",
+            "miRNA in this species": "miRNA in this species",
+            "Group_type": "Group_type",
+            "Species_in_this_group": "Species_in_this_group",
+            "Species_in_this_group_with_this_site_type": "Species_in_this_group_with_this_site_type",
+            "ORF_overlap": "ORF_overlap"
+          },
+          "id_columns": [
+            "a_Gene_ID",
+            "miRNA_family_ID",
+            "species_ID",
+            "UTR_start",
+            "UTR_end"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "The two tables have the same layout, so no transpose is needed. Columns were matched by meaning: a_Gene_ID->Gene_ID, miRNA_family_ID->miRNA_family, Site_type->site_type. The other columns have the same names in both tables. The candidate's extra UTR_record column has no counterpart in the reference and is left out. Each TargetScan site is identified by gene, miRNA family, species and its UTR start/end position. These positions come straight from the deterministic sequence-matching output, not from an estimate, so they work as a composite key. Site_type, Group_num and the other fields are compared as values. The guideline says row order may differ, so order is ignored and the comparison checks whether the rows are a permutation. The candidate has 76 rows against 74 in the reference, so it may contain extra sites.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Site_type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline requires the site_type to match. Values are fixed labels (6mer, 7mer-m8, 7mer-1a, 8mer)."
+            },
+            {
+              "name": "Group_type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The site type at the group level is a fixed label from deterministic output."
+            },
+            {
+              "name": "miRNA in this species",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Presence flag ('x'); should be identical."
+            },
+            {
+              "name": "MSA_start",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Integer coordinate in the alignment, computed deterministically. A tight relative tolerance only allows trivial differences."
+            },
+            {
+              "name": "MSA_end",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Integer coordinate in the alignment, computed deterministically. A tight relative tolerance only allows trivial differences."
+            },
+            {
+              "name": "Species_in_this_group",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "The species ID stored as a float should match exactly."
+            },
+            {
+              "name": "Species_in_this_group_with_this_site_type",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Mostly NaN. Compared tightly when values are present."
+            },
+            {
+              "name": "ORF_overlap",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Binary 0/1 flag; should match exactly."
+            },
+            {
+              "name": "Group_num",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "A running group index that depends on processing order (it differs between files for the same site) and has no biological meaning."
+            }
+          ],
+          "overall_reasoning": "The rows are aligned on gene, miRNA family, species and UTR coordinates. The guideline asks for each miRNA-target pair to match on site_type, so Site_type is the main column and is compared by exact match. Group_type repeats the site type and 'miRNA in this species' is a presence flag; both get exact match. MSA_start, MSA_end, Species_in_this_group and ORF_overlap are numbers TargetScan outputs deterministically (integer coordinates, species IDs, 0/1 flags). They use RAE with a tight tolerance (1e-3 relative), in line with the +/-0.001 guideline. Group_num is skipped: it is a running index whose value depends on how sites are processed and numbered (e.g. 73 vs 75 for the same fosb site), so it says nothing about whether the prediction is right. Species_in_this_group_with_this_site_type is mostly empty and only adds information when several species are involved, so it is compared with the same tight RAE and given low weight in confidence. The candidate-only column UTR_record is not in the reference and is left out.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "a_Gene_ID",
+            "miRNA_family_ID",
+            "species_ID",
+            "UTR_start",
+            "UTR_end"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "a_Gene_ID": "Gene_ID",
+              "miRNA_family_ID": "miRNA_family",
+              "species_ID": "species_ID",
+              "MSA_start": "MSA_start",
+              "MSA_end": "MSA_end",
+              "UTR_start": "UTR_start",
+              "UTR_end": "UTR_end",
+              "Group_num": "Group_num",
+              "Site_type": "site_type",
+              "miRNA in this species": "miRNA in this species",
+              "Group_type": "Group_type",
+              "Species_in_this_group": "Species_in_this_group",
+              "Species_in_this_group_with_this_site_type": "Species_in_this_group_with_this_site_type",
+              "ORF_overlap": "ORF_overlap"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "UTR_record"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "a_Gene_ID",
+              "miRNA_family_ID",
+              "species_ID",
+              "UTR_start",
+              "UTR_end"
+            ],
+            "matched_rows": 74,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 2,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "miRNA in this species",
+              "a_Gene_ID",
+              "miRNA_family_ID",
+              "UTR_start",
+              "Species_in_this_group_with_this_site_type",
+              "Site_type",
+              "species_ID",
+              "ORF_overlap",
+              "MSA_start",
+              "MSA_end",
+              "Species_in_this_group",
+              "Group_num",
+              "UTR_end",
+              "Group_type"
+            ],
+            "converted_columns": [
+              "ORF_overlap",
+              "MSA_start",
+              "MSA_end",
+              "Species_in_this_group",
+              "Group_num"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "miRNA in this species": [
+                "str",
+                "str",
+                true
+              ],
+              "a_Gene_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "miRNA_family_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "UTR_start": [
+                "str",
+                "str",
+                true
+              ],
+              "Species_in_this_group_with_this_site_type": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Site_type": [
+                "str",
+                "str",
+                true
+              ],
+              "species_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "ORF_overlap": [
+                "float64",
+                "int64",
+                true
+              ],
+              "MSA_start": [
+                "float64",
+                "int64",
+                true
+              ],
+              "MSA_end": [
+                "float64",
+                "int64",
+                true
+              ],
+              "Species_in_this_group": [
+                "float64",
+                "int64",
+                true
+              ],
+              "Group_num": [
+                "float64",
+                "int64",
+                true
+              ],
+              "UTR_end": [
+                "str",
+                "str",
+                true
+              ],
+              "Group_type": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['UTR_record']",
+            "Unmapped candidate rows: 2",
+            "Converted 5 column(s) to match reference dtypes"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Group_num",
+            "Group_type",
+            "MSA_end",
+            "MSA_start",
+            "ORF_overlap",
+            "Site_type",
+            "Species_in_this_group",
+            "Species_in_this_group_with_this_site_type",
+            "miRNA in this species"
+          ],
+          "filtered_columns": [
+            "Group_type",
+            "MSA_end",
+            "MSA_start",
+            "ORF_overlap",
+            "Site_type",
+            "Species_in_this_group",
+            "Species_in_this_group_with_this_site_type",
+            "miRNA in this species"
+          ],
+          "overall_similarity": 0.8651315789473685,
+          "per_column_similarities": {
+            "Group_type": {
+              "similarity": 0.9736842105263158,
+              "strategy": "exact",
+              "matching_count": 74,
+              "total_count": 76,
+              "error": null,
+              "details": {}
+            },
+            "MSA_end": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 74,
+              "total_count": 74,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "MSA_start": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 74,
+              "total_count": 74,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "ORF_overlap": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 74,
+              "total_count": 74,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "Site_type": {
+              "similarity": 0.9736842105263158,
+              "strategy": "exact",
+              "matching_count": 74,
+              "total_count": 76,
+              "error": null,
+              "details": {}
+            },
+            "Species_in_this_group": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 74,
+              "total_count": 74,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "Species_in_this_group_with_this_site_type": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            },
+            "miRNA in this species": {
+              "similarity": 0.9736842105263158,
+              "strategy": "exact",
+              "matching_count": 74,
+              "total_count": 76,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.9333333333333333,
+            "col_recall": 1.0,
+            "col_f1": 0.9655172413793104,
+            "col_jaccard": 0.9333333333333333,
+            "ref_rows": 76,
+            "alt_rows": 76,
+            "row_intersection": 76,
+            "ref_cols": 14,
+            "alt_cols": 15,
+            "col_intersection": 14
+          },
+          "shape": {
+            "ref_shape": [
+              76,
+              14
+            ],
+            "alt_shape": [
+              76,
+              15
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "miRNA in this species": true,
+              "a_Gene_ID": true,
+              "miRNA_family_ID": true,
+              "UTR_start": true,
+              "Species_in_this_group_with_this_site_type": true,
+              "Site_type": true,
+              "species_ID": true,
+              "ORF_overlap": true,
+              "MSA_start": true,
+              "MSA_end": true,
+              "Species_in_this_group": true,
+              "Group_num": true,
+              "UTR_end": true,
+              "Group_type": true
+            },
+            "common_columns": 14
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9769736842105263,
+            "ref_missing_rate": 0.14802631578947367,
+            "alt_missing_rate": 0.125
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

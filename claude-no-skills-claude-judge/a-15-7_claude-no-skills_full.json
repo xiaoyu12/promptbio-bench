@@ -1,0 +1,226 @@
+{
+  "id": "a-15-7",
+  "question": "Use iClusterPlus to integrate RNA-seq, DNA variant, and copy number data for unsupervised clustering and to identify three molecular subtypes. Visualize the identified molecular subtypes using PCA.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-7/ref_answer/cluster.csv",
+      "eval_guideline": "Cluster assignments must match the reference partition at the record level, with at least 80% of samples agreeing after optimal label remapping; cluster label values and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-7/output/cluster.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames are identical and both are CSV files, likely holding the cluster assignments.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare iClusterPlus cluster assignments (3 molecular subtypes) per sample. Align rows by sample ID; cluster label values are arbitrary, so apply optimal label remapping (permutation of cluster labels) before comparing. Pass if at least 80% of samples agree after remapping. Column order and label naming may differ."
+      },
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "The guideline asks for a record-level match of cluster assignments with an 80% agreement threshold after label remapping. That calls for per-sample row alignment, which is what approximate does, and the question tells the comparison engine that cluster labels can be permuted. Summary isn't used despite the stochastic iClusterPlus fit, because only aggregate statistics would be compared rather than each sample's assignment.",
+      "strategy_error": null,
+      "similarity": 0.5476190476190477,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "sample_id": "sample_id",
+            "cluster": "cluster"
+          },
+          "id_columns": [
+            "sample_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sample_id",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same shape (84x2) and the same column names, so no transpose is needed and the columns map one-to-one. sample_id is the unique row identifier (TCGA barcodes), so rows are matched on it. Each row is one sample's cluster assignment, so row order does not matter and the rows are sorted by sample_id. The cluster labels are arbitrary and differ between the tables (e.g., ref 2 vs candidate 1). They must be compared after optimal label remapping, not by exact value, as the evaluation guideline says.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "cluster",
+              "data_type": "categorical",
+              "strategy": "partition",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The subtype numbers are arbitrary labels, even though they are stored as integers. The 'partition' strategy scores agreement after the best one-to-one relabelling, which is the comparison the guideline asks for (at least 80% agreement). No tolerance or threshold applies."
+            }
+          ],
+          "overall_reasoning": "The only data column is 'cluster', which holds iClusterPlus subtype assignments (3 groups). The numbers are arbitrary labels: the candidate seems to use a different numbering from the reference (for example, ref 2 ↔ cand 1). So the column is compared with the 'partition' strategy, which finds the best one-to-one relabelling and measures how many samples agree. This matches the guideline that at least 80% of samples must agree after optimal remapping. sample_id is used only to align rows and is not compared.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "sample_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "sample_id": "sample_id",
+              "cluster": "cluster"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample_id"
+            ],
+            "matched_rows": 84,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "cluster",
+              "sample_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "cluster": [
+                "int64",
+                "int64",
+                true
+              ],
+              "sample_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sample_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['sample_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "cluster"
+          ],
+          "filtered_columns": [
+            "cluster"
+          ],
+          "overall_similarity": 0.5476190476190477,
+          "per_column_similarities": {
+            "cluster": {
+              "similarity": 0.5476190476190477,
+              "strategy": "partition",
+              "matching_count": 46,
+              "total_count": 84,
+              "error": null,
+              "details": {
+                "label_mapping": {
+                  "3": "1",
+                  "1": "2",
+                  "2": "3"
+                },
+                "adjusted_rand_index": 0.20420277008034238,
+                "ref_groups": 3,
+                "alt_groups": 3
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 84,
+            "alt_rows": 84,
+            "row_intersection": 84,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              84,
+              2
+            ],
+            "alt_shape": [
+              84,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "cluster": true,
+              "sample_id": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-7/ref_answer/cluster.png",
+      "eval_guideline": "Points colored by cluster membership; axis labels, color scheme, and point styling may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-7/output/cluster.png",
+      "match_confidence": 0.97,
+      "match_reasoning": "The filenames are identical and both are PNG images, likely the PCA plot of the subtypes.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a PCA scatter plot image, and the guideline only asks that points be colored by cluster membership while allowing styling to vary. That makes this a visual, semantic comparison and not a pixel-level one.",
+      "strategy_error": null,
+      "similarity": 0.55,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "partially equivalent",
+        "confidence": 0.7,
+        "explanation": "The two plots do the same kind of task, but they show different data.\n\n**Reference plot**\n- A PCA scatter titled \"PCA colored by iClusterPlus cluster\", with about 85–90 samples.\n- PC1 runs from about -60 to 60 and PC2 from about -50 to 45. This suggests PCA on unscaled data.\n- There are 3 clusters. Cluster 2 (green, about 30 points) forms two separate groups at the upper left and upper right.\n- Cluster 1 (red, about 40 points) and cluster 3 (blue, about 15 points) are mixed together across the middle and lower part of the plot.\n\n**Candidate plot**\n- Also a PCA scatter of iClusterPlus results with K=2, which gives 3 clusters. It integrates mutation, copy number and expression data. It has variance-explained axis labels (PC1 11.2%, PC2 6.6%) and dashed ellipses around each cluster.\n- PC1 runs from about -0.7 to 2.4 and PC2 from about -1 to 2.6, so the data were scaled or preprocessed differently.\n- Cluster 2 (orange, about 40 points) sits tightly on the left. Cluster 3 (purple, about 30 points) is in the middle and overlaps cluster 2. Cluster 1 (green, about 14 points) is spread out to the right and lower part, with a few outliers.\n\n**What matches**\n- Both use iClusterPlus with three subtypes and show a PCA scatter colored by cluster. This meets the evaluation guideline, which lets labels, colors and point styling differ.\n\n**What differs**\n- **Point layout:** The arrangement of points in PCA space is very different. In the reference, one cluster is split into two separated groups and the other two are mixed. In the candidate, the three clusters run in a left-to-right line and partly overlap.\n- **Cluster sizes:** The sizes differ, even allowing for the cluster numbers being swapped.\n- **PCA input:** The PC scales differ greatly, which points to different input matrices or preprocessing.\n\nSo the candidate meets the task's visualization requirement, but it does not reproduce the same data pattern or cluster structure as the reference. That makes it partially equivalent."
+      },
+      "comparison_error": null
+    }
+  ]
+}

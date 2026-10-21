@@ -1,0 +1,910 @@
+{
+  "id": "a-8-2",
+  "question": "Preprocessing of raw mass spectrometry data (peak extraction and alignment using BSA1_F1 as reference)",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-2/ref_answer/BSA1_aligned.tsv",
+      "eval_guideline": "TSV with header row (rt, mz, intensity, charge, quality) sorted by rt. Feature count must match the reference; each feature must match within rt +/-10 s, mz +/-0.01, and intensity within 10% relative absolute error.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-8-2/output/BSA1_aligned.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are TSV files with aligned features for BSA1.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Preprocessing of raw mass spectrometry data (feature/peak extraction and RT alignment using BSA1_F1 as reference); output is the aligned feature table for BSA1. TSV with header (rt, mz, intensity, charge, quality) sorted by rt. Feature count must match the reference; each feature must match within rt +/-10 s, mz +/-0.01, and intensity within 10% relative absolute error."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for record-level matching of each feature, with a tolerance for rt, m/z and intensity, so approximate alignment of the TSV is the right fit. Feature detection and alignment are deterministic.",
+      "strategy_error": null,
+      "similarity": 0.9999825588954618,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "rt": "rt",
+            "mz": "mz",
+            "intensity": "intensity",
+            "charge": "charge",
+            "quality": "quality"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "rt",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same orientation (one row per feature), so no transpose is needed. The five reference columns (rt, mz, intensity, charge, quality) match candidate columns with the same names. The extra candidate columns (feature_id, rt_original, rt_shift, rt_start, rt_end, mz_start, mz_end) are not in the reference and are dropped. feature_id is a run-specific hash that does not appear in the reference, so it can't be used to match rows. The only possible identifiers are measured values (rt, mz), which differ slightly between runs, so they can't serve as exact keys. Rows are therefore matched by position after sorting both tables by rt. The guideline says the output is sorted by rt, and the candidate is currently sorted by descending intensity, so it needs re-sorting. Features are then compared within the tolerances (rt ±10 s, mz ±0.01, intensity within 10%). Row order has no meaning beyond the rt sort, so the tables are treated as an unordered feature set and checked as a permutation.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "rt",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.003,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline allows ±10 s. With rt between about 1500 and 5000 s, that is roughly 0.002–0.0067 relative, so 0.003 approximates the 10 s window."
+            },
+            {
+              "name": "mz",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 2e-05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline allows ±0.01 Da. With mz between about 300 and 1500, that is about 6.7e-6 to 3.3e-5 relative, so I chose 2e-5."
+            },
+            {
+              "name": "intensity",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline explicitly sets a 10% relative absolute error."
+            },
+            {
+              "name": "charge",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Charge is an integer state, so it must match exactly."
+            },
+            {
+              "name": "quality",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "Quality is a feature-finder score not covered by the guideline. Small numerical differences are allowed, so a loose 5% tolerance is used."
+            }
+          ],
+          "overall_reasoning": "Task output is a feature table (rt, mz, intensity, charge, quality). The guideline says the feature count must match and each feature must match within rt ±10 s, mz ±0.01 Da and intensity within 10% RAE. Rows are aligned by index after sorting by rt. The comparison only supports relative tolerances, so I turned the absolute windows into relative ones using the observed value ranges:\n- **rt:** values run from about 1500 s up to a few thousand seconds, so ±10 s is a relative tolerance of 0.002–0.0067. I chose 0.003.\n- **mz:** values run from about 300 to 1500, so ±0.01 Da is 6.7e-6 to 3.3e-5 relative. I chose 2e-5.\n- **intensity:** 0.10, as the guideline states.\n- **charge:** must match exactly, so tolerance is 0.\n- **quality:** not named in the guideline. It is compared loosely with a tolerance of 0.05.\n\nExtra candidate columns (feature_id, rt_original, rt_shift, and the start/end bounds) are not in the reference, so they are left out.",
+          "overall_confidence": 0.85,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "rt": "rt",
+              "mz": "mz",
+              "intensity": "intensity",
+              "charge": "charge",
+              "quality": "quality"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "feature_id",
+              "rt_original",
+              "rt_shift",
+              "rt_start",
+              "rt_end",
+              "mz_start",
+              "mz_end"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "charge",
+              "quality",
+              "mz",
+              "intensity",
+              "rt"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "charge": [
+                "int64",
+                "int64",
+                true
+              ],
+              "quality": [
+                "float64",
+                "float64",
+                true
+              ],
+              "mz": [
+                "float64",
+                "float64",
+                true
+              ],
+              "intensity": [
+                "float64",
+                "float64",
+                true
+              ],
+              "rt": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "rt"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['feature_id', 'rt_original', 'rt_shift', 'rt_start', 'rt_end', 'mz_start', 'mz_end']",
+            "Sorted both dataframes by ['rt']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "charge",
+            "intensity",
+            "mz",
+            "quality",
+            "rt"
+          ],
+          "filtered_columns": [
+            "charge",
+            "intensity",
+            "mz",
+            "quality",
+            "rt"
+          ],
+          "overall_similarity": 0.9999825588954618,
+          "per_column_similarities": {
+            "charge": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 256,
+              "total_count": 256,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "intensity": {
+              "similarity": 0.9999773737214617,
+              "strategy": "rae",
+              "matching_count": 256,
+              "total_count": 256,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "mz": {
+              "similarity": 0.9999999994146332,
+              "strategy": "rae",
+              "matching_count": 256,
+              "total_count": 256,
+              "error": null,
+              "details": {
+                "tolerance": 2e-05
+              }
+            },
+            "quality": {
+              "similarity": 0.9999354356281003,
+              "strategy": "rae",
+              "matching_count": 256,
+              "total_count": 256,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "rt": {
+              "similarity": 0.9999999857131132,
+              "strategy": "rae",
+              "matching_count": 256,
+              "total_count": 256,
+              "error": null,
+              "details": {
+                "tolerance": 0.003
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4166666666666667,
+            "col_recall": 1.0,
+            "col_f1": 0.5882352941176471,
+            "col_jaccard": 0.4166666666666667,
+            "ref_rows": 256,
+            "alt_rows": 256,
+            "row_intersection": 256,
+            "ref_cols": 5,
+            "alt_cols": 12,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              256,
+              5
+            ],
+            "alt_shape": [
+              256,
+              12
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "charge": true,
+              "quality": true,
+              "mz": true,
+              "intensity": true,
+              "rt": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-2/ref_answer/BSA2_aligned.tsv",
+      "eval_guideline": "TSV with header row (rt, mz, intensity, charge, quality) sorted by rt. Feature count must match the reference; each feature must match within rt +/-10 s, mz +/-0.01, and intensity within 10% relative absolute error.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-8-2/output/BSA2_aligned.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are TSV files with aligned features for BSA2.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare MS feature tables (rt, mz, intensity, charge, quality) from BSA2 aligned to BSA1_F1 reference. Feature count must match the reference; each feature must match within rt +/-10 s, mz +/-0.01, and intensity within 10% relative absolute error. Rows sorted by rt; small rt/mz shifts may change ordering."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for record-level matching: the feature count must be the same, and each feature must agree within rt ±10 s, mz ±0.01 and 10% relative intensity. Peak extraction and alignment are deterministic, so tolerance-based row alignment (approximate) is the right choice.",
+      "strategy_error": null,
+      "similarity": 0.99999441392965,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "rt": "rt",
+            "mz": "mz",
+            "intensity": "intensity",
+            "charge": "charge",
+            "quality": "quality"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "rt",
+          "check_permutation": true,
+          "reasoning": "Both tables have one feature per row and the same row count (235), so no transpose is needed. All five reference columns appear in the candidate under the same names, so each maps to its namesake. The candidate's extra columns (feature_id, rt_original, rt_shift, rt_start, rt_end, mz_start, mz_end) are left out. Reference rt maps to the candidate's rt, which is the aligned time (rt_original + rt_shift). The task asks for alignment to BSA1_F1, so the aligned time should be the right match, though it's worth checking against rt_original if many features fail the rt tolerance. feature_id is an arbitrary hash that isn't in the reference, so it can't serve as a row key. Every other column is a measured continuous value (rt, mz, intensity, quality) that only matches within a tolerance, so there are no exact key columns. Rows are therefore lined up by position after sorting both tables on rt, as the guideline says. This step is needed because the candidate is currently sorted by intensity, highest first. The features form an unordered set compared within tolerances, so row order isn't meaningful in itself and the permutation check is turned on.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "rt",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.004,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows rt within ±10 s. With rt around 1500–2500 s, a relative tolerance of 0.004 is roughly 6–10 s. Observed differences are about 0.004 s."
+            },
+            {
+              "name": "mz",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline allows mz within ±0.01. A relative tolerance of 1e-5 is about 0.004–0.01 Th across the typical m/z range. Values match exactly in the preview."
+            },
+            {
+              "name": "intensity",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline states intensity must be within 10% relative absolute error."
+            },
+            {
+              "name": "charge",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Charge is an integer state that should match exactly."
+            },
+            {
+              "name": "quality",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Quality is a required output column but has no tolerance in the guideline, so it gets a loose 1% relative tolerance. Observed differences are about 1e-5."
+            }
+          ],
+          "overall_reasoning": "The task is aligning features from LC-MS peak extraction, with BSA1_F1 as the reference run. Rows are matched by index after sorting by rt, and both tables have 235 rows, so the feature counts agree. The guideline sets a tolerance for each key column:\n- rt: within ±10 s. The tool only supports relative error, so this is converted to an RAE tolerance of 0.004. That is about 6 s at rt≈1580 and about 10 s at rt≈2500, so it stays close to the ±10 s window across the likely rt range. Observed differences are about 0.004 s.\n- mz: within ±0.01. Converted to an RAE tolerance of 1e-5, which is about 0.004 at m/z 370 and 0.01 at m/z 1000. The mz values match exactly in the preview.\n- intensity: within 10% relative error, so the RAE tolerance is 0.1.\n- charge: an integer state that must match exactly, so the RAE tolerance is 0.\n- quality: not named in the guideline but part of the required output. It gets a loose RAE tolerance of 0.01; observed differences are about 1e-5.\n\nExtra candidate columns (feature_id, rt_original, rt_shift, rt_start, rt_end, mz_start, mz_end) are not in the reference and are left out of the comparison.",
+          "overall_confidence": 0.85,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "rt": "rt",
+              "mz": "mz",
+              "intensity": "intensity",
+              "charge": "charge",
+              "quality": "quality"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "feature_id",
+              "rt_original",
+              "rt_shift",
+              "rt_start",
+              "rt_end",
+              "mz_start",
+              "mz_end"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "charge",
+              "quality",
+              "mz",
+              "intensity",
+              "rt"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "charge": [
+                "int64",
+                "int64",
+                true
+              ],
+              "quality": [
+                "float64",
+                "float64",
+                true
+              ],
+              "mz": [
+                "float64",
+                "float64",
+                true
+              ],
+              "intensity": [
+                "float64",
+                "float64",
+                true
+              ],
+              "rt": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "rt"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['feature_id', 'rt_original', 'rt_shift', 'rt_start', 'rt_end', 'mz_start', 'mz_end']",
+            "Sorted both dataframes by ['rt']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "charge",
+            "intensity",
+            "mz",
+            "quality",
+            "rt"
+          ],
+          "filtered_columns": [
+            "charge",
+            "intensity",
+            "mz",
+            "quality",
+            "rt"
+          ],
+          "overall_similarity": 0.99999441392965,
+          "per_column_similarities": {
+            "charge": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 235,
+              "total_count": 235,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "intensity": {
+              "similarity": 0.9999766290244277,
+              "strategy": "rae",
+              "matching_count": 235,
+              "total_count": 235,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "mz": {
+              "similarity": 0.999999999446854,
+              "strategy": "rae",
+              "matching_count": 235,
+              "total_count": 235,
+              "error": null,
+              "details": {
+                "tolerance": 1e-05
+              }
+            },
+            "quality": {
+              "similarity": 0.9999954997495939,
+              "strategy": "rae",
+              "matching_count": 235,
+              "total_count": 235,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "rt": {
+              "similarity": 0.9999999414273748,
+              "strategy": "rae",
+              "matching_count": 235,
+              "total_count": 235,
+              "error": null,
+              "details": {
+                "tolerance": 0.004
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4166666666666667,
+            "col_recall": 1.0,
+            "col_f1": 0.5882352941176471,
+            "col_jaccard": 0.4166666666666667,
+            "ref_rows": 235,
+            "alt_rows": 235,
+            "row_intersection": 235,
+            "ref_cols": 5,
+            "alt_cols": 12,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              235,
+              5
+            ],
+            "alt_shape": [
+              235,
+              12
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "charge": true,
+              "quality": true,
+              "mz": true,
+              "intensity": true,
+              "rt": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-2/ref_answer/BSA3_aligned.tsv",
+      "eval_guideline": "TSV with header row (rt, mz, intensity, charge, quality) sorted by rt. Feature count must match the reference; each feature must match within rt +/-10 s, mz +/-0.01, and intensity within 10% relative absolute error.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-8-2/output/BSA3_aligned.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are TSV files with aligned features for BSA3.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Preprocessing of raw mass spectrometry data (feature finding and alignment of BSA3_F1 to BSA1_F1 reference). Compare aligned feature tables (rt, mz, intensity, charge, quality) sorted by rt: feature count must match; each feature must match within rt +/-10 s, mz +/-0.01, intensity within 10% relative error."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for each feature to match within set rt, mz and intensity tolerances, so features have to be compared one by one. The approximate strategy does this and allows for numeric noise from the deterministic feature finding and alignment steps.",
+      "strategy_error": null,
+      "similarity": 0.9999935057115629,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "rt": "rt",
+            "mz": "mz",
+            "intensity": "intensity",
+            "charge": "charge",
+            "quality": "quality"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "rt,mz",
+          "check_permutation": true,
+          "reasoning": "Both tables list the same features in the same orientation, so no transpose is needed. Each of the 5 reference columns (rt, mz, intensity, charge, quality) has an exact name match in the candidate. The candidate's extra columns (feature_id, rt_original, rt_shift, rt_start, rt_end, mz_start, mz_end) are dropped. feature_id is a random hash that would not match any reference value, so it can't be used as a key. All the other columns are measured continuous values (rt, mz, intensity), so there is no stable ID column. Rows will be matched by position after sorting both tables by rt, then mz, following the guideline that output is sorted by rt. Features are then compared within tolerances (rt ±10 s, mz ±0.01, intensity within 10%). The candidate is currently sorted by intensity, so it has to be re-sorted. The feature set itself has no meaningful order. Possible issue: candidate rt values appear shifted by alignment (rt_shift is about 25–38 s), and candidate intensities are on a very different scale from the reference. Both could affect value matching, but they don't change the structural plan.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "rt",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.003,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows rt to differ by ±10 s. With rt values of about 1500–5000 s, that works out to a relative error of roughly 0.002–0.0067, so I chose 0.003. In the preview, candidate rt values differ from the reference by only about 2e-5 s."
+            },
+            {
+              "name": "mz",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows mz to differ by ±0.01. With mz values of about 300–1500, that is a relative error of roughly 7e-6 to 3e-5, so I chose 1e-5. In the preview, candidate mz values are identical to the reference."
+            },
+            {
+              "name": "intensity",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline says intensity must be within 10% relative absolute error."
+            },
+            {
+              "name": "charge",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Charge is a whole-number charge state (1, 2, 3, …) and should match exactly."
+            },
+            {
+              "name": "quality",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "Quality is not part of the guideline's matching rules, so a moderate 5% relative tolerance is enough. In the preview, candidate values differ from the reference by about 1e-5."
+            }
+          ],
+          "overall_reasoning": "The rows are matched by position (both tables have 204 features sorted by rt), and the extra candidate columns (feature_id, rt_original, rt_shift, rt_start/end, mz_start/end) are not compared. The guideline gives absolute tolerances for rt (±10 s) and mz (±0.01). The 'rae' strategy only takes a relative tolerance, so I converted each one using the value ranges: rt is about 1500–5000 s, and mz is about 300–1500. Intensity uses the stated 10% relative error. Charge is a whole number and must match exactly. Quality is not in the guideline, so it gets a moderate tolerance as a minor check. In the preview, the candidate matches the reference very closely: rt differs by about 2e-5 s, mz is identical, and intensity differs by less than 0.01%.",
+          "overall_confidence": 0.85,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "rt": "rt",
+              "mz": "mz",
+              "intensity": "intensity",
+              "charge": "charge",
+              "quality": "quality"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "feature_id",
+              "rt_original",
+              "rt_shift",
+              "rt_start",
+              "rt_end",
+              "mz_start",
+              "mz_end"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "charge",
+              "quality",
+              "mz",
+              "intensity",
+              "rt"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "charge": [
+                "int64",
+                "int64",
+                true
+              ],
+              "quality": [
+                "float64",
+                "float64",
+                true
+              ],
+              "mz": [
+                "float64",
+                "float64",
+                true
+              ],
+              "intensity": [
+                "float64",
+                "float64",
+                true
+              ],
+              "rt": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "rt",
+              "mz"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['feature_id', 'rt_original', 'rt_shift', 'rt_start', 'rt_end', 'mz_start', 'mz_end']",
+            "Sorted both dataframes by ['rt', 'mz']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "charge",
+            "intensity",
+            "mz",
+            "quality",
+            "rt"
+          ],
+          "filtered_columns": [
+            "charge",
+            "intensity",
+            "mz",
+            "quality",
+            "rt"
+          ],
+          "overall_similarity": 0.9999935057115629,
+          "per_column_similarities": {
+            "charge": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 204,
+              "total_count": 204,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "intensity": {
+              "similarity": 0.9999740445243986,
+              "strategy": "rae",
+              "matching_count": 204,
+              "total_count": 204,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "mz": {
+              "similarity": 0.9999999994285363,
+              "strategy": "rae",
+              "matching_count": 204,
+              "total_count": 204,
+              "error": null,
+              "details": {
+                "tolerance": 1e-05
+              }
+            },
+            "quality": {
+              "similarity": 0.9999934993754364,
+              "strategy": "rae",
+              "matching_count": 204,
+              "total_count": 204,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "rt": {
+              "similarity": 0.999999985229443,
+              "strategy": "rae",
+              "matching_count": 204,
+              "total_count": 204,
+              "error": null,
+              "details": {
+                "tolerance": 0.003
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4166666666666667,
+            "col_recall": 1.0,
+            "col_f1": 0.5882352941176471,
+            "col_jaccard": 0.4166666666666667,
+            "ref_rows": 204,
+            "alt_rows": 204,
+            "row_intersection": 204,
+            "ref_cols": 5,
+            "alt_cols": 12,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              204,
+              5
+            ],
+            "alt_shape": [
+              204,
+              12
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "charge": true,
+              "quality": true,
+              "mz": true,
+              "intensity": true,
+              "rt": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

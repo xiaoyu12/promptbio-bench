@@ -1,0 +1,652 @@
+{
+  "id": "b-2-13",
+  "question": "Merge two datasets on patient names using fuzzy string matching to handle typos or formatting differences. Use a similarity threshold of 80% (fuzz ratio). Keep all pairs of records whose names match above the threshold, using suffixes '_dataset1' and '_dataset2' to distinguish columns from each source.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-13/ref_answer/fuzzy_merged_data.csv",
+      "eval_guideline": "Matched row set must match the reference; minor differences in borderline matches near the threshold are acceptable; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-13/output/fuzzy_merged_data.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both paths end in the same filename, fuzzy_merged_data.csv, and both are CSV files. The candidate is the only output and is clearly the fuzzy-merged result.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Fuzzy merge of two patient datasets on names using fuzz ratio >= 80, keeping all matching pairs with suffixes '_dataset1' and '_dataset2'. Check that the matched row set (record pairs) is the same as the reference. Small differences in borderline matches near the threshold are acceptable. Row order, column order and header labels may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "Fuzzy merging is deterministic and the guideline asks for the matched rows to agree at the record level, while allowing row order, column order and header labels to differ. Approximate handles that kind of structural variation.",
+      "strategy_error": null,
+      "similarity": 0.9206349206349207,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "PatientID_dataset1": "PatientID_dataset1",
+            "Age_dataset1": "Age",
+            "Gender_dataset1": "Gender",
+            "BMI_dataset1": "BMI",
+            "BloodPressure_Systolic_dataset1": "BloodPressure_Systolic",
+            "BloodPressure_Diastolic_dataset1": "BloodPressure_Diastolic",
+            "Cholesterol_dataset1": "Cholesterol",
+            "Glucose_dataset1": "Glucose",
+            "HeartRate_dataset1": "HeartRate",
+            "BRCA1_expression_dataset1": "BRCA1_expression",
+            "TP53_expression_dataset1": "TP53_expression",
+            "EGFR_expression_dataset1": "EGFR_expression",
+            "MYC_expression_dataset1": "MYC_expression",
+            "KRAS_expression_dataset1": "KRAS_expression",
+            "Tissue_dataset1": "Tissue",
+            "Condition_dataset1": "Condition",
+            "Category_dataset1": "Category",
+            "Var1_dataset1": "Var1",
+            "Var2_dataset1": "Var2",
+            "Var3_dataset1": "Var3",
+            "Var4_dataset1": "Var4",
+            "DiagnosisClass_dataset1": "DiagnosisClass",
+            "Temperature_dataset1": "Temperature",
+            "IsSmoker_dataset1": "IsSmoker",
+            "EducationLevel_dataset1": "EducationLevel",
+            "VisitDate_dataset1": "VisitDate",
+            "PatientName_dataset1": "PatientName_dataset1",
+            "LabResult_dataset1": "LabResult",
+            "PatientID_dataset2": "PatientID_dataset2",
+            "PatientName_dataset2": "PatientName_dataset2",
+            "TreatmentGroup_dataset2": "TreatmentGroup",
+            "ResponseScore_dataset2": "ResponseScore",
+            "AdverseEvent_dataset2": "AdverseEvent"
+          },
+          "id_columns": [
+            "PatientID_dataset1",
+            "PatientID_dataset2"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "PatientID_dataset1,PatientID_dataset2",
+          "check_permutation": true,
+          "reasoning": "No transpose is needed: both tables are long-format merge outputs with the same kind of rows. In the candidate, columns that exist only in one dataset have no suffix (Age, TreatmentGroup and so on). Only the overlapping columns (PatientID, PatientName) have suffixes. So each reference column ending in _dataset1 or _dataset2 is mapped to its unsuffixed counterpart in the candidate. The candidate's extra fuzz_score column is computed and has no reference equivalent, so it is left unmapped. Each row is one matched pair of records, so the composite key (PatientID_dataset1, PatientID_dataset2) identifies rows in both tables. The match set is unordered, so row order doesn't matter. Both tables are sorted by the key to keep the comparison stable. The candidate has more rows (5124 vs 4494), most likely from borderline matches near the 80 threshold or a different scorer/inclusive cutoff. The guideline says this is acceptable.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "PatientName_dataset1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Merge key from dataset1. NaN in one output means the pair was not matched there, so this column shows differences in the matched row set."
+            },
+            {
+              "name": "PatientName_dataset2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Matched name from dataset2. This is the main check of which fuzzy pairs were kept."
+            },
+            {
+              "name": "TreatmentGroup_dataset2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Dataset2 payload column. Checks that the correct dataset2 record was joined."
+            },
+            {
+              "name": "ResponseScore_dataset2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Copied straight from dataset2, so values should be identical."
+            },
+            {
+              "name": "AdverseEvent_dataset2",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Dataset2 payload column that is sometimes NaN. Compared by exact match, with NaN counted as matching NaN."
+            },
+            {
+              "name": "Age_dataset1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Copied straight from dataset1. Checks that the left-side row is present and correct."
+            },
+            {
+              "name": "Gender_dataset1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Dataset1 categorical attribute, copied from the source."
+            },
+            {
+              "name": "VisitDate_dataset1",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Date string copied from dataset1."
+            },
+            {
+              "name": "LabResult_dataset1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Numeric value copied from dataset1."
+            }
+          ],
+          "overall_reasoning": "The task is a fuzzy-name merge, so what matters is which (dataset1, dataset2) record pairs end up matched. PatientID_dataset1 and PatientID_dataset2 are used for alignment and are not compared. When a pair appears in one output but not the other, the other side's value columns are all NaN after alignment. For example, reference rows such as p0001–p0112 are blank (Michael vs Emily Rodriguez, score 81.25), while the candidate fills them in. These columns therefore show directly whether the matched row sets agree.\n\n- **Main signal:** both patient-name columns, which show whether a pair was matched.\n- **Supporting signal:** the dataset2 payload columns (TreatmentGroup, ResponseScore, AdverseEvent) and a few dataset1 fields (Age, Gender, VisitDate, LabResult). These check that the right source records were joined.\n- **Numbers:** these are copied straight from the source data, so RAE uses a tight tolerance.\n- **Text:** compared by exact match.\n- **Left out:** the remaining dataset1 clinical and gene-expression columns repeat the same row-presence signal, so they are ignored to avoid over-weighting it. The candidate-only fuzz_score column is also excluded because it is not in the reference.\n\nPass rates need not be perfect, because the guideline accepts small differences for matches near the 80% threshold.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "PatientID_dataset1",
+            "PatientID_dataset2"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "PatientID_dataset1": "PatientID_dataset1",
+              "Age_dataset1": "Age",
+              "Gender_dataset1": "Gender",
+              "BMI_dataset1": "BMI",
+              "BloodPressure_Systolic_dataset1": "BloodPressure_Systolic",
+              "BloodPressure_Diastolic_dataset1": "BloodPressure_Diastolic",
+              "Cholesterol_dataset1": "Cholesterol",
+              "Glucose_dataset1": "Glucose",
+              "HeartRate_dataset1": "HeartRate",
+              "BRCA1_expression_dataset1": "BRCA1_expression",
+              "TP53_expression_dataset1": "TP53_expression",
+              "EGFR_expression_dataset1": "EGFR_expression",
+              "MYC_expression_dataset1": "MYC_expression",
+              "KRAS_expression_dataset1": "KRAS_expression",
+              "Tissue_dataset1": "Tissue",
+              "Condition_dataset1": "Condition",
+              "Category_dataset1": "Category",
+              "Var1_dataset1": "Var1",
+              "Var2_dataset1": "Var2",
+              "Var3_dataset1": "Var3",
+              "Var4_dataset1": "Var4",
+              "DiagnosisClass_dataset1": "DiagnosisClass",
+              "Temperature_dataset1": "Temperature",
+              "IsSmoker_dataset1": "IsSmoker",
+              "EducationLevel_dataset1": "EducationLevel",
+              "VisitDate_dataset1": "VisitDate",
+              "PatientName_dataset1": "PatientName_dataset1",
+              "LabResult_dataset1": "LabResult",
+              "PatientID_dataset2": "PatientID_dataset2",
+              "PatientName_dataset2": "PatientName_dataset2",
+              "TreatmentGroup_dataset2": "TreatmentGroup",
+              "ResponseScore_dataset2": "ResponseScore",
+              "AdverseEvent_dataset2": "AdverseEvent"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "fuzz_score"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "PatientID_dataset1",
+              "PatientID_dataset2"
+            ],
+            "matched_rows": 4494,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 630,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Category_dataset1",
+              "LabResult_dataset1",
+              "Var4_dataset1",
+              "Var3_dataset1",
+              "PatientID_dataset1",
+              "AdverseEvent_dataset2",
+              "BloodPressure_Diastolic_dataset1",
+              "TreatmentGroup_dataset2",
+              "Condition_dataset1",
+              "PatientName_dataset1",
+              "EducationLevel_dataset1",
+              "Gender_dataset1",
+              "Glucose_dataset1",
+              "HeartRate_dataset1",
+              "VisitDate_dataset1",
+              "KRAS_expression_dataset1",
+              "PatientID_dataset2",
+              "IsSmoker_dataset1",
+              "Tissue_dataset1",
+              "ResponseScore_dataset2",
+              "EGFR_expression_dataset1",
+              "MYC_expression_dataset1",
+              "TP53_expression_dataset1",
+              "PatientName_dataset2",
+              "Cholesterol_dataset1",
+              "Var2_dataset1",
+              "Temperature_dataset1",
+              "DiagnosisClass_dataset1",
+              "Var1_dataset1",
+              "BloodPressure_Systolic_dataset1",
+              "BRCA1_expression_dataset1",
+              "Age_dataset1",
+              "BMI_dataset1"
+            ],
+            "converted_columns": [
+              "IsSmoker_dataset1",
+              "Age_dataset1"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Category_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "LabResult_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var4_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var3_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientID_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "AdverseEvent_dataset2": [
+                "str",
+                "str",
+                true
+              ],
+              "BloodPressure_Diastolic_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "TreatmentGroup_dataset2": [
+                "str",
+                "str",
+                true
+              ],
+              "Condition_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "PatientName_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "EducationLevel_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "Gender_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "Glucose_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HeartRate_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "VisitDate_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "KRAS_expression_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientID_dataset2": [
+                "str",
+                "str",
+                true
+              ],
+              "IsSmoker_dataset1": [
+                "float64",
+                "int64",
+                true
+              ],
+              "Tissue_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "ResponseScore_dataset2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "EGFR_expression_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "MYC_expression_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "TP53_expression_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientName_dataset2": [
+                "str",
+                "str",
+                true
+              ],
+              "Cholesterol_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var2_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Temperature_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "DiagnosisClass_dataset1": [
+                "str",
+                "str",
+                true
+              ],
+              "Var1_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BloodPressure_Systolic_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BRCA1_expression_dataset1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Age_dataset1": [
+                "float64",
+                "int64",
+                true
+              ],
+              "BMI_dataset1": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "PatientID_dataset1",
+              "PatientID_dataset2"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['fuzz_score']",
+            "Unmapped candidate rows: 630",
+            "Converted 2 column(s) to match reference dtypes",
+            "Sorted both dataframes by ['PatientID_dataset1', 'PatientID_dataset2']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AdverseEvent_dataset2",
+            "Age_dataset1",
+            "Gender_dataset1",
+            "LabResult_dataset1",
+            "PatientName_dataset1",
+            "PatientName_dataset2",
+            "ResponseScore_dataset2",
+            "TreatmentGroup_dataset2",
+            "VisitDate_dataset1"
+          ],
+          "filtered_columns": [
+            "AdverseEvent_dataset2",
+            "Age_dataset1",
+            "Gender_dataset1",
+            "LabResult_dataset1",
+            "PatientName_dataset1",
+            "PatientName_dataset2",
+            "ResponseScore_dataset2",
+            "TreatmentGroup_dataset2",
+            "VisitDate_dataset1"
+          ],
+          "overall_similarity": 0.9206349206349207,
+          "per_column_similarities": {
+            "AdverseEvent_dataset2": {
+              "similarity": 0.9004683840749415,
+              "strategy": "exact",
+              "matching_count": 4614,
+              "total_count": 5124,
+              "error": null,
+              "details": {}
+            },
+            "Age_dataset1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4494,
+              "total_count": 4494,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Gender_dataset1": {
+              "similarity": 0.8770491803278688,
+              "strategy": "exact",
+              "matching_count": 4494,
+              "total_count": 5124,
+              "error": null,
+              "details": {}
+            },
+            "LabResult_dataset1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4494,
+              "total_count": 4494,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "PatientName_dataset1": {
+              "similarity": 0.8770491803278688,
+              "strategy": "exact",
+              "matching_count": 4494,
+              "total_count": 5124,
+              "error": null,
+              "details": {}
+            },
+            "PatientName_dataset2": {
+              "similarity": 0.8770491803278688,
+              "strategy": "exact",
+              "matching_count": 4494,
+              "total_count": 5124,
+              "error": null,
+              "details": {}
+            },
+            "ResponseScore_dataset2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4494,
+              "total_count": 4494,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "TreatmentGroup_dataset2": {
+              "similarity": 0.8770491803278688,
+              "strategy": "exact",
+              "matching_count": 4494,
+              "total_count": 5124,
+              "error": null,
+              "details": {}
+            },
+            "VisitDate_dataset1": {
+              "similarity": 0.8770491803278688,
+              "strategy": "exact",
+              "matching_count": 4494,
+              "total_count": 5124,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.9705882352941176,
+            "col_recall": 1.0,
+            "col_f1": 0.9850746268656716,
+            "col_jaccard": 0.9705882352941176,
+            "ref_rows": 5124,
+            "alt_rows": 5124,
+            "row_intersection": 5124,
+            "ref_cols": 33,
+            "alt_cols": 34,
+            "col_intersection": 33
+          },
+          "shape": {
+            "ref_shape": [
+              5124,
+              33
+            ],
+            "alt_shape": [
+              5124,
+              34
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Category_dataset1": true,
+              "LabResult_dataset1": true,
+              "Var4_dataset1": true,
+              "Var3_dataset1": true,
+              "PatientID_dataset1": true,
+              "AdverseEvent_dataset2": true,
+              "BloodPressure_Diastolic_dataset1": true,
+              "TreatmentGroup_dataset2": true,
+              "Condition_dataset1": true,
+              "PatientName_dataset1": true,
+              "EducationLevel_dataset1": true,
+              "Gender_dataset1": true,
+              "Glucose_dataset1": true,
+              "HeartRate_dataset1": true,
+              "VisitDate_dataset1": true,
+              "KRAS_expression_dataset1": true,
+              "PatientID_dataset2": true,
+              "IsSmoker_dataset1": true,
+              "Tissue_dataset1": true,
+              "ResponseScore_dataset2": true,
+              "EGFR_expression_dataset1": true,
+              "MYC_expression_dataset1": true,
+              "TP53_expression_dataset1": true,
+              "PatientName_dataset2": true,
+              "Cholesterol_dataset1": true,
+              "Var2_dataset1": true,
+              "Temperature_dataset1": true,
+              "DiagnosisClass_dataset1": true,
+              "Var1_dataset1": true,
+              "BloodPressure_Systolic_dataset1": true,
+              "BRCA1_expression_dataset1": true,
+              "Age_dataset1": true,
+              "BMI_dataset1": true
+            },
+            "common_columns": 33
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.8796513140775436,
+            "ref_missing_rate": 0.14682539682539683,
+            "alt_missing_rate": 0.02647671090294041
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

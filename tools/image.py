@@ -228,6 +228,12 @@ Guidelines for recommendation:
 - "not equivalent": Images differ significantly in content, data, or scientific message
 - "uncertain": Cannot determine equivalence due to image quality, complexity, or lack of clarity
 
+Presentation choices are NOT differences in data. Before comparing patterns, mentally align the two images for:
+- axis direction (e.g. a y-axis increasing upward vs downward, which mirrors a heatmap or matrix vertically) and transposed or swapped axes
+- 0-based vs 1-based positions or indices, tick spacing, and axis ranges
+- colormap and color-scale range: a dark-to-bright palette can make faint low values visible that a white-based palette hides, so judge the strong/dominant features, not how noisy the background looks
+Only treat a difference as a data difference if it remains after this alignment.
+
 Focus on scientific content and information rather than exact pixel-level matches. Consider:
 - Are the same data/patterns shown?
 - Are the axes, labels, and legends appropriate?

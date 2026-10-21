@@ -1,0 +1,36 @@
+{
+  "id": "a-14-4",
+  "question": "Predict the secondary structure of an RNA sequence using RNAfold (with the -p flag to generate a dot-plot file), then visualize the square root of base-pairing probabilities as a square heatmap.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-14-4/ref_answer/human_tRNA_Phe_dp.ps.png",
+      "eval_guideline": "Square heatmap with nucleotide positions on both axes and cells colored by sqrt(base-pairing probability); color scheme and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-14-4/output/human_tRNA_Phe_dp.ps.png",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are PNG images. Each one is the square heatmap of base-pairing probabilities made from the RNAfold dot plot.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a PNG heatmap, and the guideline asks for a check of its visual content: a square heatmap with nucleotide positions on both axes and sqrt-probability coloring. Color and styling are allowed to differ, so a semantic image comparison fits.",
+      "strategy_error": null,
+      "similarity": 0.82,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.75,
+        "explanation": "What each image shows: both are symmetric 83×83 square heatmaps of RNAfold -p base-pairing probabilities for the same 83-nt human tRNA-Phe sequence. The reference uses 0-based positions, puts the y-axis origin at the bottom and uses the viridis colormap, with a colorbar labelled \"Base-pairing probability\". The candidate uses 1-based positions, puts the y-axis origin at the top and uses the Blues colormap, with a colorbar labelled \"sqrt(base-pairing probability)\".\n\nAlignment check: after flipping the candidate vertically and shifting its positions by one, the strong stem diagonals match cell for cell:\n- Candidate pairs (5,79)…(10,74) become (4,78)…(9,73), which matches the reference's bright run at i=4–10, j=78–73.\n- Candidate pairs (9–16, 30–23) become (8–15, 29–22), which matches the reference.\n- Candidate pairs (19–23, 46–42) become (18–22, 45–41), which matches the reference.\n- Candidate pairs (46–50, 61–57) become (45–49, 60–56), which matches the reference.\n- Candidate pairs (56–60, 68–64) and their mirror (64–68, 60–56) become (55–59, 67–63) and (63–67, 59–55), which match the reference.\n- The fainter secondary diagonals and alternative-pairing features also line up.\n\nMain difference: the value scale. The strongest cells reach about 0.86 in the reference but only about 0.75 in the candidate. The reference's background also looks more pronounced overall, with many cells in the 0.3–0.6 range. My best guess, inferred from the numbers rather than confirmed, is that the reference took a square root a second time: the dot-plot file already stores sqrt(p), so a second square root gives p^0.25. That would map p≈0.56 to 0.86 in the reference and to 0.75 in the candidate. If so, the candidate's scale matches the task wording (\"sqrt of base-pairing probabilities\") more directly.\n\nConclusion: the colormap and axis orientation are only presentation choices. The data, the stem/helix pattern and the scientific message are the same. The only real difference is a monotonic change in color intensity, which does not change how the structure is read. I rated the pair equivalent; the score is slightly below 1 because of that intensity difference."
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,333 @@
+{
+  "id": "a-13-2",
+  "question": "Use Primer3 to design PCR primers for human FOXP3 mRNA: primer length 18-22 nt (opt 20), Tm 58-62 degrees C (opt 60 degrees C), GC content 40-60%, product size 200-300 bp. Return the top 5 primer pairs.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-2/ref_answer/foxp3_primers.csv",
+      "eval_guideline": "Sequences must match the reference exactly; Tm within +/-0.5, positions and product size within +/-1 bp; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-13-2/output/foxp3_primers.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (foxp3_primers.csv) and both are CSV files. The candidate is the only output for the FOXP3 primer design task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare Primer3 primer design results for human FOXP3 mRNA (top 5 primer pairs). Primer sequences (left/right) must match the reference exactly; Tm within +/-0.5 degrees C; primer positions and product size within +/-1 bp; column order and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "Primer3 is deterministic, and the guideline asks for record-level matching (exact sequences, Tm within ±0.5, positions within ±1 bp) while allowing column order and headers to differ. That calls for approximate tabular comparison.",
+      "strategy_error": null,
+      "similarity": 0.9999925987336095,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Forward_Sequence": "Forward_Sequence",
+            "Forward_Tm": "Forward_Tm",
+            "Forward_Position": "Forward_Position",
+            "Reverse_Sequence": "Reverse_Sequence",
+            "Reverse_Tm": "Reverse_Tm",
+            "Reverse_Position": "Reverse_Position",
+            "Product_Size": "Product_Size"
+          },
+          "id_columns": [
+            "Forward_Sequence",
+            "Reverse_Sequence"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "No transpose is needed because both tables list one primer pair per row. All 7 reference columns appear in the candidate under the same names, so they map one-to-one. The candidate's extra columns (Rank, Forward_Length, Forward_GC, Reverse_Length, Reverse_GC, Pair_Penalty) have no reference counterpart and are dropped. Neither sequence column is unique on its own: the forward primer TGTGGGGTAGCCATGGAAAC appears in 3 rows and the reverse primer GGGATTTGGGAAGGTGCAGA in 2. Together, Forward_Sequence plus Reverse_Sequence is unique, and these are fixed outputs that must match exactly, so this composite is the row key. Tm, position and product size are numbers that can vary slightly, so they are not used as keys. Row order matters because the task asks for the top 5 primer pairs, which is a ranked list; the candidate's ranking already matches the reference order, so no pre-sort is needed.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Forward_Tm",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0083,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline allows ±0.5 °C. On values near 60 °C, that is a relative error of about 0.0083."
+            },
+            {
+              "name": "Reverse_Tm",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0083,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline allows ±0.5 °C. On values near 60 °C, that is a relative error of about 0.0083."
+            },
+            {
+              "name": "Forward_Position",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0028,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows ±1 bp. The smallest position is 358, so 1/358 ≈ 0.0028 is the tightest relative tolerance that still allows ±1 bp for every row."
+            },
+            {
+              "name": "Reverse_Position",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0028,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows ±1 bp. A tolerance of 0.0028 allows ±1 bp at the smallest positions; at larger positions it is somewhat looser."
+            },
+            {
+              "name": "Product_Size",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.005,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "The guideline allows ±1 bp. Product sizes are 206–237 bp, so 0.005 allows a ±1 bp difference on whole numbers and nothing larger."
+            }
+          ],
+          "overall_reasoning": "The rows are aligned on the primer sequences, so a sequence mismatch shows up as an alignment failure. The plan compares the five reference data columns. Each guideline tolerance is absolute, so I converted it to a relative tolerance for the RAE strategy. For Tm, ±0.5 °C on values near 60 °C gives about 0.0083. Product sizes are about 206–237 bp, and a tolerance of 0.005 lets through only a ±1 bp difference on whole numbers. Positions run from about 358 to 1214. A tolerance of 0.0028 still allows ±1 bp at the smallest position, but at the largest position it would allow up to about ±3 bp. Seven candidate columns are not in the reference, so they are not compared: Rank, the primer lengths, GC contents and Pair_Penalty. The candidate's Tm values are rounded to two decimals (59.96), which is well within the tolerance.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "Forward_Sequence",
+            "Reverse_Sequence"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Forward_Sequence": "Forward_Sequence",
+              "Forward_Tm": "Forward_Tm",
+              "Forward_Position": "Forward_Position",
+              "Reverse_Sequence": "Reverse_Sequence",
+              "Reverse_Tm": "Reverse_Tm",
+              "Reverse_Position": "Reverse_Position",
+              "Product_Size": "Product_Size"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Rank",
+              "Forward_Length",
+              "Forward_GC",
+              "Reverse_Length",
+              "Reverse_GC",
+              "Pair_Penalty"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Forward_Sequence",
+              "Reverse_Sequence"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Forward_Tm",
+              "Reverse_Position",
+              "Reverse_Tm",
+              "Forward_Sequence",
+              "Reverse_Sequence",
+              "Forward_Position",
+              "Product_Size"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Forward_Tm": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Reverse_Position": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Reverse_Tm": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Forward_Sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "Reverse_Sequence": [
+                "str",
+                "str",
+                true
+              ],
+              "Forward_Position": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Product_Size": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Rank', 'Forward_Length', 'Forward_GC', 'Reverse_Length', 'Reverse_GC', 'Pair_Penalty']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Forward_Position",
+            "Forward_Tm",
+            "Product_Size",
+            "Reverse_Position",
+            "Reverse_Tm"
+          ],
+          "filtered_columns": [
+            "Forward_Position",
+            "Forward_Tm",
+            "Product_Size",
+            "Reverse_Position",
+            "Reverse_Tm"
+          ],
+          "overall_similarity": 0.9999925987336095,
+          "per_column_similarities": {
+            "Forward_Position": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.0028
+              }
+            },
+            "Forward_Tm": {
+              "similarity": 0.9999800358480669,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.0083
+              }
+            },
+            "Product_Size": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.005
+              }
+            },
+            "Reverse_Position": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.0028
+              }
+            },
+            "Reverse_Tm": {
+              "similarity": 0.9999829578199808,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.0083
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5384615384615384,
+            "col_recall": 1.0,
+            "col_f1": 0.7000000000000001,
+            "col_jaccard": 0.5384615384615384,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 7,
+            "alt_cols": 13,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              7
+            ],
+            "alt_shape": [
+              5,
+              13
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Forward_Tm": true,
+              "Reverse_Position": true,
+              "Reverse_Tm": true,
+              "Forward_Sequence": true,
+              "Reverse_Sequence": true,
+              "Forward_Position": true,
+              "Product_Size": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

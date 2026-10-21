@@ -1,0 +1,1227 @@
+{
+  "id": "b-2-3",
+  "question": "From a CSV file containing both clinical and genomic data, impute missing values using k-nearest neighbors (k=5) based on Euclidean distance. Report the total number and percentage of imputed values.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-3/ref_answer/knn_imputation_report.csv",
+      "eval_guideline": "Per-column missing counts must be exact; missing percentages within +/-0.05; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-3/output/knn_imputation_report.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames match exactly and both are CSV imputation reports.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "KNN imputation (k=5, Euclidean) report on a clinical+genomic CSV: compare per-column missing/imputed counts (must match exactly) and missing percentages (within +/-0.05), plus total imputed count and percentage. Row and column order may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The task is deterministic: missing counts depend only on the input data, not on KNN randomness. The output is a small per-column report table. The guideline wants exact counts and percentages within ±0.05, with any row or column order allowed, so value-by-value approximate comparison fits.",
+      "strategy_error": null,
+      "similarity": 0.9839406047516198,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "column": "column",
+            "missing_count": "missing_count",
+            "missing_percentage": "missing_percentage"
+          },
+          "id_columns": [
+            "column"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are in long format, with one row per variable, so no transpose is needed. The three reference columns have exact name matches in the candidate. The candidate's extra 'imputed_count' column has no reference counterpart and is dropped. Rows are matched on the 'column' variable name, which is a stable categorical identifier. The candidate has extra rows (PatientID, Age, Gender and other zero-missing columns), and the key-based matching handles these. The 'TOTAL' row should match if it is among the candidate's 19 unseen rows. However, its percentage depends on the denominator: the reference uses 9 imputed columns × 500 rows = 4500 cells? No — it reports 440/~9500 = 4.63%, which means all 19 columns. The candidate may use a different denominator, so this row could differ. The guideline says order doesn't matter, so the comparison is not order-sensitive.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "missing_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires exact integer counts per column, so RAE uses tolerance 0. A NaN in the reference means no missing values, which matches 0 in the candidate."
+            },
+            {
+              "name": "missing_percentage",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.005,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows ±0.05 percentage points. With values around 8–11%, that is about 0.5% relative error. Values are given to one decimal place, so any genuine mismatch is at least 0.1 and will be caught."
+            }
+          ],
+          "overall_reasoning": "The guideline asks for per-column missing counts and missing percentages, so both are compared cell by cell with RAE after aligning on the 'column' ID. missing_count must match exactly, so it uses RAE with tolerance 0. missing_percentage may be off by up to ±0.05 percentage points. Nonzero values run from about 8 to 11%, where ±0.05 is roughly 0.5% relative error, so the RAE tolerance is set to 0.005. Values are reported to one decimal place, so any real difference is at least 0.1 and would fail under either an absolute or a relative test. The candidate's extra imputed_count column has no reference counterpart, so it is not compared. One caveat: the reference shows NaN for columns with no missing values, while the candidate shows 0. Both mean 'no missing values', so the scorer should ideally treat NaN in the reference and 0 in the candidate as the same.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "column"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "column": "column",
+              "missing_count": "missing_count",
+              "missing_percentage": "missing_percentage"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "imputed_count"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "column"
+            ],
+            "matched_rows": 10,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 19,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "missing_count",
+              "missing_percentage",
+              "column"
+            ],
+            "converted_columns": [
+              "missing_count"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "missing_count": [
+                "float64",
+                "int64",
+                true
+              ],
+              "missing_percentage": [
+                "float64",
+                "float64",
+                true
+              ],
+              "column": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['imputed_count']",
+            "Unmapped candidate rows: 19",
+            "Converted 1 column(s) to match reference dtypes"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "missing_count",
+            "missing_percentage"
+          ],
+          "filtered_columns": [
+            "missing_count",
+            "missing_percentage"
+          ],
+          "overall_similarity": 0.9839406047516198,
+          "per_column_similarities": {
+            "missing_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 10,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "missing_percentage": {
+              "similarity": 0.9678812095032396,
+              "strategy": "rae",
+              "matching_count": 9,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.005
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.75,
+            "col_recall": 1.0,
+            "col_f1": 0.8571428571428571,
+            "col_jaccard": 0.75,
+            "ref_rows": 29,
+            "alt_rows": 29,
+            "row_intersection": 29,
+            "ref_cols": 3,
+            "alt_cols": 4,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              29,
+              3
+            ],
+            "alt_shape": [
+              29,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "missing_count": true,
+              "missing_percentage": true,
+              "column": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.3448275862068966,
+            "ref_missing_rate": 0.6551724137931034,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-3/ref_answer/knn_imputed_data.csv",
+      "eval_guideline": "All numeric values must match the reference within 5% relative absolute error; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-3/output/knn_imputed_data.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames match exactly and both are CSV files holding the imputed dataset.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare KNN-imputed (k=5, Euclidean) clinical+genomic data tables. All numeric values must match within 5% relative absolute error; row order, column order, and header labels may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "KNN imputation with k=5 and Euclidean distance is deterministic, so the imputed table should be compared record by record. The guideline asks for numeric agreement within 5% and allows row order, column order and header labels to differ, which is what approximate alignment handles.",
+      "strategy_error": null,
+      "similarity": 0.9927157515292339,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "PatientID": "PatientID",
+            "Age": "Age",
+            "Gender": "Gender",
+            "BMI": "BMI",
+            "BloodPressure_Systolic": "BloodPressure_Systolic",
+            "BloodPressure_Diastolic": "BloodPressure_Diastolic",
+            "Cholesterol": "Cholesterol",
+            "Glucose": "Glucose",
+            "HeartRate": "HeartRate",
+            "BRCA1_expression": "BRCA1_expression",
+            "TP53_expression": "TP53_expression",
+            "EGFR_expression": "EGFR_expression",
+            "MYC_expression": "MYC_expression",
+            "KRAS_expression": "KRAS_expression",
+            "Tissue": "Tissue",
+            "Condition": "Condition",
+            "Category": "Category",
+            "Var1": "Var1",
+            "Var2": "Var2",
+            "Var3": "Var3",
+            "Var4": "Var4",
+            "DiagnosisClass": "DiagnosisClass",
+            "Temperature": "Temperature",
+            "IsSmoker": "IsSmoker",
+            "EducationLevel": "EducationLevel",
+            "VisitDate": "VisitDate",
+            "PatientName": "PatientName",
+            "LabResult": "LabResult"
+          },
+          "id_columns": [
+            "PatientID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "PatientID",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 28 column names, so each column maps to the one with the same name. Neither table is transposed: both have one row per patient. PatientID is a unique patient ID that is copied through unchanged, so rows are matched on it. Row order doesn't matter for an imputed dataset, so we sort by PatientID and check for permutations. Values that were not imputed match exactly. Imputed cells differ (for example EGFR in P0001, Cholesterol in P0003, TP53 in P0007), probably because the KNN method or scaling differed. That is a difference in values to be judged in comparison, not a structural one.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Age",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "BMI",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "BloodPressure_Systolic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "BloodPressure_Diastolic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Cholesterol",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Glucose",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "HeartRate",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "BRCA1_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Gene expression value that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "TP53_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Gene expression value that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "EGFR_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Gene expression value that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "MYC_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Gene expression value that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "KRAS_expression",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Gene expression value that may be imputed; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Var1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric variable; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Var2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric variable; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Var3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Negative-valued numeric variable where the sign matters; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Var4",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric variable; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Temperature",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric column; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "IsSmoker",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Binary 0/1 stored as float; an imputed value could be a fraction. A 5% tolerance means observed values must match exactly."
+            },
+            {
+              "name": "LabResult",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Numeric lab value; the guideline sets a 5% RAE limit."
+            },
+            {
+              "name": "Gender",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Categorical attribute that numeric KNN does not impute; it should be preserved exactly."
+            },
+            {
+              "name": "Tissue",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Categorical attribute; should be preserved exactly."
+            },
+            {
+              "name": "Condition",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Categorical attribute; should be preserved exactly."
+            },
+            {
+              "name": "Category",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Categorical attribute; should be preserved exactly."
+            },
+            {
+              "name": "DiagnosisClass",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Categorical attribute; should be preserved exactly."
+            },
+            {
+              "name": "EducationLevel",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Categorical attribute; should be preserved exactly."
+            },
+            {
+              "name": "VisitDate",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Date string; should be preserved exactly."
+            },
+            {
+              "name": "PatientName",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Name string; should be preserved exactly."
+            }
+          ],
+          "overall_reasoning": "The task is KNN imputation (k=5, Euclidean) on a mixed clinical/genomic table. The evaluation guideline says every numeric value must be within 5% relative absolute error of the reference. So every numerical column uses cell-by-cell RAE with cell_tolerance=0.05. Under that rule, observed values that were never missing should match exactly. Imputed cells will only match if the candidate's imputation was close enough, for example if it scaled features the same way and picked the same neighbours. In the preview, some imputed cells differ by much more than 5% (e.g. TP53_expression for p0007, EGFR_expression for p0001). Those cells should count as mismatches, which the guideline intends. Sign carries meaning (Var3 is negative), so compare_abs stays false. Categorical columns are not touched by numeric KNN imputation and are compared by exact match. PatientID is excluded because it is the alignment key.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "PatientID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "PatientID": "PatientID",
+              "Age": "Age",
+              "Gender": "Gender",
+              "BMI": "BMI",
+              "BloodPressure_Systolic": "BloodPressure_Systolic",
+              "BloodPressure_Diastolic": "BloodPressure_Diastolic",
+              "Cholesterol": "Cholesterol",
+              "Glucose": "Glucose",
+              "HeartRate": "HeartRate",
+              "BRCA1_expression": "BRCA1_expression",
+              "TP53_expression": "TP53_expression",
+              "EGFR_expression": "EGFR_expression",
+              "MYC_expression": "MYC_expression",
+              "KRAS_expression": "KRAS_expression",
+              "Tissue": "Tissue",
+              "Condition": "Condition",
+              "Category": "Category",
+              "Var1": "Var1",
+              "Var2": "Var2",
+              "Var3": "Var3",
+              "Var4": "Var4",
+              "DiagnosisClass": "DiagnosisClass",
+              "Temperature": "Temperature",
+              "IsSmoker": "IsSmoker",
+              "EducationLevel": "EducationLevel",
+              "VisitDate": "VisitDate",
+              "PatientName": "PatientName",
+              "LabResult": "LabResult"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "PatientID"
+            ],
+            "matched_rows": 500,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "DiagnosisClass",
+              "VisitDate",
+              "Condition",
+              "TP53_expression",
+              "EducationLevel",
+              "EGFR_expression",
+              "KRAS_expression",
+              "Var2",
+              "BMI",
+              "Tissue",
+              "IsSmoker",
+              "LabResult",
+              "Var3",
+              "Category",
+              "Temperature",
+              "BloodPressure_Systolic",
+              "Age",
+              "Gender",
+              "Var1",
+              "HeartRate",
+              "Var4",
+              "PatientName",
+              "MYC_expression",
+              "BRCA1_expression",
+              "Cholesterol",
+              "Glucose",
+              "BloodPressure_Diastolic",
+              "PatientID"
+            ],
+            "converted_columns": [
+              "IsSmoker",
+              "Age"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "DiagnosisClass": [
+                "str",
+                "str",
+                true
+              ],
+              "VisitDate": [
+                "str",
+                "str",
+                true
+              ],
+              "Condition": [
+                "str",
+                "str",
+                true
+              ],
+              "TP53_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "EducationLevel": [
+                "str",
+                "str",
+                true
+              ],
+              "EGFR_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "KRAS_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BMI": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Tissue": [
+                "str",
+                "str",
+                true
+              ],
+              "IsSmoker": [
+                "float64",
+                "int64",
+                true
+              ],
+              "LabResult": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var3": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Category": [
+                "str",
+                "str",
+                true
+              ],
+              "Temperature": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BloodPressure_Systolic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Age": [
+                "float64",
+                "int64",
+                true
+              ],
+              "Gender": [
+                "str",
+                "str",
+                true
+              ],
+              "Var1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HeartRate": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Var4": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientName": [
+                "str",
+                "str",
+                true
+              ],
+              "MYC_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BRCA1_expression": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Cholesterol": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Glucose": [
+                "float64",
+                "float64",
+                true
+              ],
+              "BloodPressure_Diastolic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientID": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "PatientID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Converted 2 column(s) to match reference dtypes",
+            "Sorted both dataframes by ['PatientID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Age",
+            "BMI",
+            "BRCA1_expression",
+            "BloodPressure_Diastolic",
+            "BloodPressure_Systolic",
+            "Category",
+            "Cholesterol",
+            "Condition",
+            "DiagnosisClass",
+            "EGFR_expression",
+            "EducationLevel",
+            "Gender",
+            "Glucose",
+            "HeartRate",
+            "IsSmoker",
+            "KRAS_expression",
+            "LabResult",
+            "MYC_expression",
+            "PatientName",
+            "TP53_expression",
+            "Temperature",
+            "Tissue",
+            "Var1",
+            "Var2",
+            "Var3",
+            "Var4",
+            "VisitDate"
+          ],
+          "filtered_columns": [
+            "Age",
+            "BMI",
+            "BRCA1_expression",
+            "BloodPressure_Diastolic",
+            "BloodPressure_Systolic",
+            "Category",
+            "Cholesterol",
+            "Condition",
+            "DiagnosisClass",
+            "EGFR_expression",
+            "EducationLevel",
+            "Gender",
+            "Glucose",
+            "HeartRate",
+            "IsSmoker",
+            "KRAS_expression",
+            "LabResult",
+            "MYC_expression",
+            "PatientName",
+            "TP53_expression",
+            "Temperature",
+            "Tissue",
+            "Var1",
+            "Var2",
+            "Var3",
+            "Var4",
+            "VisitDate"
+          ],
+          "overall_similarity": 0.9927157515292339,
+          "per_column_similarities": {
+            "Age": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "BMI": {
+              "similarity": 0.9921197399926865,
+              "strategy": "rae",
+              "matching_count": 474,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "BRCA1_expression": {
+              "similarity": 0.9430876014179183,
+              "strategy": "rae",
+              "matching_count": 446,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "BloodPressure_Diastolic": {
+              "similarity": 0.9956783743148435,
+              "strategy": "rae",
+              "matching_count": 485,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "BloodPressure_Systolic": {
+              "similarity": 0.9950015759288032,
+              "strategy": "rae",
+              "matching_count": 479,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Category": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Cholesterol": {
+              "similarity": 0.9874519248724928,
+              "strategy": "rae",
+              "matching_count": 462,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Condition": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "DiagnosisClass": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "EGFR_expression": {
+              "similarity": 0.9598961910270116,
+              "strategy": "rae",
+              "matching_count": 457,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "EducationLevel": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Gender": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Glucose": {
+              "similarity": 0.9929716847727472,
+              "strategy": "rae",
+              "matching_count": 468,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "HeartRate": {
+              "similarity": 0.9919902896474557,
+              "strategy": "rae",
+              "matching_count": 472,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "IsSmoker": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "KRAS_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "LabResult": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "MYC_expression": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "PatientName": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "TP53_expression": {
+              "similarity": 0.945127909315356,
+              "strategy": "rae",
+              "matching_count": 448,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Temperature": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Tissue": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            },
+            "Var1": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Var2": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Var3": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Var4": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "VisitDate": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 500,
+            "alt_rows": 500,
+            "row_intersection": 500,
+            "ref_cols": 28,
+            "alt_cols": 28,
+            "col_intersection": 28
+          },
+          "shape": {
+            "ref_shape": [
+              500,
+              28
+            ],
+            "alt_shape": [
+              500,
+              28
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "DiagnosisClass": true,
+              "VisitDate": true,
+              "Condition": true,
+              "TP53_expression": true,
+              "EducationLevel": true,
+              "EGFR_expression": true,
+              "KRAS_expression": true,
+              "Var2": true,
+              "BMI": true,
+              "Tissue": true,
+              "IsSmoker": true,
+              "LabResult": true,
+              "Var3": true,
+              "Category": true,
+              "Temperature": true,
+              "BloodPressure_Systolic": true,
+              "Age": true,
+              "Gender": true,
+              "Var1": true,
+              "HeartRate": true,
+              "Var4": true,
+              "PatientName": true,
+              "MYC_expression": true,
+              "BRCA1_expression": true,
+              "Cholesterol": true,
+              "Glucose": true,
+              "BloodPressure_Diastolic": true,
+              "PatientID": true
+            },
+            "common_columns": 28
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

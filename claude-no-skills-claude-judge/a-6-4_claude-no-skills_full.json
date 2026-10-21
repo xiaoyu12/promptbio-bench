@@ -1,0 +1,1263 @@
+{
+  "id": "a-6-4",
+  "question": "Using the provided 16S rRNA amplicon sequence variant (ASV) table, calculate beta diversity between sample groups and identify significantly different taxa.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-4/ref_answer/PCoA_results.csv",
+      "eval_guideline": "Coordinates must match the reference within +/-0.05 per axis; each axis may be globally sign-flipped and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-6-4/output/PCoA_results.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV PCoA output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare PCoA coordinates (beta diversity ordination of 16S ASV table) per sample. Coordinates must match the reference within +/-0.05 per axis; each axis may be globally sign-flipped (multiply entire axis by -1) and column order may differ. Rows should be aligned by sample ID."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "PCoA is deterministic for a given distance matrix, and the guideline asks for per-sample coordinate matching within +/-0.05, allowing a global sign flip on each axis and any column order. That makes record-level approximate comparison the right choice.",
+      "strategy_error": null,
+      "similarity": 0.7822863434490005,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "sample_id": "sample_id",
+            "Axis.1": "PC1",
+            "Axis.2": "PC2",
+            "Axis.3": "PC3",
+            "Axis.4": "PC4",
+            "Axis.5": "PC5",
+            "Axis.6": "PC6",
+            "Axis.7": "PC7",
+            "Axis.8": "PC8",
+            "Axis.9": "PC9",
+            "Axis.10": "PC10",
+            "Axis.11": "PC11",
+            "Axis.12": "PC12",
+            "Axis.13": "PC13",
+            "Axis.14": "PC14",
+            "Axis.15": "PC15",
+            "Axis.16": "PC16",
+            "Axis.17": "PC17",
+            "Axis.18": "PC18",
+            "Axis.19": "PC19",
+            "Axis.20": "PC20",
+            "Axis.21": "PC21",
+            "Axis.22": "PC22",
+            "Axis.23": "PC23",
+            "Axis.24": "PC24"
+          },
+          "id_columns": [
+            "sample_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sample_id",
+          "check_permutation": true,
+          "reasoning": "Both tables hold PCoA ordination coordinates, one row per sample, and neither needs transposing. The reference names its axes Axis.1 to Axis.24 and the candidate names them PC1 to PC24, so each axis is mapped by its number. The candidate's extra 'group' column has no counterpart in the reference and is ignored. Rows are matched on sample_id (SRR accessions), not on the coordinates, which are computed values. The two tables list samples in different orders, so row order doesn't matter: both are sorted by sample_id and checked as a permutation. Per the guideline, each axis may be flipped in sign as a whole, which is a comparison tolerance and doesn't affect structure. Higher axes with similar eigenvalues might come out in a different order, but mapping axes by number is the natural choice.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Axis.1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.3,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Primary PCoA axis with arbitrary sign. Relative tolerance of 0.3 approximates the ±0.05 absolute tolerance."
+            },
+            {
+              "name": "Axis.2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.3,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Second PCoA axis with arbitrary sign. Relative tolerance approximates the ±0.05 absolute tolerance."
+            },
+            {
+              "name": "Axis.3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.3,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Third PCoA axis with arbitrary sign. Matches closely in the preview."
+            },
+            {
+              "name": "Axis.4",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.3,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "Fourth axis appears sign-flipped in the candidate, so absolute values are compared."
+            },
+            {
+              "name": "Axis.5",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.3,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.55,
+              "reasoning": "Fifth axis still holds meaningful variance, with arbitrary sign."
+            },
+            {
+              "name": "Axis.6",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable, and its order can swap."
+            },
+            {
+              "name": "Axis.7",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.8",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.9",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.10",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.11",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.12",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.13",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.14",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.15",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.16",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.17",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.18",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.19",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.20",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.21",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.22",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.23",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Low-variance higher axis. Unstable."
+            },
+            {
+              "name": "Axis.24",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.5,
+              "reasoning": "Last axis, with near-zero variance."
+            }
+          ],
+          "overall_reasoning": "These columns are PCoA ordination coordinates from beta diversity on 16S ASVs. The guideline allows ±0.05 absolute error per axis and lets each axis flip sign. Sign is arbitrary in PCoA, so compare_abs=true covers those flips. This is looser than checking for one global flip per axis, but it is acceptable. The comparison only supports relative error, not absolute. Typical coordinate values are about 0.1–0.4, so a ±0.05 error is roughly 15–40% relative. I set a cell tolerance of 0.3 as a reasonable stand-in. The first five axes hold most of the explained variance and are stable between the two files: Axis.1–3 match closely, and Axis.4–5 match after a sign flip. These are compared. Higher axes (6–24) explain very little variance and are numerically unstable. Their order and values shift with small changes in how the data is processed (e.g. Axis.15–16 differ substantially even after sign flips). They also contain many values near zero, where relative error blows up. So they are ignored. The candidate's extra 'group' column has no counterpart in the reference and is not compared.",
+          "overall_confidence": 0.6,
+          "id_columns": [
+            "sample_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "sample_id": "sample_id",
+              "Axis.1": "PC1",
+              "Axis.2": "PC2",
+              "Axis.3": "PC3",
+              "Axis.4": "PC4",
+              "Axis.5": "PC5",
+              "Axis.6": "PC6",
+              "Axis.7": "PC7",
+              "Axis.8": "PC8",
+              "Axis.9": "PC9",
+              "Axis.10": "PC10",
+              "Axis.11": "PC11",
+              "Axis.12": "PC12",
+              "Axis.13": "PC13",
+              "Axis.14": "PC14",
+              "Axis.15": "PC15",
+              "Axis.16": "PC16",
+              "Axis.17": "PC17",
+              "Axis.18": "PC18",
+              "Axis.19": "PC19",
+              "Axis.20": "PC20",
+              "Axis.21": "PC21",
+              "Axis.22": "PC22",
+              "Axis.23": "PC23",
+              "Axis.24": "PC24"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "group"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sample_id"
+            ],
+            "matched_rows": 25,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Axis.14",
+              "Axis.20",
+              "Axis.2",
+              "sample_id",
+              "Axis.8",
+              "Axis.9",
+              "Axis.21",
+              "Axis.12",
+              "Axis.23",
+              "Axis.4",
+              "Axis.6",
+              "Axis.22",
+              "Axis.13",
+              "Axis.24",
+              "Axis.16",
+              "Axis.19",
+              "Axis.1",
+              "Axis.18",
+              "Axis.11",
+              "Axis.15",
+              "Axis.10",
+              "Axis.3",
+              "Axis.17",
+              "Axis.5",
+              "Axis.7"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Axis.14": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.20": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "sample_id": [
+                "str",
+                "str",
+                true
+              ],
+              "Axis.8": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.9": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.21": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.12": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.23": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.4": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.6": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.22": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.13": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.24": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.16": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.19": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.18": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.11": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.15": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.10": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.3": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.17": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.5": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Axis.7": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sample_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['group']",
+            "Sorted both dataframes by ['sample_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Axis.1",
+            "Axis.10",
+            "Axis.11",
+            "Axis.12",
+            "Axis.13",
+            "Axis.14",
+            "Axis.15",
+            "Axis.16",
+            "Axis.17",
+            "Axis.18",
+            "Axis.19",
+            "Axis.2",
+            "Axis.20",
+            "Axis.21",
+            "Axis.22",
+            "Axis.23",
+            "Axis.24",
+            "Axis.3",
+            "Axis.4",
+            "Axis.5",
+            "Axis.6",
+            "Axis.7",
+            "Axis.8",
+            "Axis.9"
+          ],
+          "filtered_columns": [
+            "Axis.1",
+            "Axis.2",
+            "Axis.3",
+            "Axis.4",
+            "Axis.5"
+          ],
+          "overall_similarity": 0.7822863434490005,
+          "per_column_similarities": {
+            "Axis.1": {
+              "similarity": 0.908694957459398,
+              "strategy": "rae",
+              "matching_count": 24,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.3
+              }
+            },
+            "Axis.2": {
+              "similarity": 0.7860544581317108,
+              "strategy": "rae",
+              "matching_count": 19,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.3
+              }
+            },
+            "Axis.3": {
+              "similarity": 0.8312545430865178,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.3
+              }
+            },
+            "Axis.4": {
+              "similarity": 0.6842034223269858,
+              "strategy": "rae",
+              "matching_count": 17,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.3
+              }
+            },
+            "Axis.5": {
+              "similarity": 0.7012243362403894,
+              "strategy": "rae",
+              "matching_count": 15,
+              "total_count": 25,
+              "error": null,
+              "details": {
+                "tolerance": 0.3
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.9615384615384616,
+            "col_recall": 1.0,
+            "col_f1": 0.9803921568627451,
+            "col_jaccard": 0.9615384615384616,
+            "ref_rows": 25,
+            "alt_rows": 25,
+            "row_intersection": 25,
+            "ref_cols": 25,
+            "alt_cols": 26,
+            "col_intersection": 25
+          },
+          "shape": {
+            "ref_shape": [
+              25,
+              25
+            ],
+            "alt_shape": [
+              25,
+              26
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Axis.14": true,
+              "Axis.20": true,
+              "Axis.2": true,
+              "sample_id": true,
+              "Axis.8": true,
+              "Axis.9": true,
+              "Axis.21": true,
+              "Axis.12": true,
+              "Axis.23": true,
+              "Axis.4": true,
+              "Axis.6": true,
+              "Axis.22": true,
+              "Axis.13": true,
+              "Axis.24": true,
+              "Axis.16": true,
+              "Axis.19": true,
+              "Axis.1": true,
+              "Axis.18": true,
+              "Axis.11": true,
+              "Axis.15": true,
+              "Axis.10": true,
+              "Axis.3": true,
+              "Axis.17": true,
+              "Axis.5": true,
+              "Axis.7": true
+            },
+            "common_columns": 25
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-4/ref_answer/PERMANOVA_results.csv",
+      "eval_guideline": "R^2 and F-statistic must match the reference within 5% relative absolute error; Pr(>F) need only agree in significance direction (p < 0.05); row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-6-4/output/PERMANOVA_results.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV PERMANOVA results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare PERMANOVA results tables from 16S ASV beta diversity analysis. R^2 and F-statistic must match the reference within 5% relative absolute error; Pr(>F) need only agree in significance direction (p < 0.05). Row and column order may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The guideline asks for value-by-value matching of R², F and p-value significance direction. PERMANOVA's permutation p-values change from run to run, but the output is a small results table, so approximate comparison within the stated tolerances fits better than summary.",
+      "strategy_error": null,
+      "similarity": 0.8314138173359022,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "term": "term",
+            "Df": "Df",
+            "SumOfSqs": "SumOfSqs",
+            "R2": "R2",
+            "F": "F",
+            "Pr(>F)": "Pr(>F)"
+          },
+          "id_columns": [
+            "Df"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Df",
+          "check_permutation": true,
+          "reasoning": "Both tables are PERMANOVA (adonis2) outputs. They have the same layout and identical column names, so each column maps to itself and no transpose is needed. The 'term' column can't be used as a row key because the first row's label differs ('Model' in the reference, 'group' in the candidate), even though both mean the grouping-factor row. The degrees of freedom (Df: 1, 23, 24) are whole numbers set by the design, not measured values. They are the same in both tables and different on every row, so Df is a reliable key for the Model/group, Residual and Total rows. The guideline says row order may differ, so row order is not treated as meaningful. Rows are also sorted by Df as a fallback.",
+          "confidence": 0.88
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "R2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline sets 5% RAE as the explicit tolerance for R2."
+            },
+            {
+              "name": "F",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline sets 5% RAE as the tolerance for the F-statistic. Only the model row has a value; the other rows are NaN in both tables."
+            },
+            {
+              "name": "SumOfSqs",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "R2 is derived from the sums of squares, so they get the same 5% RAE tolerance as R2."
+            },
+            {
+              "name": "Pr(>F)",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 23.9,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "Only the significance direction (p < 0.05) matters. With the reference p at 0.002, an RAE of 23.9 or less means the candidate p is no more than about 0.0498. Any smaller p passes, because the RAE below the reference is at most 1. So this acts as a significance-agreement check."
+            },
+            {
+              "name": "term",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This column holds only row labels, and the model row is named differently ('Model' vs 'group'). Rows are already aligned on Df."
+            }
+          ],
+          "overall_reasoning": "This is a PERMANOVA (adonis2) table with rows Model/group, Residual and Total, aligned on Df. Following the guideline, R2 and F are checked cell by cell with RAE at a 0.05 tolerance. SumOfSqs uses the same 5% tolerance because R2 is derived from it. The rows match on the residual and total values: R2 differs by about 1.3%, F by 1.4% and SumOfSqs by 0.5% or less.\n\nPr(>F) only needs to agree on significance. Permutation p-values vary from run to run, so exact matching would be wrong here. The reference p is 0.002. A p-value cannot go below 0, so the RAE below the reference is never more than 1. Above it, an RAE tolerance of 23.9 accepts any candidate p up to about 0.0498 and rejects p ≥ 0.05. That makes the RAE check work as the p < 0.05 significance test. The candidate p of 0.0007 gives an RAE of 0.65, which passes.\n\nThe 'term' column holds only labels, and the model row is named differently in each table ('Model' vs 'group'), so it is ignored. NaN cells in F and Pr(>F) for the Residual and Total rows appear in both tables.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Df"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "term": "term",
+              "Df": "Df",
+              "SumOfSqs": "SumOfSqs",
+              "R2": "R2",
+              "F": "F",
+              "Pr(>F)": "Pr(>F)"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Df"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "F",
+              "term",
+              "Df",
+              "R2",
+              "SumOfSqs",
+              "Pr(>F)"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "F": [
+                "float64",
+                "float64",
+                true
+              ],
+              "term": [
+                "str",
+                "str",
+                true
+              ],
+              "Df": [
+                "str",
+                "str",
+                true
+              ],
+              "R2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "SumOfSqs": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Pr(>F)": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Df"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Df']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "F",
+            "Pr(>F)",
+            "R2",
+            "SumOfSqs",
+            "term"
+          ],
+          "filtered_columns": [
+            "F",
+            "Pr(>F)",
+            "R2",
+            "SumOfSqs"
+          ],
+          "overall_similarity": 0.8314138173359022,
+          "per_column_similarities": {
+            "F": {
+              "similarity": 0.9863321765871756,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Pr(>F)": {
+              "similarity": 0.3500000000000001,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 23.9
+              }
+            },
+            "R2": {
+              "similarity": 0.9954481303033923,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "SumOfSqs": {
+              "similarity": 0.9938749624530413,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 6,
+            "alt_cols": 6,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              6
+            ],
+            "alt_shape": [
+              3,
+              6
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "F": true,
+              "term": true,
+              "Df": true,
+              "R2": true,
+              "SumOfSqs": true,
+              "Pr(>F)": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.3333333333333333,
+            "alt_missing_rate": 0.3333333333333333
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-6-4/ref_answer/differential_ASVs.csv",
+      "eval_guideline": "log2FoldChange and padj must match the reference within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-6-4/output/differential_ASVs.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV lists of differential ASVs.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Differential abundance analysis of 16S ASV table between sample groups (DESeq2-style). Align rows by ASV ID; log2FoldChange and padj must match the reference within 1% relative absolute error; row and column order may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The guideline asks for a record-level match of log2FoldChange and padj within 1% relative error, and row and column order may differ. Differential abundance testing (DESeq2-style) is deterministic, so approximate (table) alignment is the right strategy.",
+      "strategy_error": null,
+      "similarity": 0.030213672898280884,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "asv_id": "asv_id",
+            "log2FoldChange": "log2FoldChange",
+            "pvalue": "pvalue",
+            "padj": "padj"
+          },
+          "id_columns": [
+            "asv_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are DESeq2-style differential abundance results with one row per ASV, so no transpose is needed. The reference columns have exact matches in the candidate (asv_id, log2FoldChange, pvalue, padj). The candidate's extra columns (baseMean, lfcSE, stat, mean_relabund_*) are left out. asv_id is a unique hash identifier, so it is used as the key to match rows. The candidate has more rows (1009 vs 380), likely because it includes non-significant or unfiltered ASVs, so rows are matched by ID rather than by position. The guideline says row order may differ, so order is ignored.",
+          "confidence": 0.93
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FoldChange",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires a match within 1% RAE. The sign carries the direction of the effect, so absolute values are not used."
+            },
+            {
+              "name": "padj",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires the adjusted p-values to match within 1% RAE."
+            },
+            {
+              "name": "pvalue",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "This column is not part of the stated evaluation criterion, which covers only log2FoldChange and padj."
+            }
+          ],
+          "overall_reasoning": "This is a DESeq2-style differential abundance task. The evaluation guideline names log2FoldChange and padj as the columns that must match the reference within 1% relative absolute error, so both use 'rae' with cell_tolerance=0.01. pvalue is not in the guideline, so I set it to 'ignore' to keep scoring tied to the stated criterion. The candidate's extra columns (baseMean, lfcSE, stat, mean_relabund_*) are not in the reference and are left out. The sign of log2FoldChange shows which direction the change goes (Healthy vs CF), so compare_abs is false. In the preview, many reference rows have NaN values, probably because results were filtered or the reference was sparse. These rows will be handled by the comparison engine's NaN logic.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "asv_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "asv_id": "asv_id",
+              "log2FoldChange": "log2FoldChange",
+              "pvalue": "pvalue",
+              "padj": "padj"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "baseMean",
+              "lfcSE",
+              "stat",
+              "mean_relabund_Healthy",
+              "mean_relabund_CF"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "asv_id"
+            ],
+            "matched_rows": 303,
+            "unmapped_ref_rows": 77,
+            "unmapped_alt_rows": 706,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "All identifiers are opaque MD5-like hashes. No candidate exactly matches any reference, so every candidate maps to null. Hashes can't be fuzzy-matched. Only the first 10 candidates are written out in this mapping; every other candidate is also null.",
+              "confidence": 0.9
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "pvalue",
+              "asv_id",
+              "log2FoldChange",
+              "padj"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "pvalue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "asv_id": [
+                "str",
+                "str",
+                true
+              ],
+              "log2FoldChange": [
+                "float64",
+                "float64",
+                true
+              ],
+              "padj": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['baseMean', 'lfcSE', 'stat', 'mean_relabund_Healthy', 'mean_relabund_CF']",
+            "Unmapped reference rows: 77",
+            "Unmapped candidate rows: 706"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "log2FoldChange",
+            "padj",
+            "pvalue"
+          ],
+          "filtered_columns": [
+            "log2FoldChange",
+            "padj"
+          ],
+          "overall_similarity": 0.030213672898280884,
+          "per_column_similarities": {
+            "log2FoldChange": {
+              "similarity": 0.0021413256846406596,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 303,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "padj": {
+              "similarity": 0.05828602011192111,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 259,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4444444444444444,
+            "col_recall": 1.0,
+            "col_f1": 0.6153846153846153,
+            "col_jaccard": 0.4444444444444444,
+            "ref_rows": 1086,
+            "alt_rows": 1086,
+            "row_intersection": 1086,
+            "ref_cols": 4,
+            "alt_cols": 9,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              1086,
+              4
+            ],
+            "alt_shape": [
+              1086,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -5
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "pvalue": true,
+              "asv_id": true,
+              "log2FoldChange": true,
+              "padj": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.3812154696132597,
+            "ref_missing_rate": 0.6500920810313076,
+            "alt_missing_rate": 0.2136279926335175
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

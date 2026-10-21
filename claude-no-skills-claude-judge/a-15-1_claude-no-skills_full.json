@@ -1,0 +1,266 @@
+{
+  "id": "a-15-1",
+  "question": "Compute Pearson correlations between all gene-methylation site pairs (all-vs-all) using DNA methylation beta values and gene expression values from the same samples. Apply Benjamini-Hochberg FDR correction globally across all pairs. Identify gene-methylation site pairs with significant negative correlations (FDR < 0.05).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-1/ref_answer/significant_results.tsv",
+      "eval_guideline": "Gene-site pairs must match the reference as an unordered set; correlation values within +/-1e-4, P-values and FDR values within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-1/output/significant_results.tsv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named significant_results.tsv and are TSVs, which is the expected output for listing the significant negative gene-methylation correlations.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare tables of significant negative gene-methylation site Pearson correlations (BH FDR < 0.05). Gene-site pairs must match as an unordered set; correlation values within +/-1e-4; P-values and FDR values within 1% relative error; column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "This is a deterministic Pearson correlation with BH FDR correction. The guideline asks for record-level matching of gene-site pairs as an unordered set, with numeric tolerances and freedom in column order, row order and header labels, which is what approximate handles.",
+      "strategy_error": null,
+      "similarity": 0.999999999999993,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "Site": "Site",
+            "Correlation": "Correlation",
+            "P-value": "P-value",
+            "FDR": "FDR"
+          },
+          "id_columns": [
+            "Gene",
+            "Site"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene,Site",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same five column names, so each column maps to the column with the same name. The table is not transposed. Each row is one gene-methylation site pair, so the key is Gene plus Site together. The guideline says to compare the pairs as an unordered set. The reference is sorted by Gene/Site and the candidate is sorted by correlation, so row order is ignored and both tables are sorted by Gene,Site before comparing. The numeric columns (Correlation, P-value, FDR) are compared within the allowed tolerances and are not used as keys.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Correlation",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.00012,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline allows ±1e-4 absolute error. With |r| between about 0.8 and 0.9, that is roughly 1.2e-4 relative error. The sign matters because the task looks for negative correlations."
+            },
+            {
+              "name": "P-value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline sets 1% relative error for P-values. These values are very small, so relative error is the right measure."
+            },
+            {
+              "name": "FDR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The guideline sets 1% relative error for Benjamini-Hochberg FDR values."
+            }
+          ],
+          "overall_reasoning": "Gene and Site are the ID columns. They are used only for alignment, so a matching pair set is checked when the rows are joined. The three numeric columns follow the evaluation guideline, and each uses cell-by-cell relative absolute error (RAE) with a cut-off. Correlation values have magnitudes of about 0.8 to 0.9. An absolute tolerance of ±1e-4 therefore works out to roughly 1.1e-4 to 1.25e-4 relative error, so 1.2e-4 is used. P-value and FDR use 1% RAE (0.01), as the guideline states. The sign of the correlation matters because the task asks for negative correlations, so absolute values are not compared.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "Gene",
+            "Site"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "Site": "Site",
+              "Correlation": "Correlation",
+              "P-value": "P-value",
+              "FDR": "FDR"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene",
+              "Site"
+            ],
+            "matched_rows": 31,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "P-value",
+              "Gene",
+              "Site",
+              "FDR",
+              "Correlation"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "P-value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ],
+              "Site": [
+                "str",
+                "str",
+                true
+              ],
+              "FDR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Correlation": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene",
+              "Site"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Gene', 'Site']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Correlation",
+            "FDR",
+            "P-value"
+          ],
+          "filtered_columns": [
+            "Correlation",
+            "FDR",
+            "P-value"
+          ],
+          "overall_similarity": 0.999999999999993,
+          "per_column_similarities": {
+            "Correlation": {
+              "similarity": 0.9999999999999999,
+              "strategy": "rae",
+              "matching_count": 31,
+              "total_count": 31,
+              "error": null,
+              "details": {
+                "tolerance": 0.00012
+              }
+            },
+            "FDR": {
+              "similarity": 0.9999999999999882,
+              "strategy": "rae",
+              "matching_count": 31,
+              "total_count": 31,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "P-value": {
+              "similarity": 0.999999999999991,
+              "strategy": "rae",
+              "matching_count": 31,
+              "total_count": 31,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 31,
+            "alt_rows": 31,
+            "row_intersection": 31,
+            "ref_cols": 5,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              31,
+              5
+            ],
+            "alt_shape": [
+              31,
+              5
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "P-value": true,
+              "Gene": true,
+              "Site": true,
+              "FDR": true,
+              "Correlation": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

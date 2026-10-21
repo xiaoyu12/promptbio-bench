@@ -1,0 +1,198 @@
+{
+  "id": "a-1-13",
+  "question": "I have the gene TP53. Could you calculate, for each transcript, the total non-overlapping exon length, ensuring that only exact gene name matches are used (no fuzzy matching).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-1-13/ref_answer/TP53_transcript_exon_lengths.tsv",
+      "eval_guideline": "Each transcript row's total non-overlapping exon length must match the reference within +/-1 bp; column order and ID versioning may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-1-13/output/TP53_transcript_exon_lengths.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are TSVs. The file holds the per-transcript TP53 exon lengths the task asks for.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "For gene TP53 (exact gene name match only), compare per-transcript total non-overlapping exon length. Match rows by transcript ID (ignore version suffixes such as .1/.2); exon length values must agree within +/-1 bp; column order may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The task is deterministic: it computes non-overlapping exon lengths per TP53 transcript from a GFF. The guideline asks for per-row matching within +/-1 bp and allows column order and ID versioning to differ, so the approximate strategy fits.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Transcript_ID": "Transcript_ID",
+            "Total_Exon_Length": "Total_Exon_Length"
+          },
+          "id_columns": [
+            "Transcript_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Transcript_ID",
+          "check_permutation": true,
+          "reasoning": "Both tables are in long format with one row per transcript, so no transpose is needed. The two reference columns have exact name matches in the candidate. The candidate's other columns (Gene, Strand, coordinates, Exon_Count and so on) are extra and get dropped. Transcript_ID is a unique, stable key, so rows are matched on it. The guideline says ID versioning may differ, so the comparison may need to strip version suffixes (e.g. '.6') if the versions don't line up. The task asks for a set of per-transcript values with no ranking, so row order doesn't matter: the plan sorts both tables by Transcript_ID and checks whether one is a permutation of the other. Total_Exon_Length should be compared with a ±1 bp tolerance.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Total_Exon_Length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0006,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is the only output the task asks for: the total non-overlapping exon length per transcript, in bp. The guideline allows ±1 bp. Visible values are about 2000–2650 bp, so 1 bp is a relative error of about 0.0004–0.0005. A tolerance of 0.0006 accepts a 1 bp difference for any value of about 1667 bp or more. It still rejects 2 bp errors for values below about 3333 bp, which covers the expected TP53 transcript range. This catches common mistakes, such as off-by-one errors across many exons or summing overlapping exons twice. Lengths are always positive, so the sign is not compared."
+            }
+          ],
+          "overall_reasoning": "Only Total_Exon_Length is compared. Transcript_ID is used only to line up the rows. The candidate's extra columns (Gene, Transcript_Type, Chromosome, Strand, Start, End, Exon_Count) do not appear in the reference and the task does not ask for them, so they are left out. The column is compared row by row using relative absolute error (RAE). The tolerance is set to about ±1 bp for values in the observed range of roughly 2000–2650 bp, which matches the evaluation guideline.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "Transcript_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Transcript_ID": "Transcript_ID",
+              "Total_Exon_Length": "Total_Exon_Length"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Gene",
+              "Transcript_Type",
+              "Chromosome",
+              "Strand",
+              "Start",
+              "End",
+              "Exon_Count"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Transcript_ID"
+            ],
+            "matched_rows": 26,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Transcript_ID",
+              "Total_Exon_Length"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Transcript_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "Total_Exon_Length": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Transcript_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Gene', 'Transcript_Type', 'Chromosome', 'Strand', 'Start', 'End', 'Exon_Count']",
+            "Sorted both dataframes by ['Transcript_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Total_Exon_Length"
+          ],
+          "filtered_columns": [
+            "Total_Exon_Length"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Total_Exon_Length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 26,
+              "total_count": 26,
+              "error": null,
+              "details": {
+                "tolerance": 0.0006
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2222222222222222,
+            "col_recall": 1.0,
+            "col_f1": 0.3636363636363636,
+            "col_jaccard": 0.2222222222222222,
+            "ref_rows": 26,
+            "alt_rows": 26,
+            "row_intersection": 26,
+            "ref_cols": 2,
+            "alt_cols": 9,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              26,
+              2
+            ],
+            "alt_shape": [
+              26,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Transcript_ID": true,
+              "Total_Exon_Length": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

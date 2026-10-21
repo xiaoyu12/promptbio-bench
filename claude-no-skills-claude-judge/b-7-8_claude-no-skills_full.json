@@ -1,0 +1,231 @@
+{
+  "id": "b-7-8",
+  "question": "Train two Support Vector Machine (SVM) classifiers to distinguish Alzheimer's vs. control subjects using gene expression data (50 gene features): one with a linear kernel and one with an RBF kernel, using a 70/30 train-test split. Report test accuracy and AUC for both models.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-8/ref_answer/svm_comparison_results.csv",
+      "eval_guideline": "Test accuracy and AUC for each kernel must match within +/-0.05; row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-8/output/svm_comparison_results.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames match exactly and both are CSV files with the SVM comparison results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare SVM classifier results (linear vs RBF kernel) for Alzheimer's vs control: test accuracy and AUC for each kernel must match within +/-0.05; row and column order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a small results table (accuracy and AUC for two kernels). The random split makes it stochastic, but a table this small should be checked value by value, so approximate fits best, and the guideline's ±0.05 tolerance absorbs run-to-run noise.",
+      "strategy_error": null,
+      "similarity": 0.9971600439254351,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Model": "Model",
+            "Test Accuracy": "Test Accuracy",
+            "AUC": "AUC"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Model",
+          "check_permutation": true,
+          "reasoning": "Neither table needs transposing: each has one row per SVM model. The three reference columns (Model, Test Accuracy, AUC) have exact name matches in the candidate. The extra candidate columns (Kernel, C, Gamma, Train Size, Test Size, CV AUC) are ignored. The Model column identifies the kernel, but the case differs ('Linear Kernel' vs 'Linear kernel'), so exact string-key matching could fail. Instead, both tables are sorted by Model and rows are aligned by position. Sorting puts 'SVM (Linear ...)' before 'SVM (RBF ...)' in both tables regardless of case, so the rows pair correctly. Row order does not matter, according to the evaluation guideline. Test Accuracy and AUC are compared within the ±0.05 tolerance.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Test Accuracy",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.07,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "This is a key metric. The absolute ±0.05 tolerance divided by reference values of about 0.71–0.77 gives a relative tolerance of about 0.07."
+            },
+            {
+              "name": "AUC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "This is a key metric. The absolute ±0.05 tolerance divided by reference values of about 0.82–0.86 gives a relative tolerance of about 0.06."
+            },
+            {
+              "name": "Model",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "This column only labels the rows, and rows are already aligned by index. Exact matching would fail because of the capitalisation difference ('Kernel' vs 'kernel')."
+            }
+          ],
+          "overall_reasoning": "The task asks for test accuracy and AUC for the linear-kernel and RBF-kernel SVMs, with each allowed to differ by ±0.05. Rows line up by index: row 0 is the linear kernel and row 1 is the RBF kernel. The 'Model' column only labels the rows, and its capitalisation differs between the two files ('Kernel' vs 'kernel'), so an exact match would fail for no real reason. It is therefore ignored. Columns that appear only in the candidate (Kernel, C, Gamma, sizes, CV AUC) are not in the reference and are excluded. The ±0.05 absolute tolerance was converted to a relative-error (RAE) tolerance using the reference values. Accuracy is about 0.71–0.77, giving roughly 0.065–0.07, so 0.07 is used. AUC is about 0.82–0.86, giving roughly 0.058–0.061, so 0.06 is used. The current candidate values easily pass both checks (largest accuracy difference is 0.008; AUC differences are under 0.001).",
+          "overall_confidence": 0.88,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Model": "Model",
+              "Test Accuracy": "Test Accuracy",
+              "AUC": "AUC"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Kernel",
+              "C",
+              "Gamma",
+              "Train Size",
+              "Test Size",
+              "CV AUC (train, 5-fold)"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Model",
+              "AUC",
+              "Test Accuracy"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Model": [
+                "str",
+                "str",
+                true
+              ],
+              "AUC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Test Accuracy": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Model"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Kernel', 'C', 'Gamma', 'Train Size', 'Test Size', 'CV AUC (train, 5-fold)']",
+            "Sorted both dataframes by ['Model']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AUC",
+            "Model",
+            "Test Accuracy"
+          ],
+          "filtered_columns": [
+            "AUC",
+            "Test Accuracy"
+          ],
+          "overall_similarity": 0.9971600439254351,
+          "per_column_similarities": {
+            "AUC": {
+              "similarity": 0.9998001390017655,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.06
+              }
+            },
+            "Test Accuracy": {
+              "similarity": 0.9945199488491048,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.07
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.3333333333333333,
+            "col_recall": 1.0,
+            "col_f1": 0.5,
+            "col_jaccard": 0.3333333333333333,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 3,
+            "alt_cols": 9,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              3
+            ],
+            "alt_shape": [
+              2,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Model": true,
+              "AUC": true,
+              "Test Accuracy": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

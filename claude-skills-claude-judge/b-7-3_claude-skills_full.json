@@ -1,0 +1,694 @@
+{
+  "id": "b-7-3",
+  "question": "Classify ECG signals into normal vs. arrhythmic using a 1D Convolutional Neural Network (CNN). Pad or truncate each signal to 256 time points, use a 70/30 train-test split, and train for 50 epochs with batch size 32.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-3/ref_answer/classification_report.csv",
+      "eval_guideline": "Per-class precision, recall, and F1 must match within +/-0.10; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-3/output/classification_report.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare classification reports from a 1D CNN that sorts ECG signals into normal vs. arrhythmic (70/30 split, 50 epochs, batch 32). Per-class precision, recall, and F1 must match within +/-0.10. Row and column order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "Training a CNN on a random split gives slightly different numbers each run, but the output is a small classification report with only a few per-class metrics. Comparing value by value with approximate matching, using the guideline's +/-0.10 tolerance, absorbs that run-to-run noise and still allows rows and columns in any order.",
+      "strategy_error": null,
+      "similarity": 0.825015451339996,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Class": "Class",
+            "Precision": "Precision",
+            "Recall": "Recall",
+            "F1-Score": "F1-Score",
+            "Support": "Support",
+            "Accuracy": null
+          },
+          "id_columns": [
+            "Class"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Class",
+          "check_permutation": true,
+          "reasoning": "Both tables are sklearn-style classification reports, and their row and column layout is the same, so no transpose is needed. Precision, Recall, F1-Score, Support and Class have the same names in both tables, so they map directly. The reference has a separate Accuracy column. The candidate has no such column and puts the accuracy value (0.97) in F1-Score on its 'accuracy' row, so Accuracy maps to null. The Class labels are categorical and appear in both tables (Arrhythmic, Normal, accuracy, macro avg, weighted avg), so Class is the row key. The guideline says row order may differ, so rows are matched by key, sorted by Class, and checked as a permutation. The per-class Precision/Recall/F1 values are the ones that matter for the evaluation.",
+          "confidence": 0.93
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Precision",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.13,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Per-class precision must match within ±0.10 absolute. Values are about 0.6–1.0, so a relative tolerance of about 0.13 approximates that bound."
+            },
+            {
+              "name": "Recall",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.13,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Per-class recall must match within ±0.10 absolute, converted to a relative tolerance of about 0.13 for values near 0.6–1.0."
+            },
+            {
+              "name": "F1-Score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.13,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Per-class F1 must match within ±0.10 absolute, converted to a relative tolerance of about 0.13. For the accuracy row, the candidate stores accuracy here while the reference has NaN."
+            },
+            {
+              "name": "Support",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.02,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "Test-set class counts come from the 70/30 split and should be nearly identical. The guideline does not require this, so it gets low confidence and a tight tolerance."
+            }
+          ],
+          "overall_reasoning": "The task is to classify ECG signals into binary classes (normal vs. arrhythmic) and report the results. The guideline asks for per-class precision, recall and F1 to match within ±0.10 absolute. All three metrics use RAE. Their values range from about 0.6 to 1.0, so ±0.10 absolute works out to roughly 10–16% relative. I set cell_tolerance to 0.13 as a compromise that is close to the stated absolute bound.\n\nSupport holds deterministic test-set class counts (85/215/300) that follow from the 70/30 split. It is compared with a tight RAE tolerance and lower confidence because the guideline does not mention it.\n\n'Accuracy' appears only in the reference and is not among the compared dtypes. In the candidate, accuracy sits in the F1-Score column of the 'accuracy' row while the reference has NaN there, so that row's F1 cell may need NaN handling.\n\nMost cells in the candidate are clearly better than the reference and fall outside ±0.10 (e.g., arrhythmic precision 0.99 vs 0.63), so the comparison should show a mismatch. Normal-class precision, macro-average recall and the Support column are within tolerance.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "Class"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Class": "Class",
+              "Precision": "Precision",
+              "Recall": "Recall",
+              "F1-Score": "F1-Score",
+              "Support": "Support"
+            },
+            "unmapped_ref": [
+              "Accuracy"
+            ],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Class"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Recall",
+              "Support",
+              "Class",
+              "F1-Score",
+              "Precision"
+            ],
+            "converted_columns": [
+              "Support"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Recall": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Support": [
+                "float64",
+                "int64",
+                true
+              ],
+              "Class": [
+                "str",
+                "str",
+                true
+              ],
+              "F1-Score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Precision": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Class"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['Accuracy']",
+            "Converted 1 column(s) to match reference dtypes",
+            "Sorted both dataframes by ['Class']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "F1-Score",
+            "Precision",
+            "Recall",
+            "Support"
+          ],
+          "filtered_columns": [
+            "F1-Score",
+            "Precision",
+            "Recall",
+            "Support"
+          ],
+          "overall_similarity": 0.825015451339996,
+          "per_column_similarities": {
+            "F1-Score": {
+              "similarity": 0.7666507453701066,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.13
+              }
+            },
+            "Precision": {
+              "similarity": 0.7276593967017646,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.13
+              }
+            },
+            "Recall": {
+              "similarity": 0.8057516632881128,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.13
+              }
+            },
+            "Support": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.02
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 0.8333333333333334,
+            "col_f1": 0.9090909090909091,
+            "col_jaccard": 0.8333333333333334,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 6,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              6
+            ],
+            "alt_shape": [
+              5,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": 1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Recall": true,
+              "Support": true,
+              "Class": true,
+              "F1-Score": true,
+              "Precision": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9,
+            "ref_missing_rate": 0.2,
+            "alt_missing_rate": 0.1
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-3/ref_answer/cnn_performance_metrics.csv",
+      "eval_guideline": "Accuracy values must match within +/-0.10; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-3/output/cnn_performance_metrics.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare CNN performance metrics for classifying ECG signals as normal or arrhythmic (1D CNN, 256 time points, 70/30 split, 50 epochs, batch size 32). Accuracy values must match within +/-0.10. Row and column order may differ."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "Training a CNN on a random split is stochastic, but the output is a small metrics table. It should be compared value by value, with the guideline's +/-0.10 accuracy tolerance covering run-to-run noise. Approximate matching also handles the allowed differences in row and column order.",
+      "strategy_error": null,
+      "similarity": 0.8840544491278906,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Metric": "Metric",
+            "Value": "Value"
+          },
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are long-format metric/value lists with the same column names (Metric, Value), so no transpose is needed and the columns map one-to-one. Rows are identified by the Metric label, but the names differ. The reference has 'Test Accuracy', 'Training Accuracy (Final)' and 'Validation Accuracy (Final)'. The candidate has 'Accuracy' (likely test accuracy) plus extra classification metrics. Matching must be semantic: 'Test Accuracy' should map to the candidate's 'Accuracy'. The training and validation accuracies may be among the 7 rows not shown in the preview, or may be missing. Row order does not matter because the guideline says so. The candidate's extra metrics should be ignored (compare only the intersection).",
+          "confidence": 0.6
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "This column holds mixed metric values. RAE with a 0.1 tolerance matches the rule that accuracy must be within 0.10 for metrics near 1. It also checks the integer settings (batch size, epochs, split sizes) closely enough. The sign carries meaning (for example, MCC), so compare_abs stays false."
+            }
+          ],
+          "overall_reasoning": "There is only one data column to compare, 'Value'. 'Metric' is the ID column and is used only for alignment. The rows mix metrics on a 0–1 scale (accuracy, balanced accuracy, F1, MCC) with integer settings (batch size, epochs, ntrain, ntest) and a loss value. The evaluation rule allows accuracy values to differ by up to 0.10. On metrics near 0.9–1.0, that is roughly a 10% relative error, so RAE with cell_tolerance 0.1 follows the rule. It also requires the settings and counts (32, 50, 700/300) to match closely. CNN training is random, so a looser cell-by-cell tolerance fits better than near-exact matching. Correlation would mean little here because the rows are different kinds of metrics. Most reference values in the preview are NaN, which makes this plan less certain.",
+          "overall_confidence": 0.6,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Metric": "Metric",
+              "Value": "Value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 15,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {
+              "finaltrainaccuracy": "trainingaccuracy(final)",
+              "accuracy": "testaccuracy"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "finaltrainaccuracy is the same as trainingaccuracy(final). Plain 'accuracy' is most likely test accuracy, because the other source columns are test-set metrics and include ntest. No candidate is a validation metric. The other candidates are settings or different metrics.",
+              "confidence": 0.82
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 1",
+            "Unmapped candidate rows: 15"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.8840544491278906,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.8840544491278906,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 18,
+            "alt_rows": 18,
+            "row_intersection": 18,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              18,
+              2
+            ],
+            "alt_shape": [
+              18,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.1111111111111111,
+            "ref_missing_rate": 0.8333333333333334,
+            "alt_missing_rate": 0.05555555555555555
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-3/ref_answer/confusion_matrix.csv",
+      "eval_guideline": "Each cell count expressed as a proportion of total test samples must be within +/-0.10 of the reference proportion; class label naming and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-3/output/confusion_matrix.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare 2x2 confusion matrices (normal vs. arrhythmic) from a 1D CNN ECG classifier trained on a random 70/30 split for 50 epochs. Convert each cell count to a proportion of total test samples; each proportion must be within +/-0.10 of the reference proportion. Class label naming (e.g., 0/1 vs normal/arrhythmic) and row/column order may differ, so align cells by actual/predicted class semantics."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "CNN training on a random split is stochastic, but the output is a small confusion matrix with only a few cells. These need to be compared one by one, so approximate fits better than summary. The guideline's ±0.10 tolerance on proportions covers the run-to-run noise, and label naming and order may differ.",
+      "strategy_error": null,
+      "similarity": 0.5160294749110539,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "true_label": "true_label",
+            "Arrhythmic": "Arrhythmic",
+            "Normal": "Normal"
+          },
+          "id_columns": [
+            "true_label"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "true_label",
+          "check_permutation": true,
+          "reasoning": "Both tables are 2x2 confusion matrices with the same orientation: true labels are rows, predicted labels are columns. No transpose is needed. The column names are identical but in a different order, so each column is mapped to the same name. The rows are in a different order (the reference lists Arrhythmic first, the candidate lists Normal first), so they are matched on the true_label key rather than by position. Row order doesn't matter, so the rows are not treated as ranked. Totals are 300 in both tables, so cell proportions can be compared directly.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Arrhythmic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.45,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.72,
+              "reasoning": "Counts predicted as arrhythmic. The ±0.10 share bound on 300 samples allows ±30 counts. Relative to the reference values that is 0.45 (for 66) and 0.77 (for 39); the stricter 0.45 is used. The candidate's arrhythmic row passes (RAE 0.17). The normal row fails (RAE 0.97), which matches the guideline."
+            },
+            {
+              "name": "Normal",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.17,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.65,
+              "reasoning": "Counts predicted as normal. ±30 counts is a relative tolerance of 1.58 for the reference value 19 and 0.17 for 176. The stricter 0.17 is used so the large normal→normal cell is held to the guideline. That cell differs by 38 counts and should fail."
+            }
+          ],
+          "overall_reasoning": "The data is a 2x2 confusion matrix: rows are true labels (the ID column) and columns are predicted counts. The guideline says each cell, taken as a share of all test samples (300), must be within ±0.10 of the reference share. That works out to about ±30 counts per cell. RAE is a relative measure, so this fixed count tolerance becomes a different relative tolerance in each cell: 30/66≈0.45, 30/39≈0.77, 30/19≈1.58 and 30/176≈0.17. Only one tolerance can be set per column, so each column uses the strictest bound of its two cells, to avoid passing cells that should fail. Arrhythmic uses 0.45 and Normal uses 0.17. Checked against the guideline directly, the candidate fails: the normal→arrhythmic cell differs by 38 counts (0.127 as a share) and the normal→normal cell by 38 counts (0.127). Both are beyond ±0.10, so a low score is the correct outcome.",
+          "overall_confidence": 0.72,
+          "id_columns": [
+            "true_label"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "true_label": "true_label",
+              "Arrhythmic": "Arrhythmic",
+              "Normal": "Normal"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "true_label"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "true_label",
+              "Arrhythmic",
+              "Normal"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "true_label": [
+                "str",
+                "str",
+                true
+              ],
+              "Arrhythmic": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Normal": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "true_label"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['true_label']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Arrhythmic",
+            "Normal"
+          ],
+          "filtered_columns": [
+            "Arrhythmic",
+            "Normal"
+          ],
+          "overall_similarity": 0.5160294749110539,
+          "per_column_similarities": {
+            "Arrhythmic": {
+              "similarity": 0.4294871794871795,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.45
+              }
+            },
+            "Normal": {
+              "similarity": 0.6025717703349283,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.17
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 3,
+            "alt_cols": 3,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              3
+            ],
+            "alt_shape": [
+              2,
+              3
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "true_label": true,
+              "Arrhythmic": true,
+              "Normal": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

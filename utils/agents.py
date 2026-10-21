@@ -26,8 +26,121 @@ CODEX_PREFIX = "codex:"
 CODEX_MAX_BODY_CHARS = 1_000_000
 
 
+# Models named "claude:<model>" (e.g. claude:claude-opus-5-5) are run through the Claude Code
+# CLI (`claude -p`), which bills against the Claude subscription it is logged in with.
+CLAUDE_PREFIX = "claude:"
+
+
 def is_codex_model(model: str) -> bool:
     return model.startswith(CODEX_PREFIX)
+
+
+def is_claude_cli_model(model: str) -> bool:
+    return model.startswith(CLAUDE_PREFIX)
+
+
+def is_cli_model(model: str) -> bool:
+    """True for models served by a logged-in CLI (no API key needed)."""
+    return is_codex_model(model) or is_claude_cli_model(model)
+
+
+class ClaudeCodeAgent:
+    """Minimal stand-in for a LangChain agent that answers via the Claude Code CLI (`claude -p`).
+
+    Same interface as CodexAgent: `invoke({"messages": [...]})` returns a dict with
+    "structured_response" (when response_format is set) or "output". Messages are sent as one
+    stream-json user turn, so image blocks reach Claude as images; structured output uses the
+    CLI's --json-schema validation. Built-in tools, MCP servers and settings files are disabled
+    and the session runs in an empty temp dir, so Claude acts as a plain judge.
+    """
+
+    def __init__(self, model: str, system_prompt: str, response_format: Optional[Type[T]] = None,
+                 max_attempts: int = 3, timeout: int = 900):
+        self.model = model[len(CLAUDE_PREFIX):]
+        self.system_prompt = system_prompt
+        self.response_format = response_format
+        self.max_attempts = max_attempts
+        self.timeout = int(os.getenv("CLAUDE_TIMEOUT", timeout))
+        self.effort = os.getenv("CLAUDE_EFFORT")
+
+    @staticmethod
+    def _content_blocks(messages: list) -> list[dict]:
+        """Convert chat messages (LangChain/OpenAI or Anthropic style) into Anthropic content blocks."""
+        blocks = []
+        for msg in messages:
+            content = msg.get("content") if isinstance(msg, dict) else getattr(msg, "content", msg)
+            role = msg.get("role", "user") if isinstance(msg, dict) else "user"
+            if isinstance(content, str):
+                blocks.append({"type": "text", "text": content if role == "user" else f"[{role}]\n{content}"})
+                continue
+            for block in content:
+                if block.get("type") == "text":
+                    blocks.append({"type": "text", "text": block["text"]})
+                elif block.get("type") == "image" and block.get("source", {}).get("type") == "base64":
+                    blocks.append({"type": "image", "source": block["source"]})
+                elif block.get("type") == "image_url":
+                    url = block["image_url"]["url"] if isinstance(block["image_url"], dict) else block["image_url"]
+                    media_type, data = re.match(r"data:([^;]+);base64,(.*)", url, re.S).groups()
+                    blocks.append({"type": "image",
+                                   "source": {"type": "base64", "media_type": media_type, "data": data}})
+                else:
+                    raise ValueError(f"Unsupported content block for Claude backend: {block.get('type')}")
+        return blocks
+
+    def _run_claude(self, blocks: list[dict], workdir: Path) -> dict:
+        cmd = [
+            "claude", "-p",
+            "--model", self.model,
+            "--system-prompt", self.system_prompt,
+            "--tools", "",
+            "--strict-mcp-config",
+            "--setting-sources", "",
+            "--no-session-persistence",
+            "--input-format", "stream-json",
+            "--output-format", "stream-json", "--verbose",
+        ]
+        if self.effort:
+            cmd += ["--effort", self.effort]
+        if self.response_format is not None:
+            cmd += ["--json-schema", json.dumps(self.response_format.model_json_schema())]
+        turn = json.dumps({"type": "user", "message": {"role": "user", "content": blocks}})
+        proc = subprocess.run(cmd, input=turn + "\n", capture_output=True, text=True,
+                              timeout=self.timeout, cwd=workdir)
+        result = None
+        for line in proc.stdout.splitlines():
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if event.get("type") == "result":
+                result = event
+        if result is None or result.get("is_error") or proc.returncode != 0:
+            detail = (result or {}).get("result") or proc.stderr.strip()[-2000:] or proc.stdout.strip()[-2000:]
+            raise RuntimeError(f"claude -p failed (rc={proc.returncode}): {detail}")
+        return result
+
+    def invoke(self, inputs: dict) -> dict:
+        messages = inputs["messages"] if isinstance(inputs, dict) else inputs
+        blocks = self._content_blocks(messages)
+        with tempfile.TemporaryDirectory(prefix="claude_eval_") as tmp:
+            if self.response_format is None:
+                return {"output": self._run_claude(blocks, Path(tmp)).get("result", "")}
+
+            last_error = None
+            for _ in range(self.max_attempts):
+                result = self._run_claude(blocks, Path(tmp))
+                payload = result.get("structured_output")
+                try:
+                    if payload is None:
+                        parsed = self.response_format.model_validate_json(
+                            CodexAgent._extract_json(result.get("result") or ""))
+                    else:
+                        parsed = self.response_format.model_validate(payload)
+                    return {"structured_response": parsed, "output": result.get("result", "")}
+                except ValidationError as e:
+                    last_error = e
+                    logger.warning(f"Claude reply did not match {self.response_format.__name__}, retrying: {e}")
+            raise ValueError(f"Claude reply never matched {self.response_format.__name__}: {last_error}")
 
 
 class CodexAgent:
@@ -154,14 +267,15 @@ def create_llm_agent(
 ) -> Any:
     """Create an LLM agent with structured output support.
     
-    Supports OpenAI (direct), OpenRouter (for third-party models) and the Codex CLI
-    (ChatGPT subscription).
+    Supports OpenAI (direct), OpenRouter (for third-party models), the Codex CLI
+    (ChatGPT subscription) and the Claude Code CLI (Claude subscription).
 
     Args:
         model: Model name
             - OpenAI direct: "gpt-4o", "gpt-3.5-turbo", etc.
             - OpenRouter: "anthropic/claude-3.5-sonnet", "google/gemini-pro", etc.
             - Codex CLI: "codex:gpt-5.6-sol", etc. (tools and temperature are ignored)
+            - Claude Code CLI: "claude:claude-opus-5-5", etc. (tools and temperature are ignored)
         system_prompt: System prompt for the agent
         response_format: Optional Pydantic model for structured output
         tools: Optional list of tools for the agent
@@ -173,6 +287,8 @@ def create_llm_agent(
     """
     if is_codex_model(model):
         return CodexAgent(model, system_prompt, response_format)
+    if is_claude_cli_model(model):
+        return ClaudeCodeAgent(model, system_prompt, response_format)
 
     # Initialize the chat model with temperature and other parameters
     chat_model = init_chat_model(model, temperature=temperature, **kwargs)

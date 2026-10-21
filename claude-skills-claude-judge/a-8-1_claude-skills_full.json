@@ -1,0 +1,337 @@
+{
+  "id": "a-8-1",
+  "question": "Annotate LC-MS peaks by matching each query m/z against the provided HMDB database using a mass tolerance of +/-0.01 Da, and report up to 3 candidate metabolites per peak ranked by absolute ppm error.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-1/ref_answer/annotations.csv",
+      "eval_guideline": "Per-peak annotation rows must match the reference in query_mz and hmdb_id (exact) and ppm_error within +/-0.001; candidates per peak must be ranked by ascending absolute ppm_error; column order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-8-1/output/annotations.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filename annotations.csv is identical in both, and both are CSV files. The candidate is the only output and is the peak annotation table the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare LC-MS peak annotation tables: for each query_mz, the candidate hmdb_id values must match the reference exactly, ppm_error must agree within +/-0.001, and up to 3 candidates per peak must be ranked by ascending absolute ppm_error. Column order may differ and extra columns are allowed."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a deterministic database lookup, and the guideline asks for a record-level match: query_mz and hmdb_id must be exact and ppm_error must be within ±0.001. Column order and extra columns are allowed to differ, so approximate alignment is the right choice.",
+      "strategy_error": null,
+      "similarity": 0.9999703512067837,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "query_mz": "query_mz",
+            "hmdb_id": "hmdb_id",
+            "name": "name",
+            "formula": "formula",
+            "exact_mass": "theoretical_mass",
+            "mz_error": "mass_error_da",
+            "ppm_error": "ppm_error",
+            "smiles": null,
+            "inchi_key": null
+          },
+          "id_columns": [
+            "query_mz",
+            "hmdb_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "query_mz,hmdb_id",
+          "check_permutation": true,
+          "reasoning": "The two tables have the same layout, one annotation row per peak and candidate, so no transpose is needed. Columns with the same name map directly: query_mz, hmdb_id, name, formula and ppm_error. Two columns have different names but mean the same thing: exact_mass maps to theoretical_mass, and mz_error maps to mass_error_da. smiles and inchi_key exist only in the reference, so they have no candidate match. The extra candidate column 'rank' is allowed by the guideline. Rows are matched on the composite key (query_mz, hmdb_id). query_mz is copied unchanged from the input, and hmdb_id is a database identifier. Together they uniquely identify each peak–candidate annotation. Because rows are matched by key, global row order doesn't matter, so rows are sorted by the key and checked as a permutation. Ranking within each peak can still be checked separately by ascending absolute ppm_error. The candidate's mass and ppm errors have the opposite sign to the reference (reference error = theoretical − observed). The guideline compares ppm_error within ±0.001, so this sign difference will matter when values are compared, but it doesn't affect how the tables are aligned.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ppm_error",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0001,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is the key metric, with a tolerance of ±0.001 ppm. Values are about 10–15 ppm, so a relative tolerance of 1e-4 is roughly equivalent. The sign convention differs between files, and ranking uses the absolute ppm error, so absolute values are compared."
+            },
+            {
+              "name": "mz_error",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "This is the same quantity in Da, and the sign convention differs here too. Absolute values are compared with a small relative tolerance to allow for rounding."
+            },
+            {
+              "name": "exact_mass",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "This is the monoisotopic mass taken from HMDB, so it should match almost exactly."
+            },
+            {
+              "name": "name",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The metabolite name is determined by hmdb_id and should match exactly."
+            },
+            {
+              "name": "formula",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The molecular formula comes from the database and should match exactly."
+            }
+          ],
+          "overall_reasoning": "The rows are aligned on query_mz and hmdb_id, so those two columns are left out of the comparison. The guideline asks for ppm_error to match within ±0.001. Since that is an absolute tolerance, I converted it to a relative one: 0.001 / ~15 ppm is about 6.7e-5, so I set an RAE tolerance of 1e-4. The candidate uses the opposite sign convention for both ppm_error and mz_error (theoretical − observed instead of observed − theoretical). The task ranks candidates by absolute ppm error and doesn't fix the sign, so I set compare_abs=true for both columns. exact_mass comes straight from the database, so it uses a tight RAE. name and formula are database-derived strings, so they use exact matching. Extra columns (smiles, inchi_key, rank) are allowed to differ, so they aren't compared.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "query_mz",
+            "hmdb_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "query_mz": "query_mz",
+              "hmdb_id": "hmdb_id",
+              "name": "name",
+              "formula": "formula",
+              "exact_mass": "theoretical_mass",
+              "mz_error": "mass_error_da",
+              "ppm_error": "ppm_error"
+            },
+            "unmapped_ref": [
+              "smiles",
+              "inchi_key"
+            ],
+            "unmapped_alt": [
+              "rank"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "query_mz",
+              "hmdb_id"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {
+              "query_mz": 4
+            },
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "mz_error",
+              "ppm_error",
+              "formula",
+              "name",
+              "hmdb_id",
+              "query_mz",
+              "exact_mass"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "mz_error": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ppm_error": [
+                "float64",
+                "float64",
+                true
+              ],
+              "formula": [
+                "str",
+                "str",
+                true
+              ],
+              "name": [
+                "str",
+                "str",
+                true
+              ],
+              "hmdb_id": [
+                "str",
+                "str",
+                true
+              ],
+              "query_mz": [
+                "str",
+                "str",
+                true
+              ],
+              "exact_mass": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "query_mz",
+              "hmdb_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['smiles', 'inchi_key']",
+            "Unmapped candidate columns: ['rank']",
+            "Sorted both dataframes by ['query_mz', 'hmdb_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "exact_mass",
+            "formula",
+            "mz_error",
+            "name",
+            "ppm_error"
+          ],
+          "filtered_columns": [
+            "exact_mass",
+            "formula",
+            "mz_error",
+            "name",
+            "ppm_error"
+          ],
+          "overall_similarity": 0.9999703512067837,
+          "per_column_similarities": {
+            "exact_mass": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "formula": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            },
+            "mz_error": {
+              "similarity": 0.9998627685448278,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "name": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            },
+            "ppm_error": {
+              "similarity": 0.9999889874890909,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.0001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.875,
+            "col_recall": 0.7777777777777778,
+            "col_f1": 0.823529411764706,
+            "col_jaccard": 0.7,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 9,
+            "alt_cols": 8,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              9
+            ],
+            "alt_shape": [
+              2,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": 1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "mz_error": true,
+              "ppm_error": true,
+              "formula": true,
+              "name": true,
+              "hmdb_id": true,
+              "query_mz": true,
+              "exact_mass": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

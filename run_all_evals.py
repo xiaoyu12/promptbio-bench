@@ -15,6 +15,7 @@ results is written to <output-dir>/summary_<label>.tsv.
 Usage:
     python run_all_evals.py                      # ChatGPT subscription via Codex CLI
     python run_all_evals.py --model gpt-5.6      # OpenAI API instead
+    python run_all_evals.py --model claude:claude-opus-5-5 --output-dir results-claude  # Claude subscription
     python run_all_evals.py --workers 8 --tasks a-6-9,a-1-1
 """
 
@@ -58,7 +59,11 @@ def _already_done(task_id: str, args) -> bool:
 
 
 USAGE_LIMIT_MARKERS = ("You've hit your usage limit", "You’ve hit your usage limit", "insufficient_quota",
-                       "credit_balance_exhausted")
+                       "credit_balance_exhausted",
+                       # Claude Code CLI (claude: models)
+                       "usage limit reached", "Usage limit reached", "You've hit your limit",
+                       "You’ve hit your limit", "out of extra usage",
+                       "hit your session limit", "session limit · resets")
 
 
 def _hit_usage_limit(task_id: str, args) -> bool:
@@ -129,7 +134,7 @@ def main():
     parser.add_argument("--output-dir", type=Path, default=Path("results"))
     parser.add_argument("--label", default="claude-skills")
     parser.add_argument("--model", default="codex:gpt-6.1-sol",
-                        help="Eval LLM; 'codex:<model>' uses the ChatGPT subscription via the Codex CLI, "
+                        help="Eval LLM; 'codex:<model>' uses the ChatGPT subscription via the Codex CLI, 'claude:<model>' the Claude subscription via the Claude Code CLI, "
                              "a bare model name uses the OpenAI API")
     parser.add_argument("--workers", type=int, default=4, help="Number of tasks evaluated in parallel")
     parser.add_argument("--tasks", help="Comma-separated subset of task ids to evaluate")

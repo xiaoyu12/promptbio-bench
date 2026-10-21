@@ -1,0 +1,134 @@
+{
+  "id": "b-11-5",
+  "question": "Analyze gene expression data from multiple patients across different time points. Build a hierarchical model with patient-level random effects and time-level fixed effects. Use MCMC sampling to estimate parameters and report posterior distributions for the random effects variance. Set the first time point as the reference level (time_effects[0] = 0) for identifiability.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-11-5/ref_answer/hierarchical_model_summary.txt",
+      "eval_guideline": "Posterior mean and credible interval for each time effect and variance parameter must be present; time effects must increase monotonically across time points; sigma_patient and sigma_error posterior means must be within 20% relative absolute error of the reference.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-11-5/output/hierarchical_model_summary.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are .txt model summary files.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.95; reasoning: Human-readable statistical report: a summary of a hierarchical Bayesian model with a title, separator line, descriptions of the model structure, and an ArviZ-style posterior summary header. It doesn't match any specific structured format."
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Hierarchical model with patient-level random effects and time-level fixed effects fit by MCMC (time_effects[0]=0 reference). Check that the posterior mean and credible interval are reported for each time effect and variance parameter, that time effects increase monotonically across time points, and that the sigma_patient and sigma_error posterior means are within 20% relative absolute error of the reference."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a text summary from stochastic MCMC sampling. The guideline mixes structural checks (estimates present, time effects increasing) with a 20% tolerance on the sigma posterior means, so an LLM-based semantic comparison that checks content and tolerances fits best.",
+      "strategy_error": null,
+      "similarity": 0.96,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.95,
+        "explanation": "Both files describe the same model: 150 observations, 30 patient random intercepts, 5 time points, and time_effects[0] = 0 as the reference level.\n\nPosterior means, candidate vs reference (ratio):\n- intercept: 4.728 vs 4.731 (0.999)\n- T1: 0.669 vs 0.672 (0.996)\n- T2: 1.157 vs 1.162 (0.996)\n- T3: 1.796 vs 1.801 (0.997)\n- T4: 2.229 vs 2.233 (0.998)\n- sigma_patient: 1.272 vs 1.271 (1.001; relative error about 0.1%, well inside the 20% limit)\n- sigma_error (called sigma_residual in the candidate): 0.809 vs 0.808 (1.001; relative error about 0.1%)\n\nThe candidate uses a different name for the error SD (sigma_residual instead of sigma_error), but it plays the same role in the model.\n\nStandard deviations are nearly the same (for example, 0.207 vs 0.209, 0.185 vs 0.186, and 0.054 vs 0.053). The 94% HDIs also match closely. For example, sigma_patient is [0.940, 1.613] vs [0.944, 1.626], and T4 is [1.848, 2.616] vs [1.828, 2.611].\n\nRandom-effects variance (sigma_patient^2): mean 1.651 in both, median 1.572 vs 1.563, and 95% credible interval [0.922, 2.854] vs [0.916, 2.864]. These are essentially identical.\n\nThe time effects increase monotonically: 0 < 0.669 < 1.157 < 1.796 < 2.229. Every time effect and variance parameter has a posterior mean and credible interval, and the candidate reports both equal-tailed intervals and HDIs.\n\nDifferences:\n- The candidate's ESS values for the time effects are lower (about 4,300–4,800 vs about 10,000–11,000). This is just a difference in sampler settings and does not affect the conclusions.\n- The candidate adds extra results the reference does not have: the ICC, sigma_residual^2, each patient's random effect, and sampler diagnostics.\n\nAll criteria in the evaluation guideline are met.",
+        "ref_length": 1216,
+        "alt_length": 6559
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-11-5/ref_answer/random_effects_variance_posterior.csv",
+      "eval_guideline": "Column means must be within 20% relative absolute error of the reference; sample count may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-11-5/output/random_effects_variance_posterior.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are .csv files of posterior samples.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The output is a set of MCMC posterior samples, so it is stochastic. The guideline compares column means within 20% relative error and allows the sample count to differ. That calls for an aggregate distribution comparison, not row-by-row matching.",
+      "strategy_error": null,
+      "similarity": 0.7174579962635299,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              8000,
+              2
+            ],
+            "alt_shape": [
+              8000,
+              6
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "row_sim": 1.0,
+          "col_sim": 0.0,
+          "col_jaccard": 0.3333333333333333,
+          "score": 0.4444444444444444
+        },
+        "missing": {
+          "ref_missing_rate": 0.0,
+          "alt_missing_rate": 0.0,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 0.7079295443461451,
+          "hellinger_distance": 0.2920704556538549,
+          "ref_count": 16000,
+          "alt_count": 48000
+        },
+        "categorical_distribution": null,
+        "component_scores": {
+          "structural": 0.4444444444444444,
+          "missing": 1.0,
+          "numeric": 0.7079295443461451,
+          "categorical": null
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-11-5/ref_answer/trace_plot.png",
+      "eval_guideline": "Trace plot must show MCMC sample paths over iterations for all population-level parameters (intercept, time effects, patient-level SD, and error SD); axis labels, color scheme, and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-11-5/output/trace_plot.png",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are .png MCMC trace plot images.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is an MCMC trace plot image, and MCMC sampling is stochastic. The guideline asks whether the plot shows the required parameter traces and allows the styling to differ, so a semantic visual comparison fits.",
+      "strategy_error": null,
+      "similarity": 0.9,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.88,
+        "explanation": "Both images are ArviZ-style trace plots. Each has posterior densities on the left and MCMC traces on the right, with 4 chains and about 2000 draws per chain.\n\nReference rows: intercept, time_effects, sigma_patient and sigma_error.\n\nCandidate rows: intercept, time_effects, sigma_patient, sigma_patient_squared, sigma_residual and patient_effects.\n\nMatching parameters:\n- **Intercept:** centered near 4.7, ranging from about 3.5 to 5.7, in both.\n- **Time effects:** in both, time_effects[0] is fixed at 0 (a flat line in the trace), and the other effects center near 0.7, 1.15, 1.8 and 2.25, with the same colors (orange, green, red, purple).\n- **Patient-level SD:** sigma_patient peaks near 1.2 with a right tail to about 2.3 in both.\n- **Error SD:** the reference's sigma_error and the candidate's sigma_residual both peak near 0.80 and range from about 0.65 to 1.05. Only the name differs.\n\nThe traces in both look well mixed and stationary, and the chains overlap. All the population-level parameters required by the guideline are present, and their posterior values agree closely.\n\nDifferences:\n- The candidate adds the variance (sigma_patient_squared) and the per-patient random effects.\n- It also names the error term \"sigma_residual\" instead of \"sigma_error\".\n- It adds a title.\n\nThese additions do not contradict the reference; they add information that fits the task. The scientific content is effectively the same."
+      },
+      "comparison_error": null
+    }
+  ]
+}

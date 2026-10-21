@@ -1,0 +1,136 @@
+{
+  "id": "a-12-3",
+  "question": "Given a CSV file containing a fruit fly gene symbol, find its human ortholog(s).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-12-3/ref_answer/human_orthologs.csv",
+      "eval_guideline": "The human_symbol values must exactly match the reference (no extra, no missing orthologs); extra columns and row order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-12-3/output/human_orthologs.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named human_orthologs.csv and are CSVs (format inferred from the extension). The candidate is the only file the agent produced, and it holds the ortholog result the task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Given a fruit fly gene symbol, find its human ortholog(s). Compare the set of human_symbol values: they must exactly match the reference with no extra and no missing orthologs. Extra columns and row order may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "Ortholog lookup is deterministic. The guideline requires the set of human_symbol values to match exactly but allows extra columns and any row order, which the approximate strategy's alignment handles.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "human_symbol": "human_symbol"
+          },
+          "id_columns": [
+            "human_symbol"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "human_symbol",
+          "check_permutation": true,
+          "reasoning": "The reference has only one column, human_symbol, and the candidate has a column with exactly the same name. The candidate's other 12 columns are extra metadata, which the guideline allows, so they are dropped. The result is an unordered set of orthologs, so human_symbol is used as the row key, rows are sorted by it, and the permutation check is on. No transpose is needed.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [],
+          "overall_reasoning": "The only column in the reference is human_symbol, and it's the ID column used for alignment. The guideline says the human_symbol set must match exactly, with no extra and no missing orthologs, and that extra columns don't count. So the score comes entirely from the row alignment on human_symbol: matched rows versus extra or missing ones. That leaves no data columns to compare. The candidate's extra columns (fly_symbol, IDs, percent identities, confidence and so on) aren't in the reference, so they are ignored.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "human_symbol"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "human_symbol": "human_symbol"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "fly_symbol",
+              "fly_flybase_id",
+              "human_hgnc_id",
+              "human_ensembl_id",
+              "ensembl_compara_type",
+              "human_perc_id",
+              "fly_perc_id",
+              "alliance_confidence",
+              "is_best_score",
+              "is_best_reverse",
+              "n_methods_supporting",
+              "methods_supporting"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "human_symbol"
+            ],
+            "matched_rows": 1,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "human_symbol"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "human_symbol": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "human_symbol"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['fly_symbol', 'fly_flybase_id', 'human_hgnc_id', 'human_ensembl_id', 'ensembl_compara_type', 'human_perc_id', 'fly_perc_id', 'alliance_confidence', 'is_best_score', 'is_best_reverse', 'n_methods_supporting', 'methods_supporting']",
+            "Sorted both dataframes by ['human_symbol']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [],
+          "overall_similarity": 1.0,
+          "row_key_overlap": {
+            "matched_rows": 1,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "notes": [
+            "No columns available for comparison",
+            "Scored by overlap of row keys (F1)"
+          ]
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

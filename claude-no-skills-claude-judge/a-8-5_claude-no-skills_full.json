@@ -1,0 +1,290 @@
+{
+  "id": "a-8-5",
+  "question": "Select the top 50 most variable metabolites (by variance across samples, computed on raw values) and perform a one-sided (alternative='greater') Fisher's exact test to identify enriched metabolic pathways. Use the SUPER_PATHWAY column in the metabolomics metadata and report one row per pathway.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-5/ref_answer/Fisher_results.tsv",
+      "eval_guideline": "Per-pathway rows must match the reference in Overlap and Pathway_Size (exact integers), and Odds_Ratio and P_Value within 1% relative absolute error; row order and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-8-5/output/Fisher_results.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filename is identical (Fisher_results.tsv) and both are TSV files. The candidate is the only file the agent produced, and it matches the task's Fisher enrichment output.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Top 50 most variable metabolites (variance on raw values) tested with a one-sided (greater) Fisher's exact test for SUPER_PATHWAY enrichment, one row per pathway. Match rows by pathway name. Overlap and Pathway_Size must be exact integers. Odds_Ratio and P_Value must be within 1% relative error. Row and column order may differ."
+      },
+      "strategy_confidence": 0.93,
+      "strategy_reasoning": "The task is deterministic: variance-based selection followed by Fisher's exact test. The guideline asks for per-pathway record matching, with exact integers for Overlap and Pathway_Size, a 1% relative tolerance for Odds_Ratio and P_Value, and row and column order allowed to differ, so approximate is the right fit.",
+      "strategy_error": null,
+      "similarity": 0.5003338523768943,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Pathway": "Pathway",
+            "Overlap": "Overlap",
+            "Pathway_Size": "Pathway_Size",
+            "Odds_Ratio": "Odds_Ratio",
+            "P_Value": "P_Value"
+          },
+          "id_columns": [
+            "Pathway"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Pathway",
+          "check_permutation": true,
+          "reasoning": "Both tables have one row per SUPER_PATHWAY, and the same 8 pathway names appear in each. All five reference columns have exact matches in the candidate. The candidate's extra columns (FDR_BH, Expected, Overlap_Metabolites) are not mapped. Rows are matched on Pathway, the categorical identifier. The guideline says row order doesn't matter, so rows are sorted by Pathway before comparing. No transpose is needed. Note that the values differ a lot: for example, Carbohydrate is 7/31 in the reference and 9/46 in the candidate. The pathway sizes are also bigger in the candidate, which points to a different background universe. That is a content mismatch, not a structural one.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Overlap",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "The number of top-variable metabolites in each pathway is an integer count. The guideline requires an exact match, so tolerance is 0."
+            },
+            {
+              "name": "Pathway_Size",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Pathway size is an integer count. The guideline requires an exact match, so tolerance is 0."
+            },
+            {
+              "name": "Odds_Ratio",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline allows 1% relative absolute error. A reference value of 0 (peptide) needs the candidate to be exactly 0 or very close to it."
+            },
+            {
+              "name": "P_Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is the one-sided Fisher p-value, and the guideline allows 1% relative absolute error."
+            }
+          ],
+          "overall_reasoning": "The evaluation guideline says each pathway row must match the reference in Overlap and Pathway_Size exactly (integers), and in Odds_Ratio and P_Value within 1% relative absolute error. The comparison therefore covers only these four columns. Overlap and Pathway_Size use RAE with tolerance 0, which means they must match exactly. Odds_Ratio and P_Value use RAE with tolerance 0.01. The candidate's extra columns (FDR_BH, Expected, Overlap_Metabolites) are not in the reference, so they are not compared. Pathway is the ID column used to line up the rows and is excluded. In this preview the candidate's Pathway_Size values (for example, 114 vs 83 for aminoacid) and its Overlap counts differ from the reference. The candidate probably used a different metabolite universe or a different filtering step, so most rows are likely to fail.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "Pathway"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Pathway": "Pathway",
+              "Overlap": "Overlap",
+              "Pathway_Size": "Pathway_Size",
+              "Odds_Ratio": "Odds_Ratio",
+              "P_Value": "P_Value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "FDR_BH",
+              "Expected",
+              "Overlap_Metabolites"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Pathway"
+            ],
+            "matched_rows": 8,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Pathway_Size",
+              "P_Value",
+              "Odds_Ratio",
+              "Pathway",
+              "Overlap"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Pathway_Size": [
+                "int64",
+                "int64",
+                true
+              ],
+              "P_Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Odds_Ratio": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Pathway": [
+                "str",
+                "str",
+                true
+              ],
+              "Overlap": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Pathway"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['FDR_BH', 'Expected', 'Overlap_Metabolites']",
+            "Sorted both dataframes by ['Pathway']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Odds_Ratio",
+            "Overlap",
+            "P_Value",
+            "Pathway_Size"
+          ],
+          "filtered_columns": [
+            "Odds_Ratio",
+            "Overlap",
+            "P_Value",
+            "Pathway_Size"
+          ],
+          "overall_similarity": 0.5003338523768943,
+          "per_column_similarities": {
+            "Odds_Ratio": {
+              "similarity": 0.4892643397909751,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Overlap": {
+              "similarity": 0.3392857142857143,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "P_Value": {
+              "similarity": 0.8235165794471875,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Pathway_Size": {
+              "similarity": 0.3492687759837002,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.625,
+            "col_recall": 1.0,
+            "col_f1": 0.7692307692307693,
+            "col_jaccard": 0.625,
+            "ref_rows": 8,
+            "alt_rows": 8,
+            "row_intersection": 8,
+            "ref_cols": 5,
+            "alt_cols": 8,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              8,
+              5
+            ],
+            "alt_shape": [
+              8,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Pathway_Size": true,
+              "P_Value": true,
+              "Odds_Ratio": true,
+              "Pathway": true,
+              "Overlap": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

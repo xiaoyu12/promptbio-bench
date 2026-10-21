@@ -1,0 +1,267 @@
+{
+  "id": "a-7-1",
+  "question": "Use BLAST to find the top 3 similar proteins to human hemoglobin (HBB) in mice.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-1/ref_answer/top3_mouse_proteins.tsv",
+      "eval_guideline": "Hit records must match the reference in protein accession, alignment length, bit score, and evalue; row order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-7-1/output/top3_mouse_proteins.tsv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical (top3_mouse_proteins.tsv), and both paths point to a TSV file holding the top 3 mouse BLAST hits for human HBB.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Use BLAST to find the top 3 similar proteins to human hemoglobin (HBB) in mice. Hit records must match the reference in protein accession, alignment length, bit score, and evalue; row order and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "BLAST output tables come from a deterministic search, and the guideline asks for each hit record to match on accession, alignment length, bit score and evalue while allowing row order and header labels to differ. That is the kind of difference approximate alignment is built to tolerate.",
+      "strategy_error": null,
+      "similarity": 0.671740589030835,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "accession": "accession",
+            "length": "length",
+            "score": "score",
+            "evalue": "evalue"
+          },
+          "id_columns": [
+            "accession"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables are already in the same layout (one row per BLAST hit), so no transpose is needed. Every reference column has a candidate column with the same name. The reference 'score' values (641, 636, 595) are on the same scale as the candidate's raw 'score' column (641, 636, 592), not its 'bitscore' column (251, 249, 232), so score maps to score. The reference 'length' of 147 matches both the candidate's 'length' and 'alignment_length'. I mapped it to 'length' because the names are identical and the values are the same. The extra candidate columns (rank, protein_name, gene, percent_identity, bitscore) are left out. The guideline says hit records must match on protein accession, so accession is the row key. Row order and header labels may differ, so the comparison ignores row order and checks for permutations. Note that the reference uses RefSeq accessions (NP_...) and the candidate uses UniProt accessions (P02088, ...). Keying on accession will therefore flag these rows as not matching, which is the right result if exact accession matching is required.",
+          "confidence": 0.8
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Alignment length is an integer that the guideline says must match, so it has to be exactly equal for each accession."
+            },
+            {
+              "name": "score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.02,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline requires the BLAST score to match for each accession. A 2% relative tolerance allows for small version or database differences, while values that belong to a different hit (e.g. 595 vs 641) still fail."
+            },
+            {
+              "name": "evalue",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.5,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "The e-value has to match for each accession, but it depends on database size and BLAST version. A 50% relative tolerance accepts values with the same order of magnitude and similar leading digits, and rejects values that are clearly different."
+            }
+          ],
+          "overall_reasoning": "The guideline says each hit must match the reference on protein accession, alignment length, bit score and e-value. Row order and column headers may differ. Accession is the ID column, so it is used only to line up the rows. The other three reference columns (length, score, evalue) all get a cell-by-cell relative absolute error (RAE) check, so each accession is held to its own values. Correlation-based checks would be unreliable with only 3 rows and would miss values swapped between accessions.\n- **length:** an integer, so it must match exactly (tolerance 0).\n- **score:** values are in the hundreds. A 2% tolerance allows for small differences between BLAST versions or databases, but still catches clear mismatches such as 595 vs 641.\n- **evalue:** e-values change with database size and BLAST version, so they get a looser 50% relative tolerance. This keeps values that agree in order of magnitude and leading digits, and rejects values that are orders of magnitude apart.\n\nThe extra candidate columns (rank, protein_name, gene, bitscore, percent_identity, alignment_length) are not in the reference, so they are not compared.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "accession"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "accession": "accession",
+              "length": "length",
+              "score": "score",
+              "evalue": "evalue"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "rank",
+              "protein_name",
+              "gene",
+              "bitscore",
+              "percent_identity",
+              "alignment_length"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "accession"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {
+              "p02104": "np001265090.1",
+              "p02089": "np058652.1",
+              "p02088": "np001188320.1"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Matched from recalled UniProt and RefSeq accessions, not looked up. P02104 is human HBE1, and NP_001265090.1 is an HBE1 RefSeq protein. P02089 is mouse Hbb-b2 (Hbb-bt), and NP_058652.1 comes from NM_016956 (Hbb-bt). P02088 is mouse Hbb-b1 (Hbb-bs), and NP_001188320.1 is an Hbb-bs RefSeq protein. The two mouse beta-globin entries are the least certain; if they are wrong, they are swapped.",
+              "confidence": 0.75
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "accession",
+              "length",
+              "score",
+              "evalue"
+            ],
+            "converted_columns": [
+              "score"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "accession": [
+                "str",
+                "str",
+                true
+              ],
+              "length": [
+                "int64",
+                "int64",
+                true
+              ],
+              "score": [
+                "float64",
+                "int64",
+                true
+              ],
+              "evalue": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['rank', 'protein_name', 'gene', 'bitscore', 'percent_identity', 'alignment_length']",
+            "Converted 1 column(s) to match reference dtypes"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "evalue",
+            "length",
+            "score"
+          ],
+          "filtered_columns": [
+            "evalue",
+            "length",
+            "score"
+          ],
+          "overall_similarity": 0.671740589030835,
+          "per_column_similarities": {
+            "evalue": {
+              "similarity": 0.06647309445652383,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.5
+              }
+            },
+            "length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "score": {
+              "similarity": 0.9487486726359812,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.02
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 4,
+            "alt_cols": 10,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              4
+            ],
+            "alt_shape": [
+              3,
+              10
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "accession": true,
+              "length": true,
+              "score": true,
+              "evalue": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

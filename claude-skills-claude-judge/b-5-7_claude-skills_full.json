@@ -1,0 +1,260 @@
+{
+  "id": "b-5-7",
+  "question": "Apply spectral clustering to the dataset using the raw feature values (no standardization). Use the RBF kernel with gamma=0.01 to construct the affinity matrix W. Report the 15 smallest eigenvalues (ascending order) of the unnormalized graph Laplacian L, visualize them with the largest eigengap annotated, and determine the optimal number of clusters using the eigengap heuristic.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-7/ref_answer/laplacian_eigenvalues.csv",
+      "eval_guideline": "The 15 eigenvalue records (ascending order) must match the reference within +/-0.01; column naming may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-5-7/output/laplacian_eigenvalues.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are CSV tables of the Laplacian eigenvalues.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the 15 smallest eigenvalues (ascending order) of the unnormalized graph Laplacian L (RBF kernel, gamma=0.01, raw features). Each eigenvalue must match the reference within +/-0.01 absolute; column naming may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "Computing eigenvalues of a Laplacian built from an RBF kernel is deterministic, and the result is a small table of 15 values. The guideline asks for each record to match within +/-0.01 and allows different column names, so approximate value-by-value comparison is the right fit.",
+      "strategy_error": null,
+      "similarity": 0.9333333333333322,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "index": null,
+            "eigenvalue": "eigenvalue"
+          },
+          "id_columns": [],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "eigenvalue",
+          "check_permutation": false,
+          "reasoning": "Both tables have the same shape (15x2) and the same orientation, so no transpose is needed. The task asks for the 15 smallest eigenvalues in ascending order, which makes this an ordered list. Rows should be matched by position (rank), not by the 'index' column. The reference numbers ranks from 0 to 14 and the candidate numbers them from 1 to 15. The eigenvalues line up exactly once that offset is taken into account (ref idx 1 = 3.580373 = cand idx 2). Joining on 'index' would pair the wrong rows, and comparing it would report false mismatches, so 'index' is mapped to null as an ordinal label only. 'eigenvalue' maps to 'eigenvalue' and is compared within ±0.01. The first eigenvalue is about -2.9e-14 in the reference and 0.0 in the candidate, which are effectively equal. Both tables are already sorted ascending, so sorting by eigenvalue first is a harmless safeguard that keeps the rank-by-rank match.",
+          "confidence": 0.9
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "eigenvalue",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "These are the core values the task asks for, and the guideline allows ±0.01. Values run from 0 to about 33, so a relative tolerance of 1e-3 equals about 0.004 to 0.03 in absolute terms for the nonzero eigenvalues. That is a bit looser than ±0.01 for the largest values and stricter near 3.6. The candidate matches the reference to about 6 decimals. The zero eigenvalue (reference -2.9e-14, candidate 0) is numerical noise and may be scored as a mismatch, depending on how the evaluator handles near-zero denominators."
+            },
+            {
+              "name": "index",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is only a position label: the reference counts from 0 and the candidate from 1. It is not a result of the computation, and the guideline says labelling may differ."
+            }
+          ],
+          "overall_reasoning": "The task asks for the 15 smallest eigenvalues of the unnormalized graph Laplacian, listed in ascending order. That makes the eigenvalue column the only one that matters. Rows line up by index because both lists are sorted ascending, and the preview values match to about 6 decimal places.\n\nThe guideline allows an absolute error of ±0.01. Values run from about 0 to about 33, so I compare them with relative absolute error (RAE) at a tolerance of 1e-3. For values from about 3.6 to 33, that is roughly 0.004 to 0.03 in absolute terms. For the bigger eigenvalues this is a little looser than ±0.01 (up to about ±0.03 near 33). It is stricter near 3.6, where ±0.01 would be a relative error of about 0.0028.\n\nThe first eigenvalue is zero in theory. The reference stores it as -2.9e-14 and the candidate as 0.0. Relative error could count that row as a mismatch, depending on how the evaluator handles near-zero denominators. That is a known risk.\n\nThe 'index' column is excluded on purpose. It is just a position label: the reference counts from 0 and the candidate from 1. The guideline also says naming and labelling may differ.",
+          "overall_confidence": 0.8,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "eigenvalue": "eigenvalue"
+            },
+            "unmapped_ref": [
+              "index"
+            ],
+            "unmapped_alt": [
+              "index"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "eigenvalue",
+              "index"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "eigenvalue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "index": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "eigenvalue"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['index']",
+            "Unmapped candidate columns: ['index']",
+            "Sorted both dataframes by ['eigenvalue']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "eigenvalue",
+            "index"
+          ],
+          "filtered_columns": [
+            "eigenvalue"
+          ],
+          "overall_similarity": 0.9333333333333322,
+          "per_column_similarities": {
+            "eigenvalue": {
+              "similarity": 0.9333333333333322,
+              "strategy": "rae",
+              "matching_count": 14,
+              "total_count": 15,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 15,
+            "alt_rows": 15,
+            "row_intersection": 15,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              15,
+              2
+            ],
+            "alt_shape": [
+              15,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "eigenvalue": true,
+              "index": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-7/ref_answer/laplacian_eigenvalues.png",
+      "eval_guideline": "Plot must show the 15 smallest sorted Laplacian eigenvalues as a line with the eigengap annotated; axis labels and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-5-7/output/laplacian_eigenvalues.png",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are PNG plots of the eigenvalues.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a PNG plot, and the guideline asks only that it show the 15 sorted Laplacian eigenvalues as a line with the eigengap annotated, while axis labels and styling may differ. That calls for a semantic check of what the plot shows rather than a pixel-level comparison.",
+      "strategy_error": null,
+      "similarity": 0.96,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.95,
+        "explanation": "The two plots show the same data. Each one draws the 15 smallest sorted eigenvalues of the unnormalized Laplacian as a line with markers. The values match at every point: about 0, 3.6, 9.0, 29.0, 30.9, 32.0, 32.3, 32.6, 32.8, 33.1, 33.6, 33.7, 33.9, 33.9 and 34.1. Both plots mark the largest eigengap between λ3 and λ4. The reference labels it \"eigengap=20.0198\" and the candidate labels it \"20.020\", which is the same value rounded. Both therefore point to k=3. The candidate states \"optimal k = 3\" outright, while the reference only implies it with the gap at index 3. The differences are only in presentation. The reference highlights the gap with a red line segment and a legend. The candidate uses a two-headed red arrow and a dashed vertical line at 3.5. The candidate also has a more detailed title, a grid, and integer ticks on the x-axis. None of these differences change the data or the scientific conclusion."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-7/ref_answer/optimal_k.txt",
+      "eval_guideline": "Must contain a single integer equal to the reference optimal cluster count.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-5-7/output/optimal_k.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are text files giving the optimal number of clusters.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.6; reasoning: The content is just the single character '3'. It's readable text with no headers, delimiters or other structure that would match a specific bioinformatics or data format, so it falls back to 'text'."
+      },
+      "strategy": "numeric",
+      "parameters": {
+        "tolerance": 0
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The guideline asks for a single integer that equals the reference optimal cluster count, and the eigengap calculation on a fixed RBF affinity is deterministic. Numeric comparison with zero tolerance therefore checks for an exact integer match.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "ref_value": 3.0,
+        "alt_value": 3.0,
+        "rae_similarity": 1.0,
+        "rae": 0.0,
+        "tolerance": 0
+      },
+      "comparison_error": null
+    }
+  ]
+}

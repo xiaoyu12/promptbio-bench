@@ -1,0 +1,287 @@
+{
+  "id": "b-6-7",
+  "question": "Perform Factor Analysis on a behavioral or survey dataset to identify underlying latent traits (e.g., anxiety, depression). Use parallel analysis (100 iterations, 95th percentile, random_state=42) to select the number of factors. Report factor loadings.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-6-7/ref_answer/factor_loadings.csv",
+      "eval_guideline": "Each survey item's factor loading values must match the reference within +/-0.05; sign of each factor may be flipped, column order and item label formatting may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-6-7/output/factor_loadings.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are CSV files holding the factor loadings table.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare factor loadings tables from Factor Analysis (number of factors chosen by parallel analysis, 100 iterations, 95th percentile, random_state=42). Each survey item's loading values must match the reference within +/-0.05. The sign of each factor may be flipped (a whole factor column multiplied by -1). Column order, factor order/naming, and item label formatting may differ, so align items by label and match factors by absolute loading pattern."
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The guideline asks for each item's loadings to match within ±0.05, which means comparing records one by one, and the seed is fixed, so 'approximate' is the right choice. It handles flipped factor signs, columns in a different order and differently formatted item labels.",
+      "strategy_error": null,
+      "similarity": 0.24448805025874645,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Item": "Item",
+            "Factor_1": "Factor_1",
+            "Factor_2": "Factor_2",
+            "Factor_3": "Factor_3"
+          },
+          "id_columns": [
+            "Item"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Item",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same layout: survey items are rows and factors are columns, so no transpose is needed. The column names match exactly (Item, Factor_1 to Factor_3), so each column is mapped to the one with the same name. Rows are matched on Item, the survey item label, which uniquely identifies each row; label formatting may differ, so the labels may need normalising. Factor loadings form an unordered set of items, so row order doesn't matter: sort by Item and check for a permutation. Caveat: the reference loadings look unrotated. Factor_1 is negative for every item shown, like a single general factor. The candidate loadings look rotated, e.g. varimax, giving a simple structure. The candidate's Factor_1 roughly matches the reference's Factor_2 in which items it groups, and the guideline allows factor order and sign to differ. So matching factor columns by name may not line them up by meaning, and the actual numbers may not agree within the 0.05 tolerance however they are paired. This plan keeps the name-based mapping, and the factor-to-factor matching is left to the value comparison step.",
+          "confidence": 0.6
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Factor_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.15,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "This compares each item's loading on Factor_1. Absolute values are used because the factor's sign may be flipped. The tolerance roughly matches ±0.05 for loadings of typical size."
+            },
+            {
+              "name": "Factor_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.15,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.6,
+              "reasoning": "This compares each item's loading on Factor_2. Absolute values are used because the factor's sign may be flipped. The tolerance roughly matches ±0.05 for loadings of typical size."
+            },
+            {
+              "name": "Factor_3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.15,
+              "compare_abs": true,
+              "cell_threshold": null,
+              "confidence": 0.55,
+              "reasoning": "This compares each item's loading on Factor_3. Absolute values are used because the factor's sign may be flipped. Many loadings here are small, so relative error is less reliable for this factor."
+            }
+          ],
+          "overall_reasoning": "The task asks for factor loadings per survey item, matched within ±0.05, and allows each factor's sign to be flipped. All three factor columns hold numerical loadings and matter equally. I used cell-by-cell RAE so that every item's loading is checked, rather than only a correlation. I set compare_abs=true because the guideline lets a whole factor's sign flip, and comparing absolute values handles that. The cost is that a sign difference within a single factor would also be ignored. The guideline gives an absolute tolerance of ±0.05. Most substantive loadings are around 0.3–0.8, so I approximated that with a relative tolerance of 0.15. This is loose for very small loadings near zero, which are close to noise anyway. Factors are aligned by column name. If the candidate's factors come out in a different order, the comparison cannot reorder them. In the preview, the reference looks unrotated (every item loads about -0.3 on Factor_1), while the candidate looks rotated (items load mainly on separate factors). This will probably cause real mismatches.",
+          "overall_confidence": 0.6,
+          "id_columns": [
+            "Item"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Item": "Item",
+              "Factor_1": "Factor_1",
+              "Factor_2": "Factor_2",
+              "Factor_3": "Factor_3"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Item"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Factor_3",
+              "Item",
+              "Factor_2",
+              "Factor_1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Factor_3": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Item": [
+                "str",
+                "str",
+                true
+              ],
+              "Factor_2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Factor_1": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Item"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Item']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Factor_1",
+            "Factor_2",
+            "Factor_3"
+          ],
+          "filtered_columns": [
+            "Factor_1",
+            "Factor_2",
+            "Factor_3"
+          ],
+          "overall_similarity": 0.24448805025874645,
+          "per_column_similarities": {
+            "Factor_1": {
+              "similarity": 0.21309006150541934,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.15
+              }
+            },
+            "Factor_2": {
+              "similarity": 0.29367235480678705,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.15
+              }
+            },
+            "Factor_3": {
+              "similarity": 0.2267017344640329,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.15
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 4,
+            "alt_cols": 4,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              4
+            ],
+            "alt_shape": [
+              20,
+              4
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Factor_3": true,
+              "Item": true,
+              "Factor_2": true,
+              "Factor_1": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-6-7/ref_answer/n_factors.txt",
+      "eval_guideline": "The factor count must match the reference exactly; whitespace may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-6-7/output/n_factors.txt",
+      "match_confidence": 0.98,
+      "match_reasoning": "Same filename, and both are text files reporting the number of factors chosen by parallel analysis.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.5; reasoning: The content is just the single character '3'. It has no structure, headers or binary signature that would match a specific format. Because it is readable, it counts as plain text by default rather than unknown."
+      },
+      "strategy": "numeric",
+      "parameters": {
+        "tolerance": 0
+      },
+      "strategy_confidence": 0.85,
+      "strategy_reasoning": "The output is a single integer factor count, and the guideline requires an exact match with whitespace allowed to differ. A numeric comparison with zero tolerance checks that exactly and ignores whitespace and formatting.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "ref_value": 3.0,
+        "alt_value": 3.0,
+        "rae_similarity": 1.0,
+        "rae": 0.0,
+        "tolerance": 0
+      },
+      "comparison_error": null
+    }
+  ]
+}

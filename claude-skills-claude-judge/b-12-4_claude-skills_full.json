@@ -1,0 +1,224 @@
+{
+  "id": "b-12-4",
+  "question": "Using the patient data in survival_data.csv (columns: PatientID, SurvTime, Event, EarlyShrinkage), perform a median split on EarlyShrinkage to create a binary ShrinkageGroup covariate (1 if above median, 0 otherwise). Fit a Cox proportional hazards model with ShrinkageGroup as the covariate, and predict the survival probability at t=52 weeks for each patient.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-12-4/ref_answer/survival_predictions.csv",
+      "eval_guideline": "ShrinkageGroup must match the reference exactly; PredictedSurvival must match within +/-0.05; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-12-4/output/survival_predictions.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both paths end in the same filename, survival_predictions.csv, and both are CSV files. This is the only candidate, and it matches the task's per-patient survival prediction output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Per-patient Cox PH survival predictions at t=52 weeks with a median-split ShrinkageGroup covariate. Align rows by PatientID; ShrinkageGroup must match exactly; PredictedSurvival must match within +/-0.05 absolute; column order and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "Cox model fitting on a median split gives a deterministic per-patient table. The guideline asks for an exact ShrinkageGroup match and a ±0.05 tolerance on PredictedSurvival, and allows column order and headers to differ, so approximate alignment is the right choice.",
+      "strategy_error": null,
+      "similarity": 0.9999999960377983,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "PatientID": "PatientID",
+            "ShrinkageGroup": "ShrinkageGroup",
+            "PredictedSurvival": "PredictedSurvival"
+          },
+          "id_columns": [
+            "PatientID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "PatientID",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same orientation, with one row per patient, so no transpose is needed. The three reference columns have exact name matches in the candidate. The candidate's extra EarlyShrinkage column is an input value and is dropped. PatientID uniquely identifies each patient and is copied from the input unchanged, so rows are matched on it. The task gives a prediction for each patient, not a ranked list, so row order doesn't matter. Sorting both tables by PatientID makes the comparison deterministic.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ShrinkageGroup",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "This is a 0/1 indicator from the median split, and the guideline requires an exact match. RAE with a tolerance of 0 counts a row as matching only when the values are identical. The 1 always means above the median, so the labels can't be swapped."
+            },
+            {
+              "name": "PredictedSurvival",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.17,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.78,
+              "reasoning": "This is the predicted survival probability at 52 weeks, with values of about 0.039 and 0.291. The guideline allows ±0.05 absolute error. A relative tolerance of 0.17 matches that for the 0.29 value but is stricter for the 0.039 value (about ±0.007). This is a compromise because RAE can't apply a fixed absolute tolerance."
+            }
+          ],
+          "overall_reasoning": "This comparison checks the two output columns the task asks for. PatientID is used only to line up the rows, and the candidate's extra EarlyShrinkage column is left out because the task doesn't require it. ShrinkageGroup is a binary 0/1 indicator from a median split, and the guideline says it must match exactly. The 0 and 1 have a fixed meaning (1 = above the median), so they can't be relabelled, which means the right strategy is exact rather than partition. PredictedSurvival comes from the Cox model and takes just two values, about 0.039 and about 0.291, one per group. The guideline allows an absolute error of ±0.05, but the RAE strategy can only measure relative error. A tolerance of 0.17 is about 0.05 divided by 0.29, so it matches the guideline for the higher survival value. For the lower value of 0.039, the same tolerance allows only about ±0.007, which is stricter than the guideline. Choosing a relative tolerance big enough to allow ±0.05 on the low value would be far too loose for the high value.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "PatientID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "PatientID": "PatientID",
+              "ShrinkageGroup": "ShrinkageGroup",
+              "PredictedSurvival": "PredictedSurvival"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "EarlyShrinkage"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "PatientID"
+            ],
+            "matched_rows": 100,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "PredictedSurvival",
+              "PatientID",
+              "ShrinkageGroup"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "PredictedSurvival": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PatientID": [
+                "str",
+                "str",
+                true
+              ],
+              "ShrinkageGroup": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "PatientID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['EarlyShrinkage']",
+            "Sorted both dataframes by ['PatientID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "PredictedSurvival",
+            "ShrinkageGroup"
+          ],
+          "filtered_columns": [
+            "PredictedSurvival",
+            "ShrinkageGroup"
+          ],
+          "overall_similarity": 0.9999999960377983,
+          "per_column_similarities": {
+            "PredictedSurvival": {
+              "similarity": 0.9999999920755965,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 0.17
+              }
+            },
+            "ShrinkageGroup": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 100,
+              "total_count": 100,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.75,
+            "col_recall": 1.0,
+            "col_f1": 0.8571428571428571,
+            "col_jaccard": 0.75,
+            "ref_rows": 100,
+            "alt_rows": 100,
+            "row_intersection": 100,
+            "ref_cols": 3,
+            "alt_cols": 4,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              100,
+              3
+            ],
+            "alt_shape": [
+              100,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "PredictedSurvival": true,
+              "PatientID": true,
+              "ShrinkageGroup": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

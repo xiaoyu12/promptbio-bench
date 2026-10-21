@@ -1,0 +1,193 @@
+{
+  "id": "a-1-9",
+  "question": "Calculate GC content for each sequence in the fasta and save results.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-1-9/ref_answer/gc_content.tsv",
+      "eval_guideline": "Each sequence's GC percentage must match the reference within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-1-9/output/gc_content.tsv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named gc_content.tsv and are TSV tables, which is the expected output of a per-sequence GC content calculation.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Calculate GC content for each sequence in the fasta and save results. Each sequence's GC percentage must match the reference within 1% relative absolute error; column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.93,
+      "strategy_reasoning": "Computing GC content is deterministic, and the guideline asks for a per-sequence match within a 1% tolerance while allowing column order, row order and headers to differ. Approximate alignment of rows and columns with a numeric tolerance fits this.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Sequence_ID": "Sequence_ID",
+            "GC_percent": "GC_percent"
+          },
+          "id_columns": [
+            "Sequence_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Sequence_ID",
+          "check_permutation": true,
+          "reasoning": "Both tables share the same layout, so no transpose is needed. Both reference columns have exact matches in the candidate. The candidate's extra columns (Length, GC_count) are left out of the mapping. Sequence_ID is a unique sequence label taken straight from the input, so it is used as the key to match rows. The guideline says row order doesn't matter, so rows are sorted by Sequence_ID and checked as a permutation. GC_percent is then compared within 1% relative error.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "GC_percent",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "GC percentage is the main output. The guideline requires each value to be within 1% RAE of the reference, so a cell counts as a match when its RAE is 0.01 or less."
+            }
+          ],
+          "overall_reasoning": "The task asks for the GC content of each sequence, so GC_percent is the only reference column that needs comparing. Sequence_ID is used only to line up the rows and is left out of the comparison. The candidate also has Length and GC_count columns. These are not in the reference, so they are not compared. GC_percent is a float percentage, so it is compared cell by cell using relative absolute error (RAE) with a tolerance of 0.01. This matches the guideline that each value must be within 1% RAE of the reference. One reference value (seq3) is 0.0. That cell can only match if the candidate value is also exactly 0, which it is here.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Sequence_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Sequence_ID": "Sequence_ID",
+              "GC_percent": "GC_percent"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Length",
+              "GC_count"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Sequence_ID"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Sequence_ID",
+              "GC_percent"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Sequence_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "GC_percent": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Sequence_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Length', 'GC_count']",
+            "Sorted both dataframes by ['Sequence_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "GC_percent"
+          ],
+          "filtered_columns": [
+            "GC_percent"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "GC_percent": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              2
+            ],
+            "alt_shape": [
+              5,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Sequence_ID": true,
+              "GC_percent": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

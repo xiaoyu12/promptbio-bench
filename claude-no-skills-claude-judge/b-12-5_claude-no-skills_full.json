@@ -1,0 +1,189 @@
+{
+  "id": "b-12-5",
+  "question": "Evaluate a linear regression model for predicting daily hospital admissions using time series cross-validation with 5 folds. Use the previous 7 days of admissions as features (lag=7). Use an expanding-window split: divide the N samples (after lag windowing) into 6 equal segments of size N//6; for fold i (i=1..5), train on the first i segments and test on segment i+1. Report the mean and standard deviation of RMSE across folds.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-12-5/ref_answer/hospital_admissions_cv_results.csv",
+      "eval_guideline": "Per-fold RMSE values must match the reference within 2% relative absolute error; the Mean row's RMSE must match within 2% relative absolute error and the Std row's RMSE must match within 15% relative absolute error; column order and decimal precision may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-12-5/output/hospital_admissions_cv_results.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The two filenames are identical and both files are CSVs holding the cross-validation RMSE results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare time-series CV results for linear regression (lag=7, 5-fold expanding window) predicting daily hospital admissions. Per-fold RMSE values must match the reference within 2% relative absolute error; the Mean row RMSE must match within 2% and the Std row RMSE within 15% relative absolute error. Column order and decimal precision may differ."
+      },
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "The task is deterministic (fixed expanding-window splits, OLS regression) and the output is a small table of per-fold RMSE values plus Mean and Std rows. Each value should be checked on its own against the guideline's tolerances, so approximate fits and also allows for column-order and precision differences.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999999,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Fold": "Fold",
+            "RMSE": "RMSE"
+          },
+          "id_columns": [
+            "Fold"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same row layout: Fold rows 1 to 5, then Mean and Std. The reference columns Fold and RMSE match candidate columns with exactly the same names. The candidate's extra columns, Train_Size and Test_Size, are not in the reference, so they are ignored. Fold uniquely identifies each row and is a label, not a computed value, so it is used as the key for matching rows. Because rows are matched by Fold, their order does not matter. No transpose is needed.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "RMSE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.02,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "RMSE values are compared row by row for the folds, Mean and Std. The guideline sets a 2% RAE limit for the per-fold and Mean rows, so the tolerance is 0.02. The Std row is allowed 15%, but only one tolerance can be set per column, so it is checked at 2% here, which is stricter than required. The values match exactly in this case."
+            }
+          ],
+          "overall_reasoning": "The only data column shared by both tables is RMSE; Fold is the ID column used for alignment. The candidate also has Train_Size and Test_Size columns that the reference does not, so they are not compared. RMSE is compared row by row using relative absolute error (RAE). The guideline allows 2% error for the per-fold rows and the Mean row, and 15% for the Std row. Only one tolerance can be set per column, so I used 0.02 because it is what 6 of the 7 rows require. The catch is that the Std row gets checked against 2% instead of 15%, which is stricter than the guideline. In this data that doesn't matter: the candidate's values match the reference exactly, Std row included.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "Fold"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Fold": "Fold",
+              "RMSE": "RMSE"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Train_Size",
+              "Test_Size"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Fold"
+            ],
+            "matched_rows": 7,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "RMSE",
+              "Fold"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "RMSE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Fold": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Train_Size', 'Test_Size']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "RMSE"
+          ],
+          "filtered_columns": [
+            "RMSE"
+          ],
+          "overall_similarity": 0.9999999999999999,
+          "per_column_similarities": {
+            "RMSE": {
+              "similarity": 0.9999999999999999,
+              "strategy": "rae",
+              "matching_count": 7,
+              "total_count": 7,
+              "error": null,
+              "details": {
+                "tolerance": 0.02
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 7,
+            "alt_rows": 7,
+            "row_intersection": 7,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              7,
+              2
+            ],
+            "alt_shape": [
+              7,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "RMSE": true,
+              "Fold": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

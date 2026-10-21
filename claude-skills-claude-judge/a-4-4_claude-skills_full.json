@@ -1,0 +1,40 @@
+{
+  "id": "a-4-4",
+  "question": "Identify enriched motifs in the given sequences using MEME.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-4-4/ref_answer/meme.txt",
+      "eval_guideline": "Discovered motif position weight matrices and motif E-values must match the reference; tool metadata, timestamps, and whitespace may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-4-4/output/meme.txt",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named meme.txt, which is MEME's standard plain-text results file. This is the only candidate file and it fits the motif discovery task.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "llm",
+        "status": "success",
+        "extension": "txt",
+        "note": "llm: confidence: 0.95; reasoning: Human-readable MEME motif discovery output (meme.txt) with a banner header and version info; not a specific structured bioinformatics format listed."
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Identify enriched motifs in the given sequences using MEME. Compare the discovered motifs: their position weight matrices (letter-probability matrices), consensus sequences, widths, and E-values must match the reference. Ignore differences in tool metadata, version, command line, timestamps, and whitespace."
+      },
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "The guideline says the motif PWMs and E-values must match, while tool metadata, timestamps and whitespace may differ. A semantic comparison can check those key results in MEME's long, semi-structured text report and ignore the header and run-info lines that would throw off line-by-line exact or approximate matching.",
+      "strategy_error": null,
+      "similarity": 0.15,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "not equivalent",
+        "confidence": 0.92,
+        "explanation": "The two files ran MEME on the same input (20 sequences, each 156 bp) but with very different settings, so the motifs and E-values they report don't match.\n\n**Parameter differences**\n- Reference: `-mod zoops -nmotifs 5 -revcomp -minw 6 -maxw 15`.\n- Candidate: `-mod anr -nmotifs 3 -minw 6 -maxw 50 -markov_order 0`, searching only the given strand (no `-revcomp`).\n- Because the reference searched both strands, its background frequencies are symmetric (A/T 0.254, C/G 0.246). The candidate's are not (A 0.255, C 0.227, G 0.266, T 0.252).\n\n**Motif-by-motif comparison**\n- **MEME-1:**\n  - Reference: ATGATGVR, width 8, 15 sites, E = 4.7e-04. The last two positions vary: position 7 is A/C/G/T at 0.2/0.33/0.33/0.13, and position 8 is A/G at 0.67/0.33.\n  - Candidate: ATGATG, width 6, 27 sites, E = 4.6e-17. Position 6 is G 0.926 / C 0.074.\n  - Both share the ATGATG core. However, the width, matrix, site count and E-value all differ; the E-values are about 13 orders of magnitude apart.\n  - The candidate's MEME-1 effectively merges the reference's MEME-1 (sites near position 51/76) with its MEME-2 (sites near position 100).\n- **Reference MEME-2:** VATGATG, E = 1.9e+03. The candidate has no separate motif like this.\n- **Reference MEME-3:** GAVTCCGTGKYGTC, E = 1.1e+05. Missing from the candidate.\n- **Reference MEME-4:** GCCCGWYCCGTGC, E = 2.0e+05. Missing from the candidate.\n- **Reference MEME-5:** CGAAGCCC, E = 2.8e+05. Missing from the candidate.\n- **Candidate MEME-2:** CCCCTYCC, E = 6.0e+02. Has no counterpart in the reference.\n- **Candidate MEME-3:** THCYMKDWKTABSAHTMABGC, width 21, E = 1.6e+03. Has no counterpart in the reference.\n- **Overall:** the candidate reports 3 motifs and the reference reports 5.\n\n**Other differences**\n- Site positions and p-values differ (for example, 3.15e-05 in the reference vs 2.92e-04 in the candidate for ATGATG sites).\n- The combined block diagrams also differ.\n\nThe only real overlap is the ATGATG core. The guideline requires the motif PWMs and E-values to match, and they don't, so the candidate is not equivalent.",
+        "ref_length": 34495,
+        "alt_length": 25157
+      },
+      "comparison_error": null
+    }
+  ]
+}

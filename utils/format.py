@@ -1,6 +1,7 @@
 """File signature detection and utilities."""
 
 from __future__ import annotations
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Optional, Dict, Set, Any
@@ -153,7 +154,7 @@ class FormatDetector:
         "txt": "text", "log": "text",
     }
     
-    def __init__(self, fallback: Method = "llm", model: str = "gpt-5.4", n_lines: int = 10, comment_char: str = "#"):
+    def __init__(self, fallback: Method = "llm", model: Optional[str] = None, n_lines: int = 10, comment_char: str = "#"):
         """Initialize FormatDetector.
         
         Args:
@@ -161,18 +162,19 @@ class FormatDetector:
                 - "none": no fallback, return "unknown"
                 - "extension": use extension-based detection
                 - "llm": use LLM inference, then extension as final resort
-            model: Model name for LLM inference (e.g. "gpt-5.4")
+            model: Model name for LLM inference (e.g. "gpt-5.4"); defaults to the run's eval model
+                (see _default_model)
             n_lines: Number of lines to use for detection (default: 10).
             comment_char: Character used to identify comment lines (default: "#").
         """
         self.fallback = fallback
-        self.model = model
+        self.model = model or _default_model()
         self.n_lines = n_lines
         self.comment_char = comment_char
         
     # ---------- main function ----------
     
-    def detect(self, path: str, fallback: Method = "none", model: str = "gpt-5.4") -> FileSignature:
+    def detect(self, path: str, fallback: Method = "none", model: Optional[str] = None) -> FileSignature:
         """Detect file format, compression, and text/binary nature from file signature.
         
         Uses binary signatures, magic bytes, and content heuristics to detect format.
@@ -1055,7 +1057,17 @@ def detect_format_from_extension(file_path: str) -> Format:
     return FormatDetector.EXTENSION_MAP.get(ext, "unknown")
 
 
-def detect_file_signature(path: str, fallback: Method = "llm", model: str = "gpt-5.4") -> FileSignature:
+def _default_model() -> str:
+    """Model for LLM format inference when the caller passes none.
+
+    run_eval.py exports its --model as EVAL_MODEL, so handlers that detect formats without
+    being handed a model (e.g. during file validation) use the same model as the rest of the
+    evaluation instead of a hard-coded API model.
+    """
+    return os.environ.get("EVAL_MODEL", "gpt-5.4")
+
+
+def detect_file_signature(path: str, fallback: Method = "llm", model: Optional[str] = None) -> FileSignature:
     """Convenience function for file format detection.
     
     Creates a FormatDetector instance and detects file format, compression, and text/binary nature.
@@ -1067,7 +1079,7 @@ def detect_file_signature(path: str, fallback: Method = "llm", model: str = "gpt
             - "none": no fallback, return "unknown"
             - "extension": use extension-based detection
             - "llm": use LLM inference, then extension as final resort
-        model: Model for LLM inference (e.g. "gpt-5.4")
+        model: Model for LLM inference (e.g. "gpt-5.4"); defaults to the run's eval model (see _default_model)
     
     Returns:
         FileSignature with format, compression, is_text, extension, and optional note

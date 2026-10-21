@@ -1,0 +1,193 @@
+{
+  "id": "b-8-4",
+  "question": "Using Elastic Net regression (alpha=0.1, l1_ratio=0.5), predict age from methylation data and identify the top 10 features by absolute coefficient magnitude with non-zero coefficients. Use an 80-20 train-test split (random_state=42) and fit the model on the training data only.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-4/ref_answer/top_10_features.csv",
+      "eval_guideline": "All 10 feature names must match the reference exactly; coefficient values must match within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-8-4/output/top_10_features.csv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files have the same name, top_10_features.csv, and both are CSVs. The candidate is the only output file, and it matches the task of listing the top 10 Elastic Net features.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare top 10 Elastic Net (alpha=0.1, l1_ratio=0.5, 80-20 split random_state=42) features predicting age from methylation data. All 10 feature names must match the reference exactly; coefficient values must match within 1% relative absolute error; column order, row order, and header labels may differ."
+      },
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "This is a small results table: 10 feature names and their coefficients. The split uses a fixed seed (random_state=42), and the guideline asks for exact name matches and coefficients within 1% relative error, with column order, row order and header labels allowed to differ. Approximate comparison handles exactly that kind of value-by-value check.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature",
+            "Coefficient": "Coefficient"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use the same layout (features as rows), so no transpose is needed. The reference columns 'Feature' and 'Coefficient' match the candidate columns of the same names. The candidate's extra 'Abs_Coefficient' column is left out. Rows are matched on 'Feature', which holds the CpG probe IDs. The evaluation guideline says row order may differ, so row order is not treated as meaningful and the permutation check is on. Note that the feature sets differ: the candidate has cg01000015 and lacks cg01000196. The coefficient values are also on a very different scale (about 4.5–4.85 versus 1.09–1.38). These look like real content differences, not alignment problems.",
+          "confidence": 0.93
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Coefficient",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The guideline requires coefficients to match within 1% relative absolute error, so this uses RAE with a 0.01 tolerance. Sign is kept because the direction of a regression coefficient carries meaning."
+            }
+          ],
+          "overall_reasoning": "The task asks for the top 10 Elastic Net features and their coefficients. Feature is the ID column, so it is used only to align the two tables, and the feature-name matching is handled by that alignment. That leaves Coefficient as the only reference data column to compare. It uses RAE with a 0.01 tolerance, matching the guideline's 1% relative error requirement. Sign is kept (compare_abs=false) because the direction of a regression coefficient carries meaning. The candidate's extra Abs_Coefficient column is not in the reference, so it is excluded. The previews show large mismatches: the reference coefficients are about 1.1–1.4, the candidate's are about 4.5–4.8, and one reference row is NaN. This suggests the candidate fit the model differently, for example without standardizing the features.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature",
+              "Coefficient": "Coefficient"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Abs_Coefficient"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 9,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 1,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "These are Illumina CpG probe IDs. cg01000015 and cg01000196 are different probes, and no formatting difference explains the mismatch.",
+              "confidence": 0.97
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Feature",
+              "Coefficient"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Feature": [
+                "str",
+                "str",
+                true
+              ],
+              "Coefficient": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Abs_Coefficient']",
+            "Unmapped reference rows: 1",
+            "Unmapped candidate rows: 1"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Coefficient"
+          ],
+          "filtered_columns": [
+            "Coefficient"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "Coefficient": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 9,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6666666666666666,
+            "col_recall": 1.0,
+            "col_f1": 0.8,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 11,
+            "alt_rows": 11,
+            "row_intersection": 11,
+            "ref_cols": 2,
+            "alt_cols": 3,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              11,
+              2
+            ],
+            "alt_shape": [
+              11,
+              3
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Feature": true,
+              "Coefficient": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.8181818181818182,
+            "ref_missing_rate": 0.09090909090909091,
+            "alt_missing_rate": 0.09090909090909091
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

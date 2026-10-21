@@ -1,0 +1,190 @@
+{
+  "id": "a-7-4",
+  "question": "Calculate the isoelectric point (pI) of each protein in the given FASTA file.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-7-4/ref_answer/isoelectric.tsv",
+      "eval_guideline": "Each protein's pI value must match the reference within +/-0.1; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-7-4/output/isoelectric.tsv",
+      "match_confidence": 0.97,
+      "match_reasoning": "Same filename (isoelectric.tsv) and the same TSV format, and it matches the task of calculating protein pI.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Calculate the isoelectric point (pI) of each protein in the given FASTA file. Match proteins by ID; each protein's pI value must match the reference within +/-0.1; column order and header labels may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "pI calculation is deterministic and the result is a per-protein table that is matched record by record with a ±0.1 numeric tolerance, where column order and header labels may differ. The approximate strategy handles reordered columns and rows and allows small numeric differences.",
+      "strategy_error": null,
+      "similarity": 0.9995906328357872,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "protein_id": "fasta_id",
+            "pI": "pI"
+          },
+          "id_columns": [
+            "protein_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Reference protein_id holds the full FASTA header (e.g. 'A0A087X1C5|CYP2D7'). It matches the candidate's 'fasta_id' column exactly, not its 'protein_id' column, which holds only the accession. So ref protein_id maps to candidate fasta_id, and pI maps to pI. The candidate's extra columns (protein_id, gene, length) are left out. Rows are matched on the protein identifier. Order doesn't matter because this is a per-protein set of values. pI is a computed value and is compared within the ±0.1 tolerance, so it is not used as a key.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "pI",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "The task needs each pI to match within ±0.1. A relative tolerance of 0.01 is about ±0.1 at pI≈10 and stricter at lower pI, so it approximates the absolute threshold. The candidate's 2-decimal rounding falls well inside it."
+            }
+          ],
+          "overall_reasoning": "The only data column to score is pI (float64). protein_id is used for alignment and is left out. The extra candidate columns (protein_id__candidate, gene, length) are not in the reference and are not compared. The guideline asks for an absolute match of ±0.1 pI units, but the RAE strategy only accepts a relative tolerance, so I converted it. Reference pI values run from about 5.37 to 10.27. That puts the relative equivalent of ±0.1 between about 0.0097 and 0.0186. I set the tolerance to 0.01, which is about ±0.1 at the top of the range and stricter (about ±0.054) at the low end. The candidate values only differ from the reference by 2-decimal rounding (≤0.005), so they all pass easily. The sign of pI carries meaning, so compare_abs is false.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "protein_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "protein_id": "fasta_id",
+              "pI": "pI"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "protein_id",
+              "gene",
+              "length"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "protein_id"
+            ],
+            "matched_rows": 6,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "pI",
+              "protein_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "pI": [
+                "float64",
+                "float64",
+                true
+              ],
+              "protein_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['protein_id', 'gene', 'length']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "pI"
+          ],
+          "filtered_columns": [
+            "pI"
+          ],
+          "overall_similarity": 0.9995906328357872,
+          "per_column_similarities": {
+            "pI": {
+              "similarity": 0.9995906328357872,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 1.0,
+            "col_f1": 0.5714285714285715,
+            "col_jaccard": 0.4,
+            "ref_rows": 6,
+            "alt_rows": 6,
+            "row_intersection": 6,
+            "ref_cols": 2,
+            "alt_cols": 5,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              6,
+              2
+            ],
+            "alt_shape": [
+              6,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "pI": true,
+              "protein_id": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

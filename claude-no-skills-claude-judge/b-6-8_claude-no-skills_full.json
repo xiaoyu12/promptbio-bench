@@ -1,0 +1,39 @@
+{
+  "id": "b-6-8",
+  "question": "Build a 5-layer autoencoder to compress gene expression data into a lower-dimensional latent space. The architecture should follow this sequence: Input -> Dense (32 units, ReLU) -> Bottleneck (8 units, ReLU) -> Dense (32 units, ReLU) -> Output (linear). After training, extract the 8-dimensional bottleneck layer for all samples.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-6-8/ref_answer/bottleneck_representations.csv",
+      "eval_guideline": "All samples must be present with exactly 8 bottleneck latent columns; all values must be non-negative; row order, column order, and header labels may differ; numeric values are non-deterministic and need not match.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-6-8/output/bottleneck_representations.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "Both files are named bottleneck_representations.csv and are CSVs. Each holds the 8-dimensional bottleneck embeddings for all samples.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Autoencoder bottleneck extraction (Input->Dense32 ReLU->Bottleneck8 ReLU->Dense32 ReLU->linear output) on gene expression data. Check that all samples in the reference are present, that there are exactly 8 latent columns, and that all values are non-negative (because of the ReLU bottleneck). Row order, column order and header labels may differ. Training is stochastic, so the numeric values do not need to match the reference.",
+        "max_rows": 1000
+      },
+      "strategy_confidence": 0.62,
+      "strategy_reasoning": "Neural network training is stochastic, and the guideline says the values need not match, so approximate value-by-value matching won't work. The guideline only checks structure (every sample present, 8 columns, no negative values). An LLM-based semantic check that is given the guideline can test these, while 'summary' would compare latent distributions whose scale is arbitrary.",
+      "strategy_error": null,
+      "similarity": 0.97,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.93,
+        "explanation": "The two files match on structure. Each has 200 rows and 9 columns: Sample_ID plus Latent_1 to Latent_8. The column names and order are the same. Rows were matched by Sample_ID, and both files list Sample_001 to Sample_200 in the same order, with no samples missing and no extra samples. Every latent value shown in the candidate is non-negative. Exact zeros occur often, as expected from a ReLU bottleneck (8 units), and there are no NaNs or negative numbers. This meets the rule that the 8-dimensional bottleneck activations must be non-negative. The values themselves differ from the reference, as expected. Autoencoder training isn't deterministic, so the latent axes aren't identifiable between runs, and the guideline says numeric values don't have to match. The candidate's value ranges (0 to about 12.8) are similar to the reference's (0 to about 12.3), which fits outputs from the same architecture. All the required criteria are met: all samples are present, there are exactly 8 latent columns, and every value is non-negative."
+      },
+      "comparison_error": null
+    }
+  ]
+}

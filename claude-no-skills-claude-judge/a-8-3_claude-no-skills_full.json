@@ -1,0 +1,36 @@
+{
+  "id": "a-8-3",
+  "question": "Generate a hierarchical clustering heatmap to visualize metabolic differences among tissue samples. Z-score standardize the metabolite intensities, then produce a clustermap with a tissue-type color sidebar derived from the sample metadata.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-3/ref_answer/clustermap.png",
+      "eval_guideline": "Clustermap must show hierarchical clustering dendrograms with z-scored cell values and a tissue-type color sidebar; color palette and dendrogram aesthetics may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-8-3/output/clustermap.png",
+      "match_confidence": 0.97,
+      "match_reasoning": "Both files are named clustermap.png and are PNG images, which is the clustermap heatmap output the task asks for.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.9,
+      "strategy_reasoning": "The output is a PNG image, and the guideline asks for specific visual features: dendrograms, z-scored cell values and a tissue-type color sidebar. It also lets the colors and styling differ, so the image has to be judged on what it shows rather than compared pixel by pixel.",
+      "strategy_error": null,
+      "similarity": 0.75,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.7,
+        "explanation": "What each image shows:\n- **Reference:** a seaborn clustermap with samples as rows (DIAG-16xxx, about 60 samples) and metabolites as columns (several hundred, some labelled). It has dendrograms on both axes, a two-colour TISSUE_TYPE sidebar (blue and orange, with no legend), and a vlag colormap. The colour scale runs from about -2 to 7, which fits z-scoring each metabolite without clipping. One column is uniform, probably a constant metabolite.\n- **Candidate:** the same kind of clustermap, but transposed: samples are columns (about 60 of the same DIAG IDs) and metabolites are rows (n=555). It also has dendrograms on both axes. The tissue-type colour bar (NORMAL/TUMOR) has a legend. It uses an RdBu_r colormap clipped at ±3 and labels the colour bar as a z-score of log2 intensity. The title says Ward linkage with Euclidean distance.\n\nSimilarities, after allowing for the transposed layout and different palettes:\n- Both meet the required elements: hierarchical clustering dendrograms on both axes, z-scored cell values and a tissue-type colour sidebar taken from the metadata.\n- Both use the same sample set.\n- Both show samples grouping largely by tissue type, with a few samples mixed into the other group.\n- Both show a small subgroup of samples with strongly raised values in a block of metabolites. In the reference these are rows such as DIAG-16108, 16130, 16122 and 16132. In the candidate the same samples (16108, 16122, 16132, 16130) form a high-z-score block.\n\nDifferences:\n- The clustering trees differ. The candidate separates the tissues cleanly: one all-NORMAL cluster, and a TUMOR cluster containing only two NORMAL samples. The reference is more mixed, with a small blue group at the top, a large orange cluster, a large blue cluster, and orange samples scattered near the bottom. This is likely because of the different linkage method and possibly preprocessing (the candidate log2-transforms and clips the values).\n- The colour ranges differ (clipped ±3 versus unclipped up to about 7).\n- The candidate includes all 555 metabolites. The reference's metabolite set may differ slightly, since it includes a constant column.\n\nThe guideline allows palette and dendrogram aesthetics to differ, and the core content and message are the same: z-scored metabolite clustering in which samples split mostly by tissue type. The score is moderately high rather than perfect because the cluster structure and scaling choices differ."
+      },
+      "comparison_error": null
+    }
+  ]
+}

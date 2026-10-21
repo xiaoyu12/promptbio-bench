@@ -1,0 +1,375 @@
+{
+  "id": "a-15-5",
+  "question": "Integrate differentially expressed genes and proteins, and identify concordant vs. discordant regulation trends. Classify each gene as concordant if RNA and protein log2 fold-changes have the same sign (both positive or both negative), and discordant if they have opposite signs.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-5/ref_answer/rna_protein_concordance.csv",
+      "eval_guideline": "Numeric values must match within +/-1e-6; RNA_dir, Protein_dir, and Regulation are case-insensitive; column order and row order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-5/output/rna_protein_concordance.csv",
+      "match_confidence": 0.98,
+      "match_reasoning": "The filenames are identical and both files are CSV. The candidate is the agent's concordance table, which is what this task asks for.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Integrate differentially expressed genes and proteins (rna_de.csv, protein_de.csv) and classify each gene as concordant (RNA and protein log2FC same sign) or discordant (opposite signs). Compare per-gene records: numeric values must match within +/-1e-6; RNA_dir, Protein_dir, and Regulation columns are case-insensitive; column order and row order may differ."
+      },
+      "strategy_confidence": 0.92,
+      "strategy_reasoning": "This is a deterministic merge of RNA and protein results where each gene gets a sign-based label. The guideline allows a numeric tolerance (±1e-6), case-insensitive labels, and any column or row order, so approximate matching is the right fit.",
+      "strategy_error": null,
+      "similarity": 0.5714285714285714,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "gene_id": "gene_id",
+            "log2FoldChange_RNA": "log2FoldChange_RNA",
+            "pvalue_RNA": "pvalue_RNA",
+            "log2FoldChange_Protein": "log2FoldChange_Protein",
+            "pvalue_Protein": "pvalue_Protein",
+            "RNA_dir": "RNA_dir",
+            "Protein_dir": "Protein_dir",
+            "Regulation": "Regulation"
+          },
+          "id_columns": [
+            "gene_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "gene_id",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same structure, so no transpose is needed. The column names match exactly, so each column maps to itself. Each row is one gene, so gene_id is a unique key for matching rows. The guideline says row order may differ and the output is an unordered set of genes, so row order is not treated as meaningful. Rows are sorted by gene_id and checked as a permutation. RNA_dir, Protein_dir and Regulation differ only in letter case (for example 'Up' vs 'up'), and the guideline makes these columns case-insensitive. This is a value comparison issue, not a structural one.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FoldChange_RNA",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "RNA fold change, which must match within 1e-6. Sign is kept because it sets the direction."
+            },
+            {
+              "name": "pvalue_RNA",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "RNA p-value, which must match within 1e-6."
+            },
+            {
+              "name": "log2FoldChange_Protein",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "Protein fold change, which must match within 1e-6. Sign is kept because it sets the direction."
+            },
+            {
+              "name": "pvalue_Protein",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 1e-06,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Protein p-value, which must match within 1e-6."
+            },
+            {
+              "name": "RNA_dir",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Up/down direction label for RNA. Compare as an exact match without regard to case (Up and up are equal)."
+            },
+            {
+              "name": "Protein_dir",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Up/down direction label for protein. Compare as an exact match without regard to case."
+            },
+            {
+              "name": "Regulation",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "The main output (concordant or discordant). Compare as an exact match without regard to case."
+            }
+          ],
+          "overall_reasoning": "The task combines RNA and protein differential expression results and labels each gene concordant or discordant based on whether the two log2 fold-changes have the same sign. Every data column is compared; gene_id is used only for alignment. The four numeric columns (log2FoldChange_RNA, pvalue_RNA, log2FoldChange_Protein, pvalue_Protein) use relative absolute error (RAE) with a tolerance of 1e-6, matching the guideline that numbers must agree within ±1e-6. Signs are kept for the fold changes because the sign is what decides direction and concordance. The three text columns (RNA_dir, Protein_dir, Regulation) use exact matching and must be compared case-insensitively, as the guideline requires. The candidate capitalises its labels (\"Up\", \"Down\", \"Discordant\") where the reference uses lower case, so this plan only works if the exact matcher lowercases or casefolds values first. Regulation is the main output of the task, and the direction columns feed into it.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "gene_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "gene_id": "gene_id",
+              "log2FoldChange_RNA": "log2FoldChange_RNA",
+              "pvalue_RNA": "pvalue_RNA",
+              "log2FoldChange_Protein": "log2FoldChange_Protein",
+              "pvalue_Protein": "pvalue_Protein",
+              "RNA_dir": "RNA_dir",
+              "Protein_dir": "Protein_dir",
+              "Regulation": "Regulation"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "gene_id"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Regulation",
+              "log2FoldChange_Protein",
+              "pvalue_Protein",
+              "log2FoldChange_RNA",
+              "pvalue_RNA",
+              "Protein_dir",
+              "RNA_dir",
+              "gene_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Regulation": [
+                "str",
+                "str",
+                true
+              ],
+              "log2FoldChange_Protein": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pvalue_Protein": [
+                "float64",
+                "float64",
+                true
+              ],
+              "log2FoldChange_RNA": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pvalue_RNA": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Protein_dir": [
+                "str",
+                "str",
+                true
+              ],
+              "RNA_dir": [
+                "str",
+                "str",
+                true
+              ],
+              "gene_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "gene_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['gene_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Protein_dir",
+            "RNA_dir",
+            "Regulation",
+            "log2FoldChange_Protein",
+            "log2FoldChange_RNA",
+            "pvalue_Protein",
+            "pvalue_RNA"
+          ],
+          "filtered_columns": [
+            "Protein_dir",
+            "RNA_dir",
+            "Regulation",
+            "log2FoldChange_Protein",
+            "log2FoldChange_RNA",
+            "pvalue_Protein",
+            "pvalue_RNA"
+          ],
+          "overall_similarity": 0.5714285714285714,
+          "per_column_similarities": {
+            "Protein_dir": {
+              "similarity": 0.0,
+              "strategy": "exact",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {}
+            },
+            "RNA_dir": {
+              "similarity": 0.0,
+              "strategy": "exact",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {}
+            },
+            "Regulation": {
+              "similarity": 0.0,
+              "strategy": "exact",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {}
+            },
+            "log2FoldChange_Protein": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "log2FoldChange_RNA": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "pvalue_Protein": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "pvalue_RNA": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5,
+            "alt_rows": 5,
+            "row_intersection": 5,
+            "ref_cols": 8,
+            "alt_cols": 8,
+            "col_intersection": 8
+          },
+          "shape": {
+            "ref_shape": [
+              5,
+              8
+            ],
+            "alt_shape": [
+              5,
+              8
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Regulation": true,
+              "log2FoldChange_Protein": true,
+              "pvalue_Protein": true,
+              "log2FoldChange_RNA": true,
+              "pvalue_RNA": true,
+              "Protein_dir": true,
+              "RNA_dir": true,
+              "gene_id": true
+            },
+            "common_columns": 8
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}
