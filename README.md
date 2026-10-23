@@ -2,10 +2,20 @@
 
 [![Website](https://img.shields.io/badge/Website-promptbio-blue?style=flat-square)](https://promptbio.github.io/promptbio-bench) [![Code](https://img.shields.io/badge/Code-GitHub-black?style=flat-square&logo=github)](https://github.com/promptbio/promptbio-bench) [![Preprint](https://img.shields.io/badge/Preprint-bioRxiv-b31b1b?style=flat-square)](https://doi.org/10.64898/2026.05.05.723092) [![Data](https://img.shields.io/badge/Data-HuggingFace-yellow?style=flat-square&logo=huggingface)](https://huggingface.co/datasets/promptbio-ai/promptbio-bench-data)
 
-This repository contains the updated evaluation framework for [PromptBio-bench](https://doi.org/10.64898/2026.05.05.723092), a benchmark of 244 tasks spanning bioinformatics and data science. Given a task and an agent output directory, it runs a 4-step LLM-assisted pipeline to score how well the output matches the reference answer.
+This repository contains the updated evaluation framework and results for [PromptBio-bench](https://doi.org/10.64898/2026.05.05.723092), a benchmark of 244 tasks spanning bioinformatics and data science. Given a task and an agent output directory, it runs a 4-step LLM-assisted pipeline to score how well the output matches the reference answer.
 
+Claude Opus 5.5 (high effort) in
+Claude Code solved all 244 tasks of PromptBio-Bench, whose free-form output files are scored
+against expert references. It was run with and without 667 bioinformatics Agent Skills (bioSkills,
+ClawBio). Under the original evaluation framework with GPT-5.6 judges, Claude with skills
+completed every task and reached 0.869 accuracy, against 0.758 for Biomni and ToolsGenie and
+0.717 for STELLA (paired McNemar p ≤ 2 × 10−4). Its failures exposed eleven evaluator defects
+and several incorrect reference answers. With these defects fixed, Claude reached 0.918 to 0.926
+with skills and 0.873 to 0.902 without, across GPT and Claude judges that agreed on 95 to 98% of
+tasks.
 <p align="center">
-  <img src="docs/img/promptbio-bench.png" alt="PromptBio-bench overview: task datasets spanning genomics, epigenomics, transcriptomics, proteomics, metabolomics, metagenomics, single-cell omics, and data science / statistics / ML; each task pairs a description, input data, and reference answer; an agent consumes the task and produces result files, which are scored by the Match → Detect → Recommend → Compare pipeline." width="900">
+  <img src="docs/img/fig1_original_framework.png" alt="Accuracy by task difficulty under the original PromptBio-Bench evaluation framework. Specialist
+agents in grey, Claude Opus 5.5 with bioinformatics skills in blue." width="900">
 </p>
 
 --- 
