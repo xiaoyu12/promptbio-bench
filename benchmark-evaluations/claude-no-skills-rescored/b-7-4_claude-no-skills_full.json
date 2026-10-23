@@ -1,0 +1,197 @@
+{
+  "id": "b-7-4",
+  "question": "Train a Random Forest classifier on the provided dataset using a 70/30 train-test split and compare two configurations: one using the default class weight setting and the other using balanced class weights. For each version, calculate the area under the precision-recall curve (AUPRC) on the test set and report the results.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-4/ref_answer/rf_auprc_comparison.csv",
+      "eval_guideline": "AUPRC for each configuration must match the reference within +/-0.05; both configurations must be reported; column order and label phrasing may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-4/output/rf_auprc_comparison.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV format. The name directly corresponds to the requested comparison of Random Forest AUPRC results with default and balanced class weights.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare test-set AUPRC for both Random Forest configurations: default class weights and balanced class weights. Require both configurations and match each AUPRC to the reference within an absolute tolerance of 0.05, allowing column order and label phrasing to differ."
+      },
+      "strategy_confidence": 1.0,
+      "strategy_reasoning": "Although model training and the 70/30 split are stochastic, this output is a small table of two metrics, so the small-results-table exception calls for value-by-value approximate comparison. This strategy supports structural alignment while applying the guideline's ±0.05 tolerance to each configuration.",
+      "strategy_error": null,
+      "similarity": 0.9854688669936447,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Configuration": "Configuration",
+            "AUPRC": "AUPRC"
+          },
+          "id_columns": [
+            "Configuration"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain one row per classifier configuration, so no transpose is needed. Map Configuration and AUPRC directly and exclude extra candidate columns. Configuration uniquely identifies each row; semantically match Default to RandomForest (default class_weight) and Balanced to RandomForest (balanced class_weight). Row and column order do not matter. Use candidate AUPRC rather than AUPRC_trapezoid; both configuration values are within the specified 0.05 tolerance.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "AUPRC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.056,
+              "cell_threshold": null,
+              "confidence": 0.97,
+              "reasoning": "AUPRC is the required float64 metric for both configurations. Use per-cell relative absolute error because numerical agreement matters. Assuming RAE is absolute error divided by the reference magnitude, 0.056 approximates the required absolute tolerance of 0.05 at reference values near 0.90. Both candidate values satisfy the stated absolute tolerance."
+            }
+          ],
+          "overall_reasoning": "Compare AUPRC for both aligned configurations. Configuration is an alignment ID and is excluded; candidate-only diagnostic columns are outside the required comparison. Correlation would not enforce agreement for each configuration. A single relative tolerance cannot exactly express an absolute tolerance of 0.05 for differing reference values; 0.056 closely approximates it here. Exact guideline enforcement requires checking each absolute difference against 0.05 and confirming both configurations are present.",
+          "overall_confidence": 0.97,
+          "id_columns": [
+            "Configuration"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Configuration": "Configuration",
+              "AUPRC": "AUPRC"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "class_weight",
+              "AUPRC_trapezoid",
+              "ROC_AUC",
+              "n_train",
+              "n_test",
+              "test_positive_rate"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Configuration"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {
+              "balanced": "randomforest (balanced class_weight)",
+              "default": "randomforest (default class_weight)"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Each candidate matches the corresponding class_weight value in the reference identifier.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Configuration",
+              "AUPRC"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Configuration": [
+                "str",
+                "str",
+                true
+              ],
+              "AUPRC": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['class_weight', 'AUPRC_trapezoid', 'ROC_AUC', 'n_train', 'n_test', 'test_positive_rate']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AUPRC"
+          ],
+          "filtered_columns": [
+            "AUPRC"
+          ],
+          "overall_similarity": 0.9854688669936447,
+          "per_column_similarities": {
+            "AUPRC": {
+              "similarity": 0.9854688669936447,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.056
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.25,
+            "col_recall": 1.0,
+            "col_f1": 0.4,
+            "col_jaccard": 0.25,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 2,
+            "alt_cols": 8,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              2
+            ],
+            "alt_shape": [
+              2,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Configuration": true,
+              "AUPRC": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

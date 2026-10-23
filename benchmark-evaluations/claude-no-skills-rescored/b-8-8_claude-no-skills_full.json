@@ -1,0 +1,175 @@
+{
+  "id": "b-8-8",
+  "question": "Fit a Generalized Additive Model (GAM) using the pygam library to predict blood pressure as a smooth function of age, BMI, and exercise minutes/week. Use penalized splines (20 splines per term) with GCV-based smoothing parameter selection. Use an 80-20 train-test split (random_state=42). Report test R^2 and test adjusted R^2 (using 3 predictors in the adjustment formula).",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-8/ref_answer/gam_performance.csv",
+      "eval_guideline": "Both Test_R^2 and Test_Adjusted_R^2 must agree within +/-0.05 of reference; metric naming and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-8-8/output/gam_performance.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both paths have the identical filename gam_performance.csv and indicate CSV format. They belong to the same task and clearly correspond to the requested GAM performance metrics, test R^2 and adjusted R^2.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare Test_R^2 and Test_Adjusted_R^2 value by value, allowing absolute differences of up to 0.05 for each metric. Align equivalent metric names and ignore column order differences."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The output contains only two performance metrics, so the small-results-table exception calls for approximate comparison despite model fitting and a train-test split. This strategy accommodates differing metric names and column order while applying the guideline's ±0.05 tolerance.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use the same Metric and Value columns and require no transpose or column mapping. Metric uniquely identifies each reported statistic. Match the reference Test_R2 and Test_Adjusted_R2 rows by Metric, excluding the candidate's additional metrics from the requested comparison. Row order is immaterial, and key-based alignment makes sorting unnecessary.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05607,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Value is float64 and contains the two required test metrics. Compare only test_r2 and test_adjusted_r2; exclude rows whose reference value is NaN. Assuming RAE is absolute error divided by the absolute reference value, 0.05 / 0.89 is approximately 0.05607. This column-wide relative tolerance approximates the requested absolute tolerance."
+            }
+          ],
+          "overall_reasoning": "Metric is used only for alignment and is excluded from column_configs. Only test_r2 and test_adjusted_r2 are required; other reference rows contain no comparison targets. Both required metrics must independently have absolute error <= 0.05, rather than merely achieving a satisfactory average match score. A single column-wide RAE tolerance cannot encode that absolute bound exactly for two different reference values, so enforce the absolute checks separately when possible. The supplied candidate matches both reference metrics at the displayed precision.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 7,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate rows: 7"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05607
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 9,
+            "alt_rows": 9,
+            "row_intersection": 9,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              9,
+              2
+            ],
+            "alt_shape": [
+              9,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.2222222222222222,
+            "ref_missing_rate": 0.7777777777777778,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

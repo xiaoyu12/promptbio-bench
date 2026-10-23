@@ -1,0 +1,604 @@
+
+Task:    a-3-6
+Question: Identify candidate fusion gene junctions from RNA-Seq data. Align reads with STAR using chimeric detection parameters to produce a chimeric junction file, then extract candidate fusion junctions into a CSV.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-3-6/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-3-6/output  (2 file(s))
+Matched files:
+  K562_Chimeric.out.junction → K562_Chimeric.out.junction  (conf=1.00)
+    Reasoning: The filenames are identical and both paths indicate STAR chimeric junction output files with the same extensionless junction format.
+  K562_candidate_fusions.csv → K562_candidate_fusions.csv  (conf=1.00)
+    Reasoning: The filenames are identical, both use CSV format, and each represents the requested candidate fusion junction table for the K562 RNA-Seq sample.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: tsv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-6/ref_answer/K562_Chimeric.out.junction
+    alt: promptbio-bench-claude-skills/tasks/a-3-6/output/K562_Chimeric.out.junction
+
+  File 2/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-6/ref_answer/K562_candidate_fusions.csv
+    alt: promptbio-bench-claude-skills/tasks/a-3-6/output/K562_candidate_fusions.csv
+
+  File 1/2: status=success, similarity=0.0006
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "0": "chr_donorA",
+            "1": "brkpt_donorA",
+            "2": "strand_donorA",
+            "3": "chr_acceptorB",
+            "4": "brkpt_acceptorB",
+            "5": "strand_acceptorB",
+            "6": "junction_type",
+            "7": "repeat_left_lenA",
+            "8": "repeat_right_lenB",
+            "9": "read_name",
+            "10": "start_alnA",
+            "11": "cigar_alnA",
+            "12": "start_alnB",
+            "13": "cigar_alnB"
+          },
+          "id_columns": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "0,1,2,3,4,5",
+          "check_permutation": true,
+          "reasoning": "The tables have the same row-oriented junction structure, so no transpose is needed. Reference columns 0-13 correspond directly, in order, to the candidate's STAR chimeric-junction fields; the candidate additionally contains read-level scoring and annotation columns that have no reference counterparts. Rows should be matched using the six biologically required junction fields: donor chromosome, breakpoint, and strand plus acceptor chromosome, breakpoint, and strand. Read-level fields are excluded from the identity key because the evaluation permits those annotations to differ. Junction records are an unordered set, and the candidate contains additional records, so comparison should align and sort by the composite junction key rather than use positional order.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [],
+          "overall_reasoning": "The evaluation-critical fusion-junction fields\u2014donor and acceptor chromosome, position, and strand\u2014are columns 0\u20135, but these are designated as alignment-only ID columns and must be excluded from column_configs. Columns 6\u201313 contain read-level support and alignment annotations, which the guideline explicitly permits to differ; comparing their numerical values (6\u20138, 10, 12) or strings (9, 11, 13) would therefore penalize acceptable outputs. No non-ID column is task-critical, so the comparison list is empty and no RAE tolerances, Jaccard thresholds, or delimiters apply.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "0": "chr_donorA",
+              "1": "brkpt_donorA",
+              "2": "strand_donorA",
+              "3": "chr_acceptorB",
+              "4": "brkpt_acceptorB",
+              "5": "strand_acceptorB",
+              "6": "junction_type",
+              "7": "repeat_left_lenA",
+              "8": "repeat_right_lenB",
+              "9": "read_name",
+              "10": "start_alnA",
+              "11": "cigar_alnA",
+              "12": "start_alnB",
+              "13": "cigar_alnB"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "num_chim_aln",
+              "max_poss_aln_score",
+              "non_chim_aln_score",
+              "this_chim_aln_score",
+              "bestall_chim_aln_score",
+              "PEmerged_bool",
+              "readgrp"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "matched_rows": 0,
+            "unmapped_ref_rows": 434,
+            "unmapped_alt_rows": 796,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "2",
+              "10",
+              "3",
+              "8",
+              "12",
+              "4",
+              "7",
+              "6",
+              "9",
+              "11",
+              "13",
+              "0",
+              "1",
+              "5"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "2": [
+                "str",
+                "str",
+                true
+              ],
+              "10": [
+                "float64",
+                "float64",
+                true
+              ],
+              "3": [
+                "str",
+                "str",
+                true
+              ],
+              "8": [
+                "float64",
+                "float64",
+                true
+              ],
+              "12": [
+                "float64",
+                "float64",
+                true
+              ],
+              "4": [
+                "str",
+                "str",
+                true
+              ],
+              "7": [
+                "float64",
+                "float64",
+                true
+              ],
+              "6": [
+                "float64",
+                "float64",
+                true
+              ],
+              "9": [
+                "str",
+                "str",
+                true
+              ],
+              "11": [
+                "str",
+                "str",
+                true
+              ],
+              "13": [
+                "str",
+                "str",
+                true
+              ],
+              "0": [
+                "str",
+                "str",
+                true
+              ],
+              "1": [
+                "str",
+                "str",
+                true
+              ],
+              "5": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['num_chim_aln', 'max_poss_aln_score', 'non_chim_aln_score', 'this_chim_aln_score', 'bestall_chim_aln_score', 'PEmerged_bool', 'readgrp']",
+            "Unmapped reference rows: 434",
+            "Unmapped candidate rows: 796",
+            "Sorted both dataframes by ['0', '1', '2', '3', '4', '5']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "10",
+            "11",
+            "12",
+            "13",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "filtered_columns": [
+            "10",
+            "11",
+            "12",
+            "13",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "overall_similarity": 0.0006097560975609756,
+          "per_column_similarities": {
+            "10": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            },
+            "11": {
+              "similarity": 0.0016260162601626016,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 1230,
+              "error": null,
+              "details": {}
+            },
+            "12": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "All values invalid",
+              "details": {}
+            },
+            "13": {
+              "similarity": 0.0016260162601626016,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 1230,
+              "error": null,
+              "details": {}
+            },
+            "6": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 99,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "7": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 405,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "8": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 309,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "9": {
+              "similarity": 0.0016260162601626016,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 1230,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6666666666666666,
+            "col_recall": 1.0,
+            "col_f1": 0.8,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 1230,
+            "alt_rows": 1230,
+            "row_intersection": 1230,
+            "ref_cols": 14,
+            "alt_cols": 21,
+            "col_intersection": 14
+          },
+          "shape": {
+            "ref_shape": [
+              1230,
+              14
+            ],
+            "alt_shape": [
+              1230,
+              21
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -7
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "2": true,
+              "10": true,
+              "3": true,
+              "8": true,
+              "12": true,
+              "4": true,
+              "7": true,
+              "6": true,
+              "9": true,
+              "11": true,
+              "13": true,
+              "0": true,
+              "1": true,
+              "5": true
+            },
+            "common_columns": 14
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.0016260162601626016,
+            "ref_missing_rate": 0.6471544715447154,
+            "alt_missing_rate": 0.3544715447154472
+          }
+        }
+      }
+
+  File 2/2: status=success, similarity=0.8449
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "chr1": "chr1",
+            "base1": "base1",
+            "strand1": "strand1",
+            "chr2": "chr2",
+            "base2": "base2",
+            "strand2": "strand2",
+            "junction_type": "junction_type",
+            "read_name": "read_name"
+          },
+          "id_columns": [
+            "chr1",
+            "base1",
+            "strand1",
+            "chr2",
+            "base2",
+            "strand2",
+            "junction_type"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "chr1,base1,strand1,chr2,base2,strand2,junction_type",
+          "check_permutation": true,
+          "reasoning": "The tables use the same row-oriented junction structure, so no transpose is needed. Every reference column has an exact-name candidate match; explicit mapping is required because the candidate contains additional columns. Rows should be matched using the seven fields specified by the evaluation guideline, which collectively identify each fusion-junction record; read_name is excluded because it is not part of the required record match and differs in representation. Fusion records form an unordered set, so row and column order are not significant. Sorting by the composite junction key provides deterministic comparison, and permutation checking accommodates differing row order.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [],
+          "overall_reasoning": "The seven specified ID columns fully define the fusion junction records and are used only for alignment, so they are excluded from column_configs. The only remaining reference column, read_name, is not critical under the evaluation guideline and is semantically incompatible across the inputs: the reference represents it as float64 values (1.0/NaN), while the candidate contains categorical read identifiers. No valid dtype-aware numerical or categorical comparison would meaningfully score this column, so no data columns should be compared after alignment.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "chr1",
+            "base1",
+            "strand1",
+            "chr2",
+            "base2",
+            "strand2",
+            "junction_type"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "chr1": "chr1",
+              "base1": "base1",
+              "strand1": "strand1",
+              "chr2": "chr2",
+              "base2": "base2",
+              "strand2": "strand2",
+              "junction_type": "junction_type",
+              "read_name": "read_name"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "repeat_left",
+              "repeat_right",
+              "start1",
+              "cigar1",
+              "start2",
+              "cigar2",
+              "num_chim_aln",
+              "max_poss_aln_score",
+              "non_chim_aln_score",
+              "this_chim_aln_score",
+              "bestall_chim_aln_score",
+              "PEmerged_bool",
+              "readgrp",
+              "read_class",
+              "inter_chromosomal",
+              "dist",
+              "involves_chrM",
+              "junction_split_read_support"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "chr1",
+              "base1",
+              "strand1",
+              "chr2",
+              "base2",
+              "strand2",
+              "junction_type"
+            ],
+            "matched_rows": 1051,
+            "unmapped_ref_rows": 36,
+            "unmapped_alt_rows": 350,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "chr2",
+              "strand1",
+              "strand2",
+              "junction_type",
+              "base1",
+              "chr1",
+              "read_name",
+              "base2"
+            ],
+            "converted_columns": [],
+            "failed_columns": [
+              "read_name"
+            ],
+            "conversion_details": {
+              "chr2": [
+                "str",
+                "str",
+                true
+              ],
+              "strand1": [
+                "str",
+                "str",
+                true
+              ],
+              "strand2": [
+                "str",
+                "str",
+                true
+              ],
+              "junction_type": [
+                "str",
+                "str",
+                true
+              ],
+              "base1": [
+                "str",
+                "str",
+                true
+              ],
+              "chr1": [
+                "str",
+                "str",
+                true
+              ],
+              "read_name": [
+                "float64",
+                "str",
+                false
+              ],
+              "base2": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "chr1",
+              "base1",
+              "strand1",
+              "chr2",
+              "base2",
+              "strand2",
+              "junction_type"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['repeat_left', 'repeat_right', 'start1', 'cigar1', 'start2', 'cigar2', 'num_chim_aln', 'max_poss_aln_score', 'non_chim_aln_score', 'this_chim_aln_score', 'bestall_chim_aln_score', 'PEmerged_bool', 'readgrp', 'read_class', 'inter_chromosomal', 'dist', 'involves_chrM', 'junction_split_read_support']",
+            "Unmapped reference rows: 36",
+            "Unmapped candidate rows: 350",
+            "Failed to convert 1 column(s)",
+            "Sorted both dataframes by ['chr1', 'base1', 'strand1', 'chr2', 'base2', 'strand2', 'junction_type']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "read_name"
+          ],
+          "overall_similarity": 0.844855305466238,
+          "row_key_overlap": {
+            "matched_rows": 1051,
+            "ref_rows": 1087,
+            "alt_rows": 1401,
+            "precision": 0.7501784439685939,
+            "recall": 0.9668813247470102,
+            "f1": 0.844855305466238
+          },
+          "notes": [
+            "No column similarity could be computed",
+            "Scored by overlap of row keys (F1)"
+          ],
+          "per_column_similarities": {
+            "read_name": {
+              "similarity": null,
+              "strategy": "rae",
+              "matching_count": null,
+              "total_count": null,
+              "error": "RAE calculation failed: could not convert string to float: '61PKHAAXX_HWUSI-EAS627_0007:4:21:8774:9996'",
+              "details": {}
+            }
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-3-6  |  Agent: claude-skills
+Avg similarity: 0.4227
+============================================================
+
+✅ Results saved → claude-skills-rescored/a-3-6_claude-skills.json
+✅ Full states saved → claude-skills-rescored/a-3-6_claude-skills_full.json
+
+
+
+

@@ -1,0 +1,879 @@
+
+Task:    a-2-8
+Question: Run GSEA on ranked gene list to identify the most enriched gene sets of biological processes. Use the provided GO_Biological_Process_2021 gene set library (data/GO_Biological_Process_2021.gmt) with min_size=15 and max_size=500. Report the full enrichment results and the top 10 significantly enriched gene sets.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-2-8/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-2-8/output  (2 file(s))
+Matched files:
+  gsea_result.csv → gsea_result.csv  (conf=1.00)
+    Reasoning: The filenames match exactly, and both paths indicate CSV files containing the full GSEA enrichment results.
+  gsea_top10_result.csv → gsea_top10_result.csv  (conf=1.00)
+    Reasoning: The filenames and CSV formats match exactly, and both represent the requested top 10 significantly enriched gene sets.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_result.csv
+    alt: promptbio-bench-claude-skills/tasks/a-2-8/output/gsea_result.csv
+
+  File 2/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-2-8/ref_answer/gsea_top10_result.csv
+    alt: promptbio-bench-claude-skills/tasks/a-2-8/output/gsea_top10_result.csv
+
+  File 1/2: status=success, similarity=0.5092
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have the same 10-column GSEA result structure, so no transpose or column mapping is needed. Rows should be matched by Term because each term contains the unique GO identifier used by the evaluation; the reference's library-name prefix should be ignored when extracting that identifier. Row order is meaningful because the task requests the top 10 ranked enrichment results, so the existing result ranking should be preserved rather than key-sorted. Column order is not semantically important.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "ES is a core enrichment result. A 5% relative-error tolerance accommodates small implementation or permutation differences while penalizing materially different values and opposite enrichment directions."
+            },
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "NES determines enrichment magnitude and direction, and the evaluation guideline explicitly permits 5% relative absolute error. Opposite signs will produce a large error and therefore fail."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.86,
+              "reasoning": "Nominal p-values are relevant to the full enrichment output but can vary with permutation. A 10% relative-error tolerance allows expected stochastic variation."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "FDR q-value is critical for identifying significantly enriched sets, and the evaluation guideline explicitly permits 10% relative absolute error."
+            },
+            {
+              "name": "FWER p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "FWER p-value is part of the requested full enrichment results and is permutation-dependent, so a 10% relative-error tolerance is appropriate."
+            },
+            {
+              "name": "Tag %",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "Tag percentage is encoded as a ratio string such as 25/30 and should match exactly for an aligned gene set; it is not a delimited collection."
+            },
+            {
+              "name": "Gene %",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.88,
+              "reasoning": "Gene percentage is supplied as a formatted string and is compared exactly because no numeric tolerance can be applied under its declared string dtype."
+            },
+            {
+              "name": "Lead_genes",
+              "data_type": "categorical",
+              "strategy": "overlap",
+              "cell_delimiter": ";",
+              "cell_tolerance": null,
+              "cell_threshold": 0.8,
+              "confidence": 0.96,
+              "reasoning": "Leading-edge genes form a semicolon-delimited set. Jaccard overlap ignores inconsequential ordering while requiring at least 80% set similarity."
+            }
+          ],
+          "overall_reasoning": "Term is excluded because it is the alignment key; its parsed GO ID establishes record identity. NES and FDR q-value receive the evaluation-specified relative-error tolerances and are the most critical fields for enrichment direction, ranking, and significance. ES and the remaining p-values are also compared because full enrichment results are requested, with modest allowances for permutation variability. Tag %, Gene %, and leading-edge genes capture supporting enrichment details. Lead_genes uses semicolon-delimited overlap because ordering is not biologically meaningful, whereas the formatted percentage fields use exact comparison. Name is omitted because it is a constant analysis label ('prerank') rather than a biological result.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "matched_rows": 105,
+            "unmapped_ref_rows": 2756,
+            "unmapped_alt_rows": 2756,
+            "fuzzy_matched_ids": {
+              "regulation of interleukin-1 production (go:0032652)": "go_biological_process_2021.gmt__regulation of interleukin-1 production (go:0032652)",
+              "regulation of response to external stimulus (go:0032101)": "go_biological_process_2021.gmt__regulation of response to external stimulus (go:0032101)",
+              "regulation of inflammatory response (go:0050727)": "go_biological_process_2021.gmt__regulation of inflammatory response (go:0050727)",
+              "positive regulation of response to external stimulus (go:0032103)": "go_biological_process_2021.gmt__positive regulation of response to external stimulus (go:0032103)",
+              "regulation of monooxygenase activity (go:0032768)": "go_biological_process_2021.gmt__regulation of monooxygenase activity (go:0032768)",
+              "regulation of oligodendrocyte differentiation (go:0048713)": "go_biological_process_2021.gmt__regulation of oligodendrocyte differentiation (go:0048713)",
+              "establishment of skin barrier (go:0061436)": "go_biological_process_2021.gmt__establishment of skin barrier (go:0061436)",
+              "trna aminoacylation (go:0043039)": "go_biological_process_2021.gmt__trna aminoacylation (go:0043039)",
+              "hyaluronan metabolic process (go:0030212)": "go_biological_process_2021.gmt__hyaluronan metabolic process (go:0030212)",
+              "apoptotic process (go:0006915)": "go_biological_process_2021.gmt__apoptotic process (go:0006915)",
+              "basement membrane organization (go:0071711)": "go_biological_process_2021.gmt__basement membrane organization (go:0071711)",
+              "acylglycerol biosynthetic process (go:0046463)": "go_biological_process_2021.gmt__acylglycerol biosynthetic process (go:0046463)",
+              "neuron projection development (go:0031175)": "go_biological_process_2021.gmt__neuron projection development (go:0031175)",
+              "interleukin-27-mediated signaling pathway (go:0070106)": "go_biological_process_2021.gmt__interleukin-27-mediated signaling pathway (go:0070106)",
+              "early endosome to late endosome transport (go:0045022)": "go_biological_process_2021.gmt__early endosome to late endosome transport (go:0045022)",
+              "regulation of signal transduction by p53 class mediator (go:1901796)": "go_biological_process_2021.gmt__regulation of signal transduction by p53 class mediator (go:1901796)",
+              "liver development (go:0001889)": "go_biological_process_2021.gmt__liver development (go:0001889)",
+              "regulation of notch signaling pathway (go:0008593)": "go_biological_process_2021.gmt__regulation of notch signaling pathway (go:0008593)",
+              "antigen processing and presentation of exogenous peptide antigen via mhc class i (go:0042590)": "go_biological_process_2021.gmt__antigen processing and presentation of exogenous peptide antigen via mhc class i (go:0042590)",
+              "regulation of interferon-beta production (go:0032648)": "go_biological_process_2021.gmt__regulation of interferon-beta production (go:0032648)",
+              "sympathetic nervous system development (go:0048485)": "go_biological_process_2021.gmt__sympathetic nervous system development (go:0048485)",
+              "regulation of receptor recycling (go:0001919)": "go_biological_process_2021.gmt__regulation of receptor recycling (go:0001919)",
+              "receptor internalization (go:0031623)": "go_biological_process_2021.gmt__receptor internalization (go:0031623)",
+              "dendritic cell differentiation (go:0097028)": "go_biological_process_2021.gmt__dendritic cell differentiation (go:0097028)",
+              "visual perception (go:0007601)": "go_biological_process_2021.gmt__visual perception (go:0007601)",
+              "cell morphogenesis involved in differentiation (go:0000904)": "go_biological_process_2021.gmt__cell morphogenesis involved in differentiation (go:0000904)",
+              "cellular response to dsrna (go:0071359)": "go_biological_process_2021.gmt__cellular response to dsrna (go:0071359)",
+              "phospholipase c-activating g protein-coupled receptor signaling pathway (go:0007200)": "go_biological_process_2021.gmt__phospholipase c-activating g protein-coupled receptor signaling pathway (go:0007200)",
+              "apoptotic dna fragmentation (go:0006309)": "go_biological_process_2021.gmt__apoptotic dna fragmentation (go:0006309)",
+              "maintenance of blood-brain barrier (go:0035633)": "go_biological_process_2021.gmt__maintenance of blood-brain barrier (go:0035633)",
+              "microtubule polymerization or depolymerization (go:0031109)": "go_biological_process_2021.gmt__microtubule polymerization or depolymerization (go:0031109)",
+              "negative regulation of telomere maintenance (go:0032205)": "go_biological_process_2021.gmt__negative regulation of telomere maintenance (go:0032205)",
+              "positive regulation of stress-activated mapk cascade (go:0032874)": "go_biological_process_2021.gmt__positive regulation of stress-activated mapk cascade (go:0032874)",
+              "pyrimidine-containing compound catabolic process (go:0072529)": "go_biological_process_2021.gmt__pyrimidine-containing compound catabolic process (go:0072529)",
+              "rna stabilization (go:0043489)": "go_biological_process_2021.gmt__rna stabilization (go:0043489)",
+              "positive regulation of blood coagulation (go:0030194)": "go_biological_process_2021.gmt__positive regulation of blood coagulation (go:0030194)",
+              "production of small rna involved in gene silencing by rna (go:0070918)": "go_biological_process_2021.gmt__production of small rna involved in gene silencing by rna (go:0070918)",
+              "regulation of presynapse assembly (go:1905606)": "go_biological_process_2021.gmt__regulation of presynapse assembly (go:1905606)",
+              "cilium assembly (go:0060271)": "go_biological_process_2021.gmt__cilium assembly (go:0060271)",
+              "negative regulation of epithelial to mesenchymal transition (go:0010719)": "go_biological_process_2021.gmt__negative regulation of epithelial to mesenchymal transition (go:0010719)",
+              "atrioventricular valve morphogenesis (go:0003181)": "go_biological_process_2021.gmt__atrioventricular valve morphogenesis (go:0003181)",
+              "negative regulation of cytokine-mediated signaling pathway (go:0001960)": "go_biological_process_2021.gmt__negative regulation of cytokine-mediated signaling pathway (go:0001960)",
+              "positive regulation of intracellular transport (go:0032388)": "go_biological_process_2021.gmt__positive regulation of intracellular transport (go:0032388)",
+              "dna-templated transcription, initiation (go:0006352)": "go_biological_process_2021.gmt__dna-templated transcription, initiation (go:0006352)",
+              "regulation of pri-mirna transcription by rna polymerase ii (go:1902893)": "go_biological_process_2021.gmt__regulation of pri-mirna transcription by rna polymerase ii (go:1902893)",
+              "import into nucleus (go:0051170)": "go_biological_process_2021.gmt__import into nucleus (go:0051170)",
+              "positive regulation of cell-substrate junction organization (go:0150117)": "go_biological_process_2021.gmt__positive regulation of cell-substrate junction organization (go:0150117)",
+              "chromosome condensation (go:0030261)": "go_biological_process_2021.gmt__chromosome condensation (go:0030261)",
+              "cytoplasmic pattern recognition receptor signaling pathway (go:0002753)": "go_biological_process_2021.gmt__cytoplasmic pattern recognition receptor signaling pathway (go:0002753)",
+              "glucose transmembrane transport (go:1904659)": "go_biological_process_2021.gmt__glucose transmembrane transport (go:1904659)",
+              "regulation of chromosome organization (go:0033044)": "go_biological_process_2021.gmt__regulation of chromosome organization (go:0033044)",
+              "trna processing (go:0008033)": "go_biological_process_2021.gmt__trna processing (go:0008033)",
+              "cell surface receptor signaling pathway involved in heart development (go:0061311)": "go_biological_process_2021.gmt__cell surface receptor signaling pathway involved in heart development (go:0061311)",
+              "regulation of immunoglobulin production (go:0002637)": "go_biological_process_2021.gmt__regulation of immunoglobulin production (go:0002637)",
+              "sulfur compound biosynthetic process (go:0044272)": "go_biological_process_2021.gmt__sulfur compound biosynthetic process (go:0044272)",
+              "positive regulation of cyclin-dependent protein kinase activity (go:1904031)": "go_biological_process_2021.gmt__positive regulation of cyclin-dependent protein kinase activity (go:1904031)",
+              "protein catabolic process (go:0030163)": "go_biological_process_2021.gmt__protein catabolic process (go:0030163)",
+              "positive regulation of release of cytochrome c from mitochondria (go:0090200)": "go_biological_process_2021.gmt__positive regulation of release of cytochrome c from mitochondria (go:0090200)",
+              "unsaturated fatty acid metabolic process (go:0033559)": "go_biological_process_2021.gmt__unsaturated fatty acid metabolic process (go:0033559)",
+              "phosphatidylcholine biosynthetic process (go:0006656)": "go_biological_process_2021.gmt__phosphatidylcholine biosynthetic process (go:0006656)",
+              "negative regulation of fatty acid metabolic process (go:0045922)": "go_biological_process_2021.gmt__negative regulation of fatty acid metabolic process (go:0045922)",
+              "negative regulation of interleukin-8 production (go:0032717)": "go_biological_process_2021.gmt__negative regulation of interleukin-8 production (go:0032717)",
+              "polyol biosynthetic process (go:0046173)": "go_biological_process_2021.gmt__polyol biosynthetic process (go:0046173)",
+              "regulation of steroid biosynthetic process (go:0050810)": "go_biological_process_2021.gmt__regulation of steroid biosynthetic process (go:0050810)",
+              "regulation of t cell receptor signaling pathway (go:0050856)": "go_biological_process_2021.gmt__regulation of t cell receptor signaling pathway (go:0050856)",
+              "neuron projection organization (go:0106027)": "go_biological_process_2021.gmt__neuron projection organization (go:0106027)",
+              "entrainment of circadian clock by photoperiod (go:0043153)": "go_biological_process_2021.gmt__entrainment of circadian clock by photoperiod (go:0043153)",
+              "positive regulation of protein localization to cell periphery (go:1904377)": "go_biological_process_2021.gmt__positive regulation of protein localization to cell periphery (go:1904377)",
+              "regulation of blood vessel endothelial cell proliferation involved in sprouting angiogenesis (go:1903587)": "go_biological_process_2021.gmt__regulation of blood vessel endothelial cell proliferation involved in sprouting angiogenesis (go:1903587)",
+              "activin receptor signaling pathway (go:0032924)": "go_biological_process_2021.gmt__activin receptor signaling pathway (go:0032924)",
+              "regulation of cellular component movement (go:0051270)": "go_biological_process_2021.gmt__regulation of cellular component movement (go:0051270)",
+              "nucleic acid metabolic process (go:0090304)": "go_biological_process_2021.gmt__nucleic acid metabolic process (go:0090304)",
+              "regulation of mitotic metaphase/anaphase transition (go:0030071)": "go_biological_process_2021.gmt__regulation of mitotic metaphase/anaphase transition (go:0030071)",
+              "negative regulation of peptidyl-serine phosphorylation (go:0033137)": "go_biological_process_2021.gmt__negative regulation of peptidyl-serine phosphorylation (go:0033137)",
+              "gpi anchor biosynthetic process (go:0006506)": "go_biological_process_2021.gmt__gpi anchor biosynthetic process (go:0006506)",
+              "epidermal cell differentiation (go:0009913)": "go_biological_process_2021.gmt__epidermal cell differentiation (go:0009913)",
+              "regulation of smooth muscle cell migration (go:0014910)": "go_biological_process_2021.gmt__regulation of smooth muscle cell migration (go:0014910)",
+              "regulation of neuron apoptotic process (go:0043523)": "go_biological_process_2021.gmt__regulation of neuron apoptotic process (go:0043523)",
+              "regulation of neuron death (go:1901214)": "go_biological_process_2021.gmt__regulation of neuron death (go:1901214)",
+              "regulation of angiogenesis (go:0045765)": "go_biological_process_2021.gmt__regulation of angiogenesis (go:0045765)",
+              "negative regulation of sequestering of calcium ion (go:0051283)": "go_biological_process_2021.gmt__negative regulation of sequestering of calcium ion (go:0051283)",
+              "negative regulation of ubiquitin-dependent protein catabolic process (go:2000059)": "go_biological_process_2021.gmt__negative regulation of ubiquitin-dependent protein catabolic process (go:2000059)",
+              "regulation of osteoblast differentiation (go:0045667)": "go_biological_process_2021.gmt__regulation of osteoblast differentiation (go:0045667)",
+              "regulation of t cell chemotaxis (go:0010819)": "go_biological_process_2021.gmt__regulation of t cell chemotaxis (go:0010819)",
+              "peptidyl-tyrosine modification (go:0018212)": "go_biological_process_2021.gmt__peptidyl-tyrosine modification (go:0018212)",
+              "plasma membrane organization (go:0007009)": "go_biological_process_2021.gmt__plasma membrane organization (go:0007009)",
+              "regulation of clathrin-dependent endocytosis (go:2000369)": "go_biological_process_2021.gmt__regulation of clathrin-dependent endocytosis (go:2000369)",
+              "regulation of protein targeting to membrane (go:0090313)": "go_biological_process_2021.gmt__regulation of protein targeting to membrane (go:0090313)",
+              "regulation of viral genome replication (go:0045069)": "go_biological_process_2021.gmt__regulation of viral genome replication (go:0045069)",
+              "negative regulation of peptidyl-tyrosine phosphorylation (go:0050732)": "go_biological_process_2021.gmt__negative regulation of peptidyl-tyrosine phosphorylation (go:0050732)",
+              "positive regulation of developmental growth (go:0048639)": "go_biological_process_2021.gmt__positive regulation of developmental growth (go:0048639)",
+              "heterochromatin assembly (go:0031507)": "go_biological_process_2021.gmt__heterochromatin assembly (go:0031507)",
+              "respiratory tube development (go:0030323)": "go_biological_process_2021.gmt__respiratory tube development (go:0030323)",
+              "secondary alcohol biosynthetic process (go:1902653)": "go_biological_process_2021.gmt__secondary alcohol biosynthetic process (go:1902653)",
+              "regulation of defense response to virus (go:0050688)": "go_biological_process_2021.gmt__regulation of defense response to virus (go:0050688)",
+              "positive regulation of t cell migration (go:2000406)": "go_biological_process_2021.gmt__positive regulation of t cell migration (go:2000406)",
+              "hexose metabolic process (go:0019318)": "go_biological_process_2021.gmt__hexose metabolic process (go:0019318)",
+              "odontogenesis of dentin-containing tooth (go:0042475)": "go_biological_process_2021.gmt__odontogenesis of dentin-containing tooth (go:0042475)",
+              "epithelial to mesenchymal transition (go:0001837)": "go_biological_process_2021.gmt__epithelial to mesenchymal transition (go:0001837)",
+              "regulation of golgi organization (go:1903358)": "go_biological_process_2021.gmt__regulation of golgi organization (go:1903358)",
+              "sphingolipid metabolic process (go:0006665)": "go_biological_process_2021.gmt__sphingolipid metabolic process (go:0006665)",
+              "histone deacetylation (go:0016575)": "go_biological_process_2021.gmt__histone deacetylation (go:0016575)",
+              "male meiosis i (go:0007141)": "go_biological_process_2021.gmt__male meiosis i (go:0007141)",
+              "eye development (go:0001654)": "go_biological_process_2021.gmt__eye development (go:0001654)",
+              "peptide metabolic process (go:0006518)": "go_biological_process_2021.gmt__peptide metabolic process (go:0006518)"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Matched exact GO accession and biological-process name; reference identifiers add only the dataset prefix.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene %",
+              "Name",
+              "Lead_genes",
+              "Term",
+              "NOM p-val",
+              "Tag %",
+              "ES",
+              "FWER p-val",
+              "NES",
+              "FDR q-val"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene %": [
+                "str",
+                "str",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "Lead_genes": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Tag %": [
+                "str",
+                "str",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FWER p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 2756",
+            "Unmapped candidate rows: 2756"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Tag %"
+          ],
+          "filtered_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Tag %"
+          ],
+          "overall_similarity": 0.5092267245311476,
+          "per_column_similarities": {
+            "ES": {
+              "similarity": 0.9999420515497576,
+              "strategy": "rae",
+              "matching_count": 105,
+              "total_count": 105,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "FDR q-val": {
+              "similarity": 0.9338294749344287,
+              "strategy": "rae",
+              "matching_count": 88,
+              "total_count": 106,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "FWER p-val": {
+              "similarity": 0.9729890498942931,
+              "strategy": "rae",
+              "matching_count": 99,
+              "total_count": 106,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Gene %": {
+              "similarity": 0.01335232330425494,
+              "strategy": "exact",
+              "matching_count": 75,
+              "total_count": 5617,
+              "error": null,
+              "details": {}
+            },
+            "Lead_genes": {
+              "similarity": 0.018693252625956915,
+              "strategy": "overlap",
+              "matching_count": 105,
+              "total_count": 5617,
+              "error": null,
+              "details": {
+                "delimiter": ";",
+                "threshold": 0.8,
+                "valid_pairs": 5617,
+                "total_pairs": 5617
+              }
+            },
+            "NES": {
+              "similarity": 0.9944640096876866,
+              "strategy": "rae",
+              "matching_count": 105,
+              "total_count": 105,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "NOM p-val": {
+              "similarity": 0.12185038162684622,
+              "strategy": "rae",
+              "matching_count": 63,
+              "total_count": 714,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Tag %": {
+              "similarity": 0.018693252625956915,
+              "strategy": "exact",
+              "matching_count": 105,
+              "total_count": 5617,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5617,
+            "alt_rows": 5617,
+            "row_intersection": 5617,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              5617,
+              10
+            ],
+            "alt_shape": [
+              5617,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene %": true,
+              "Name": true,
+              "Lead_genes": true,
+              "Term": true,
+              "NOM p-val": true,
+              "Tag %": true,
+              "ES": true,
+              "FWER p-val": true,
+              "NES": true,
+              "FDR q-val": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.018693252625956915,
+            "ref_missing_rate": 0.49065337368702155,
+            "alt_missing_rate": 0.49065337368702155
+          }
+        }
+      }
+
+  File 2/2: status=success, similarity=0.7342
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Term"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have the same 10 columns in the same tabular orientation, so no transpose or column mapping is needed. Align rows by Term, using the embedded GO ID as the stable identifier while ignoring the reference library-name prefix and other term-formatting differences. Row order remains significant because these are ranked top-10 enrichment results and only limited rank shifts are allowed. Preserve the reported ranking rather than pre-sorting; compare matched terms by GO ID and assess enrichment direction from the sign of NES.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Name",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The analysis label should be identical for every reported enrichment result; it is not a set-valued field."
+            },
+            {
+              "name": "ES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "ES is an absolute enrichment measurement whose sign determines enrichment direction. A 5% relative-error tolerance accommodates minor implementation or permutation variation while rejecting direction reversals and substantial magnitude differences."
+            },
+            {
+              "name": "NES",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "NES is the principal statistic for enrichment direction and top-set ranking. The 5% relative-error tolerance directly follows the evaluation guideline."
+            },
+            {
+              "name": "NOM p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1,
+              "cell_threshold": null,
+              "confidence": 0.82,
+              "reasoning": "Nominal p-values are important for significance but can vary with permutation sampling. A 10% relative tolerance is appropriate for nonzero values; exact zero values remain meaningfully distinguishable from nonzero values under ordinary RAE handling."
+            },
+            {
+              "name": "FDR q-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.5,
+              "cell_threshold": null,
+              "confidence": 0.82,
+              "reasoning": "FDR is critical for identifying significantly enriched sets, but the displayed values are very small and visibly sensitive to permutation counts. A 50% relative tolerance permits modest small-value variation while still penalizing materially different significance estimates."
+            },
+            {
+              "name": "FWER p-val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.5,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "FWER is a secondary significance statistic and is permutation-sensitive at the observed small scale. A 50% relative tolerance accommodates sampling granularity without treating large discrepancies as matches."
+            },
+            {
+              "name": "Tag %",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.94,
+              "reasoning": "Although stored as text, Tag % encodes an exact leading-edge count ratio such as 72/94. Exact comparison is appropriate because both numerator and denominator should be reproduced."
+            },
+            {
+              "name": "Gene %",
+              "data_type": "categorical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.91,
+              "reasoning": "This percentage is stored as a formatted string and differs by trivial rounding such as 14.19% versus 14.20%. The available categorical strategies cannot express an appropriate numeric percentage tolerance, so it should not create false failures."
+            },
+            {
+              "name": "Lead_genes",
+              "data_type": "categorical",
+              "strategy": "overlap",
+              "cell_delimiter": ";",
+              "cell_tolerance": null,
+              "cell_threshold": 0.8,
+              "confidence": 0.98,
+              "reasoning": "Leading-edge genes form a semicolon-delimited set whose ordering is not the key semantic property. Jaccard overlap with a high 0.8 threshold requires strong biological agreement while allowing minor implementation-dependent differences."
+            }
+          ],
+          "overall_reasoning": "Term is excluded because it is the alignment identifier, although its parsed GO ID is the basis for matching gene sets. NES and ES receive the greatest emphasis because the task explicitly requires the same GO sets and enrichment direction and permits 5% NES error. Significance columns are compared as absolute reported measurements with wider relative tolerances reflecting permutation variability at very small values. Name and the count-based Tag % are exact categorical fields, Lead_genes is compared as a semicolon-delimited set, and Gene % is ignored because its string dtype prevents a rounding-aware numeric comparison. Missing candidate results will still be exposed through mismatches in the critical ES, NES, significance, Name, Tag %, and Lead_genes columns.",
+          "overall_confidence": 0.94,
+          "id_columns": [
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Term"
+            ],
+            "matched_rows": 8,
+            "unmapped_ref_rows": 2,
+            "unmapped_alt_rows": 2,
+            "fuzzy_matched_ids": {
+              "srp-dependent cotranslational protein targeting to membrane (go:0006614)": "go_biological_process_2021.gmt__srp-dependent cotranslational protein targeting to membrane (go:0006614)",
+              "fc receptor signaling pathway (go:0038093)": "go_biological_process_2021.gmt__fc receptor signaling pathway (go:0038093)",
+              "nuclear-transcribed mrna catabolic process, nonsense-mediated decay (go:0000184)": "go_biological_process_2021.gmt__nuclear-transcribed mrna catabolic process, nonsense-mediated decay (go:0000184)",
+              "erbb2 signaling pathway (go:0038128)": "go_biological_process_2021.gmt__erbb2 signaling pathway (go:0038128)",
+              "cytoplasmic translation (go:0002181)": "go_biological_process_2021.gmt__cytoplasmic translation (go:0002181)",
+              "cotranslational protein targeting to membrane (go:0006613)": "go_biological_process_2021.gmt__cotranslational protein targeting to membrane (go:0006613)",
+              "fc-epsilon receptor signaling pathway (go:0038095)": "go_biological_process_2021.gmt__fc-epsilon receptor signaling pathway (go:0038095)",
+              "regulation of nmda receptor activity (go:2000310)": "go_biological_process_2021.gmt__regulation of nmda receptor activity (go:2000310)"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Matched exact GO accession numbers and process names after disregarding the common reference prefix. Two candidates have no corresponding reference accession and were mapped to null.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene %",
+              "Name",
+              "Lead_genes",
+              "Term",
+              "NOM p-val",
+              "Tag %",
+              "ES",
+              "FWER p-val",
+              "NES",
+              "FDR q-val"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene %": [
+                "str",
+                "str",
+                true
+              ],
+              "Name": [
+                "str",
+                "str",
+                true
+              ],
+              "Lead_genes": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "NOM p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Tag %": [
+                "str",
+                "str",
+                true
+              ],
+              "ES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FWER p-val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "NES": [
+                "float64",
+                "float64",
+                true
+              ],
+              "FDR q-val": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference rows: 2",
+            "Unmapped candidate rows: 2"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Gene %",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "filtered_columns": [
+            "ES",
+            "FDR q-val",
+            "FWER p-val",
+            "Lead_genes",
+            "NES",
+            "NOM p-val",
+            "Name",
+            "Tag %"
+          ],
+          "overall_similarity": 0.7342346440204712,
+          "per_column_similarities": {
+            "ES": {
+              "similarity": 0.9999498536619853,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "FDR q-val": {
+              "similarity": 0.5051911198988083,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.5
+              }
+            },
+            "FWER p-val": {
+              "similarity": 0.5729166666666667,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.5
+              }
+            },
+            "Lead_genes": {
+              "similarity": 0.6666666666666666,
+              "strategy": "overlap",
+              "matching_count": 8,
+              "total_count": 12,
+              "error": null,
+              "details": {
+                "delimiter": ";",
+                "threshold": 0.8,
+                "valid_pairs": 12,
+                "total_pairs": 12
+              }
+            },
+            "NES": {
+              "similarity": 0.9958195119363098,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "NOM p-val": {
+              "similarity": 0.8,
+              "strategy": "rae",
+              "matching_count": 8,
+              "total_count": 10,
+              "error": null,
+              "details": {
+                "tolerance": 0.1
+              }
+            },
+            "Name": {
+              "similarity": 0.6666666666666666,
+              "strategy": "exact",
+              "matching_count": 8,
+              "total_count": 12,
+              "error": null,
+              "details": {}
+            },
+            "Tag %": {
+              "similarity": 0.6666666666666666,
+              "strategy": "exact",
+              "matching_count": 8,
+              "total_count": 12,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 12,
+            "alt_rows": 12,
+            "row_intersection": 12,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              12,
+              10
+            ],
+            "alt_shape": [
+              12,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene %": true,
+              "Name": true,
+              "Lead_genes": true,
+              "Term": true,
+              "NOM p-val": true,
+              "Tag %": true,
+              "ES": true,
+              "FWER p-val": true,
+              "NES": true,
+              "FDR q-val": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.6666666666666666,
+            "ref_missing_rate": 0.16666666666666666,
+            "alt_missing_rate": 0.16666666666666666
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-2-8  |  Agent: claude-skills
+Avg similarity: 0.6217
+============================================================
+
+✅ Results saved → claude-skills-rescored/a-2-8_claude-skills.json
+✅ Full states saved → claude-skills-rescored/a-2-8_claude-skills_full.json
+
+
+
+

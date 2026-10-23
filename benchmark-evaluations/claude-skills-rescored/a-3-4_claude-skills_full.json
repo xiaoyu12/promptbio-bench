@@ -1,0 +1,287 @@
+{
+  "id": "a-3-4",
+  "question": "Use DESeq2 for differential analysis and plot results as a volcano plot.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-4/ref_answer/DESeq2_results.csv",
+      "eval_guideline": "log2FoldChange, stat, and padj per gene must match within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-4/output/DESeq2_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate CSV-formatted DESeq2 differential-analysis results for the same task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare DESeq2 result tables by gene, requiring log2FoldChange, stat, and padj to agree within 1% relative absolute error while allowing row and column reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level numeric agreement per gene with a 1% relative tolerance and explicitly permits reordered rows and columns. Approximate table comparison supports gene-based alignment and minor numeric variation.",
+      "strategy_error": null,
+      "similarity": 0.9999999999042549,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "gene_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "gene_id",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 2000-by-7 structure and exactly matching column names, so no transpose or column mapping is needed. Rows appear in different orders and should be matched by the unique gene_id identifier. Differential-expression results are unordered per-gene records, and the evaluation explicitly permits differing row and column order; sorting by gene_id provides deterministic alignment before comparing log2FoldChange, stat, and padj.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FoldChange",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is an explicitly required per-gene DESeq2 result. Use cell-wise relative absolute error with a 0.01 threshold to enforce the stated 1% error limit."
+            },
+            {
+              "name": "stat",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is an explicitly required per-gene DESeq2 statistic. Use cell-wise relative absolute error with a 0.01 threshold to enforce the stated 1% error limit."
+            },
+            {
+              "name": "padj",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This is the explicitly required adjusted p-value and is central to volcano-plot significance classification. Use cell-wise relative absolute error with a 0.01 threshold to enforce the stated 1% error limit."
+            }
+          ],
+          "overall_reasoning": "Align rows by gene_id but exclude that identifier from scoring. The evaluation guideline explicitly identifies log2FoldChange, stat, and padj as the required outputs, so only those columns are included; baseMean, lfcSE, and pvalue are auxiliary DESeq2 outputs and are not required by the stated criterion. All selected columns are float64 numerical values, and absolute numerical agreement matters rather than merely correlation or rank preservation, making RAE the appropriate strategy. A cell_tolerance of 0.01 directly represents the required 1% relative absolute error. No categorical overlap comparison, delimiter, or Jaccard threshold applies. Missing or non-finite values should be treated as matching only when they occur for the same aligned gene in both dataframes.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "gene_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "gene_id"
+            ],
+            "matched_rows": 2000,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "padj",
+              "baseMean",
+              "pvalue",
+              "log2FoldChange",
+              "lfcSE",
+              "stat",
+              "gene_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "padj": [
+                "float64",
+                "float64",
+                true
+              ],
+              "baseMean": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pvalue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "log2FoldChange": [
+                "float64",
+                "float64",
+                true
+              ],
+              "lfcSE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "stat": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "gene_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['gene_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "log2FoldChange",
+            "padj",
+            "stat"
+          ],
+          "filtered_columns": [
+            "log2FoldChange",
+            "padj",
+            "stat"
+          ],
+          "overall_similarity": 0.9999999999042549,
+          "per_column_similarities": {
+            "log2FoldChange": {
+              "similarity": 0.9999999999954244,
+              "strategy": "rae",
+              "matching_count": 1992,
+              "total_count": 1992,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "padj": {
+              "similarity": 0.9999999999999781,
+              "strategy": "rae",
+              "matching_count": 1992,
+              "total_count": 1992,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "stat": {
+              "similarity": 0.9999999997173622,
+              "strategy": "rae",
+              "matching_count": 1992,
+              "total_count": 1992,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 2000,
+            "alt_rows": 2000,
+            "row_intersection": 2000,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              2000,
+              7
+            ],
+            "alt_shape": [
+              2000,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "padj": true,
+              "baseMean": true,
+              "pvalue": true,
+              "log2FoldChange": true,
+              "lfcSE": true,
+              "stat": true,
+              "gene_id": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.004,
+            "alt_missing_rate": 0.004
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-4/ref_answer/volcano_plot.png",
+      "eval_guideline": "Points must be colored to distinguish significant from non-significant genes (padj < 0.05); styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-4/output/volcano_plot.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both are PNG volcano plots corresponding to the requested visualization for the same task.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires a visual property—points colored by significance at padj < 0.05—while explicitly allowing styling differences. Semantic comparison is therefore appropriate for evaluating the volcano plot.",
+      "strategy_error": null,
+      "similarity": 0.94,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.98,
+        "explanation": "Both images visualize the same differential-expression results as volcano plots, with log2 fold change on the x-axis and -log10 adjusted p-value on the y-axis. The point distribution and major outliers match closely: very strong downregulated points occur near (-8, 41), (-3.8, 23), and approximately (-2, 13–15), while a strong upregulated point occurs near (1.5, 3.5); the dense nonsignificant cloud around zero also agrees. Both distinguish genes satisfying padj < 0.05 from nonsignificant genes. The candidate adds fold-change thresholds at log2FC = -1 and 1, a horizontal padj = 0.05 line, and separates significant genes into blue downregulated and red upregulated categories. The reference instead colors all significant genes red and does not display threshold lines. These are styling and annotation differences that improve directional interpretation without changing the underlying data or scientific message. One minor semantic difference is that the reference legend describes significance only by adjusted p-value, whereas the candidate's colored significant categories additionally require |log2FC| > 1; however, the displayed significant points appear to meet those thresholds, so the practical classification and conclusion remain equivalent."
+      },
+      "comparison_error": null
+    }
+  ]
+}

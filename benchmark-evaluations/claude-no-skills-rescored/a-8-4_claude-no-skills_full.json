@@ -1,0 +1,409 @@
+{
+  "id": "a-8-4",
+  "question": "Filter the provided metabolomics metadata table to retain only the rows whose HMDB ID appears in the given list.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-8-4/ref_answer/metabolomics_meta.tsv",
+      "eval_guideline": "Filtered rows must match the reference in all column values; row order, column order, and whitespace may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-8-4/output/metabolomics_meta.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both files have the identical filename metabolomics_meta.tsv and indicate TSV format. The candidate corresponds directly to the expected metabolomics metadata table filtered by the provided HMDB ID list.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the filtered metabolomics metadata tables, requiring the same retained rows and all column values to match while allowing differences in row order, column order, and whitespace."
+      },
+      "strategy_confidence": 1.0,
+      "strategy_reasoning": "The guideline requires record-level agreement in all column values while explicitly allowing reordered rows and columns and whitespace differences. Approximate comparison supports this structural alignment for a deterministic TSV filtering task.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Group_HMDB",
+            "COMP_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Group_HMDB,COMP_ID",
+          "check_permutation": true,
+          "reasoning": "Both tables have identical column names and orientation, so no column mapping or transpose is needed. Match rows using Group_HMDB and COMP_ID together to distinguish metabolite records sharing an HMDB ID. Sort by these keys for consistent comparison and compare all column values while allowing whitespace differences and matching missing values. Row and column order are irrelevant. The displayed rows match, but the undisplayed rows cannot be verified from the previews.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "CAS",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Compare complete CAS strings after whitespace normalization; preserve identifiers, punctuation, and their order."
+            },
+            {
+              "name": "KEGG",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "KEGG identifiers must match exactly after whitespace normalization."
+            },
+            {
+              "name": "MASS",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Filtering must preserve mass values exactly, so require zero relative absolute error."
+            },
+            {
+              "name": "Metabolite",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Preserve complete metabolite names, including punctuation, after whitespace normalization."
+            },
+            {
+              "name": "PLATFORM",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Platform labels carry specific meaning and must match after whitespace normalization."
+            },
+            {
+              "name": "PUBCHEM",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Although stored as float64, these values are identifiers. Require zero error because relative tolerance at large magnitudes could accept different identifiers."
+            },
+            {
+              "name": "RI",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Filtering must preserve retention index values exactly; no measurement tolerance is warranted."
+            },
+            {
+              "name": "SUB_PATHWAY",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Compare complete pathway descriptions after whitespace normalization. Commas are meaningful parts of descriptions, not delimiters for set comparison."
+            },
+            {
+              "name": "SUPER_PATHWAY",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Pathway categories have meaningful labels and must match after whitespace normalization."
+            }
+          ],
+          "overall_reasoning": "All nine non-ID columns are critical because filtering must preserve every retained value. Exclude Group_HMDB and COMP_ID from value comparison and use their existing alignment independently of row or column order. Normalize whitespace before exact string comparisons while preserving other characters. Use RAE with zero tolerance for all numerical columns because this task permits no numerical changes, regardless of value scale. Treat paired missing values as matching and a missing versus present value as a mismatch; handle paired numerical zeros as matching. No overlap strategy or delimiter parsing is needed because full cell content must be preserved. The truncated previews support this plan but cannot establish equality of unseen rows.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "Group_HMDB",
+            "COMP_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Group_HMDB",
+              "COMP_ID"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "SUPER_PATHWAY",
+              "Group_HMDB",
+              "CAS",
+              "MASS",
+              "PLATFORM",
+              "Metabolite",
+              "RI",
+              "COMP_ID",
+              "PUBCHEM",
+              "KEGG",
+              "SUB_PATHWAY"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "SUPER_PATHWAY": [
+                "str",
+                "str",
+                true
+              ],
+              "Group_HMDB": [
+                "str",
+                "str",
+                true
+              ],
+              "CAS": [
+                "str",
+                "str",
+                true
+              ],
+              "MASS": [
+                "float64",
+                "float64",
+                true
+              ],
+              "PLATFORM": [
+                "str",
+                "str",
+                true
+              ],
+              "Metabolite": [
+                "str",
+                "str",
+                true
+              ],
+              "RI": [
+                "float64",
+                "float64",
+                true
+              ],
+              "COMP_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "PUBCHEM": [
+                "float64",
+                "float64",
+                true
+              ],
+              "KEGG": [
+                "str",
+                "str",
+                true
+              ],
+              "SUB_PATHWAY": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Group_HMDB",
+              "COMP_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Group_HMDB', 'COMP_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "CAS",
+            "KEGG",
+            "MASS",
+            "Metabolite",
+            "PLATFORM",
+            "PUBCHEM",
+            "RI",
+            "SUB_PATHWAY",
+            "SUPER_PATHWAY"
+          ],
+          "filtered_columns": [
+            "CAS",
+            "KEGG",
+            "MASS",
+            "Metabolite",
+            "PLATFORM",
+            "PUBCHEM",
+            "RI",
+            "SUB_PATHWAY",
+            "SUPER_PATHWAY"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "CAS": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            },
+            "KEGG": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            },
+            "MASS": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Metabolite": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            },
+            "PLATFORM": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            },
+            "PUBCHEM": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 15,
+              "total_count": 15,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "RI": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "SUB_PATHWAY": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            },
+            "SUPER_PATHWAY": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 11,
+            "alt_cols": 11,
+            "col_intersection": 11
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              11
+            ],
+            "alt_shape": [
+              20,
+              11
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "SUPER_PATHWAY": true,
+              "Group_HMDB": true,
+              "CAS": true,
+              "MASS": true,
+              "PLATFORM": true,
+              "Metabolite": true,
+              "RI": true,
+              "COMP_ID": true,
+              "PUBCHEM": true,
+              "KEGG": true,
+              "SUB_PATHWAY": true
+            },
+            "common_columns": 11
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.10555555555555556,
+            "alt_missing_rate": 0.10555555555555556
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

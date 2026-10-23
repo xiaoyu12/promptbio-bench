@@ -1,0 +1,239 @@
+{
+  "id": "b-5-3",
+  "question": "Apply DBSCAN clustering to the dataset with eps=0.5 and min_samples=5. For each data point, report its cluster label and whether it is a core, border, or noise point.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-3/ref_answer/dbscan_cluster_report.csv",
+      "eval_guideline": "Each point's cluster label and point type (Core, Border, or Noise) must match the reference; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-5-3/output/dbscan_cluster_report.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical basenames and CSV extensions, indicating corresponding tabular DBSCAN reports. The candidate name directly matches the requested per-point cluster labels and core, border, or noise classifications.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare DBSCAN reports for eps=0.5 and min_samples=5. Align corresponding data points and columns despite differences in row order, column order, or header labels; require each point's cluster label and Core, Border, or Noise type to match the reference."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires point-level cluster labels and point types to match while explicitly allowing structural differences in the table. Approximate comparison supports this alignment and record-level evaluation.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "feature_1": "feature_1",
+            "feature_2": "feature_2",
+            "Cluster": "cluster_label",
+            "PointType": "point_type"
+          },
+          "id_columns": [
+            "feature_1",
+            "feature_2"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "feature_1,feature_2",
+          "check_permutation": true,
+          "reasoning": "Both tables represent points as rows, so no transpose is needed. Map the feature columns directly and map Cluster and PointType to their semantic equivalents. Match and sort points using the composite feature coordinates, assuming these uniquely identify points; uniqueness must be checked on the full data. Ignore the candidate-only point_id column. Row and column order do not matter, but cluster labels and point types must match exactly.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Cluster",
+              "data_type": "categorical",
+              "strategy": "partition",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Although stored as int64, cluster IDs represent categorical group membership. Compare after optimal one-to-one relabelling, as required for arbitrary cluster labels. PointType independently verifies noise membership."
+            },
+            {
+              "name": "PointType",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Core, Border, and Noise are meaningful string categories that must match exactly for each aligned point."
+            }
+          ],
+          "overall_reasoning": "Cluster membership and point type are the required DBSCAN outputs. Exclude feature_1 and feature_2 because they are alignment IDs, and omit candidate-only point_id because it is unrelated to the required outputs. Use partition comparison for integer-encoded cluster categories and exact comparison for PointType. Neither strategy requires numerical tolerances, Jaccard thresholds, or delimiters.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "feature_1",
+            "feature_2"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "feature_1": "feature_1",
+              "feature_2": "feature_2",
+              "Cluster": "cluster_label",
+              "PointType": "point_type"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "point_id"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "feature_1",
+              "feature_2"
+            ],
+            "matched_rows": 120,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "feature_2",
+              "PointType",
+              "feature_1",
+              "Cluster"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "feature_2": [
+                "str",
+                "str",
+                true
+              ],
+              "PointType": [
+                "str",
+                "str",
+                true
+              ],
+              "feature_1": [
+                "str",
+                "str",
+                true
+              ],
+              "Cluster": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "feature_1",
+              "feature_2"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['point_id']",
+            "Sorted both dataframes by ['feature_1', 'feature_2']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Cluster",
+            "PointType"
+          ],
+          "filtered_columns": [
+            "Cluster",
+            "PointType"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Cluster": {
+              "similarity": 1.0,
+              "strategy": "partition",
+              "matching_count": 120,
+              "total_count": 120,
+              "error": null,
+              "details": {
+                "label_mapping": {
+                  "-1": "-1",
+                  "0": "0",
+                  "1": "1"
+                },
+                "adjusted_rand_index": 1.0,
+                "ref_groups": 3,
+                "alt_groups": 3
+              }
+            },
+            "PointType": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 120,
+              "total_count": 120,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8,
+            "col_recall": 1.0,
+            "col_f1": 0.888888888888889,
+            "col_jaccard": 0.8,
+            "ref_rows": 120,
+            "alt_rows": 120,
+            "row_intersection": 120,
+            "ref_cols": 4,
+            "alt_cols": 5,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              120,
+              4
+            ],
+            "alt_shape": [
+              120,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "feature_2": true,
+              "PointType": true,
+              "feature_1": true,
+              "Cluster": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

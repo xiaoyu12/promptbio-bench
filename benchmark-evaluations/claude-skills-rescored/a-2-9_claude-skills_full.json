@@ -1,0 +1,282 @@
+{
+  "id": "a-2-9",
+  "question": "Perform KEGG pathway enrichment analysis on the provided gene list and report the enriched pathways.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-2-9/ref_answer/enrich_result.csv",
+      "eval_guideline": "Enriched KEGG pathway records must match the reference in pathway identity, Odds Ratio, P-value, and Adjusted P-value within 1% relative absolute error; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-2-9/output/enrich_result.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and .csv format, and both correspond to the KEGG pathway enrichment result for task a-2-9.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare enriched KEGG pathway records by pathway identity, Odds Ratio, P-value, and Adjusted P-value, allowing row/column reordering, extra columns, and up to 1% relative absolute numeric error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level matching of a small CSV results table while allowing structural differences and minor numeric variation. Approximate comparison supports row and column realignment and value-by-value assessment under the stated 1% tolerance.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Gene_set",
+            "Term"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene_set,Term",
+          "check_permutation": true,
+          "reasoning": "Both dataframes have the same 169×10 structure and exactly matching column names, so no transpose or column mapping is needed. Rows represent enriched pathway records and are unordered for evaluation. The composite key Gene_set and Term identifies each pathway record more robustly than position alone; sorting by this key ensures deterministic matching. Differences in the ordering of genes within the semicolon-delimited Genes field do not affect structural row identity.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Odds Ratio",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Odds Ratio is explicitly required by the evaluation guideline. Cell-wise relative absolute error with a 0.01 tolerance directly enforces the allowed 1% relative absolute error."
+            },
+            {
+              "name": "P-value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "P-value is explicitly required and spans very small magnitudes, making scale-independent relative absolute error appropriate. A 0.01 tolerance implements the specified 1% relative absolute error limit."
+            },
+            {
+              "name": "Adjusted P-value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Adjusted P-value is explicitly required by the evaluation guideline. Relative absolute error is suitable across its varying scales, and the 0.01 tolerance corresponds to the required 1% limit."
+            }
+          ],
+          "overall_reasoning": "Gene_set and Term establish pathway identity and are used only for alignment, so they are excluded from comparison as instructed. The evaluation guideline specifically identifies Odds Ratio, P-value, and Adjusted P-value as the scored enrichment results; therefore, only these critical numerical columns are included. Each uses cell-wise relative absolute error with tolerance 0.01 to enforce agreement within 1% relative absolute error. Overlap, Combined Score, Genes, Old P-value, and Old Adjusted P-value are ancillary outputs not required by the stated evaluation criterion.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "Gene_set",
+            "Term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene_set",
+              "Term"
+            ],
+            "matched_rows": 169,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene_set",
+              "Adjusted P-value",
+              "P-value",
+              "Odds Ratio",
+              "Old P-value",
+              "Old Adjusted P-value",
+              "Overlap",
+              "Term",
+              "Combined Score",
+              "Genes"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene_set": [
+                "str",
+                "str",
+                true
+              ],
+              "Adjusted P-value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P-value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Odds Ratio": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Old P-value": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Old Adjusted P-value": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Overlap": [
+                "str",
+                "str",
+                true
+              ],
+              "Term": [
+                "str",
+                "str",
+                true
+              ],
+              "Combined Score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Genes": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene_set",
+              "Term"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Gene_set', 'Term']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Adjusted P-value",
+            "Odds Ratio",
+            "P-value"
+          ],
+          "filtered_columns": [
+            "Adjusted P-value",
+            "Odds Ratio",
+            "P-value"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Adjusted P-value": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 169,
+              "total_count": 169,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Odds Ratio": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 169,
+              "total_count": 169,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "P-value": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 169,
+              "total_count": 169,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 169,
+            "alt_rows": 169,
+            "row_intersection": 169,
+            "ref_cols": 10,
+            "alt_cols": 10,
+            "col_intersection": 10
+          },
+          "shape": {
+            "ref_shape": [
+              169,
+              10
+            ],
+            "alt_shape": [
+              169,
+              10
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene_set": true,
+              "Adjusted P-value": true,
+              "P-value": true,
+              "Odds Ratio": true,
+              "Old P-value": true,
+              "Old Adjusted P-value": true,
+              "Overlap": true,
+              "Term": true,
+              "Combined Score": true,
+              "Genes": true
+            },
+            "common_columns": 10
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

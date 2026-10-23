@@ -1,0 +1,272 @@
+
+Task:    b-4-4
+Question: Assess whether blood pressure changed significantly after treatment in 30 patients using a paired t-test. Report the mean difference, 95% confidence interval, and p-value.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/b-4-4/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/b-4-4/output  (1 file(s))
+Matched files:
+  paired_ttest_results.csv → paired_ttest_results.csv  (conf=0.98)
+    Reasoning: The filenames are identical (paired_ttest_results.csv) and both files are CSVs. Both hold the paired t-test results for the task.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/1: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/b-4-4/ref_answer/paired_ttest_results.csv
+    alt: promptbio-bench-claude-skills/tasks/b-4-4/output/paired_ttest_results.csv
+
+  File 1/1: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "Mean_Difference": "Mean_Difference",
+            "CI_95_Lower": "CI_95_Lower",
+            "CI_95_Upper": "CI_95_Upper",
+            "P_Value": "P_Value"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables hold a single row of paired t-test summary results, and neither needs transposing. All 4 reference columns appear with the exact same names in the candidate. The candidate's 10 extra columns (N, means, SD, SE, t, df, Cohen's d, and so on) are left out by intersecting on the reference columns. Each table has only one row, so no ID column is needed and rows are paired by position. No sorting or permutation check is needed.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Mean_Difference",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "This is one of the main results. The guideline allows 1% relative error. The sign is kept because it shows the direction of the effect."
+            },
+            {
+              "name": "CI_95_Lower",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "Lower CI bound. The guideline allows 1% relative error."
+            },
+            {
+              "name": "CI_95_Upper",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "Upper CI bound. The guideline allows 1% relative error."
+            },
+            {
+              "name": "P_Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 150000000.0,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline allows an absolute error of \u00b10.001. Since the reference p-value is 6.33e-12, that equals a relative error of about 1.58e8, so the tolerance is set to 1.5e8. In practice, any p-value below about 0.001 counts as a match."
+            }
+          ],
+          "overall_reasoning": "The task asks for three things: the mean difference, the 95% CI bounds and the p-value. Only those four reference columns are compared. The candidate's extra columns (Test, N, means, SD, SE, t-statistic, DF, Cohen's d, significance flag) have no counterpart in the reference, so they are left out. All four compared columns are float64 and use RAE.\n\n- **Mean difference and CI bounds:** these must match within 1% relative error, so cell_tolerance is 0.01.\n- **P-value:** the guideline allows an absolute error of \u00b10.001, but RAE measures relative error. The reference p-value is 6.33e-12, so an absolute error of 0.001 works out to a relative error of about 1.58e8. I set cell_tolerance to 1.5e8, which is slightly stricter than the guideline and avoids rounding problems at the edge. In practice, any p-value below about 0.001 will count as a match.\n- **Sign:** compare_abs is off for every column. The sign shows which way the change went, and the CI bounds have a fixed lower/upper order. The candidate uses the same convention as the reference (after minus before).",
+          "overall_confidence": 0.88,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Mean_Difference": "Mean_Difference",
+              "CI_95_Lower": "CI_95_Lower",
+              "CI_95_Upper": "CI_95_Upper",
+              "P_Value": "P_Value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Test",
+              "N",
+              "Mean_Before",
+              "Mean_After",
+              "SD_Difference",
+              "SE_Difference",
+              "T_Statistic",
+              "DF",
+              "Cohens_d",
+              "Significant_0.05"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "CI_95_Lower",
+              "Mean_Difference",
+              "CI_95_Upper",
+              "P_Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "CI_95_Lower": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Mean_Difference": [
+                "float64",
+                "float64",
+                true
+              ],
+              "CI_95_Upper": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P_Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Test', 'N', 'Mean_Before', 'Mean_After', 'SD_Difference', 'SE_Difference', 'T_Statistic', 'DF', 'Cohens_d', 'Significant_0.05']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "CI_95_Lower",
+            "CI_95_Upper",
+            "Mean_Difference",
+            "P_Value"
+          ],
+          "filtered_columns": [
+            "CI_95_Lower",
+            "CI_95_Upper",
+            "Mean_Difference",
+            "P_Value"
+          ],
+          "overall_similarity": 0.9999999999999998,
+          "per_column_similarities": {
+            "CI_95_Lower": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "CI_95_Upper": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Mean_Difference": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "P_Value": {
+              "similarity": 0.9999999999999991,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 150000000.0
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2857142857142857,
+            "col_recall": 1.0,
+            "col_f1": 0.4444444444444445,
+            "col_jaccard": 0.2857142857142857,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 4,
+            "alt_cols": 14,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              4
+            ],
+            "alt_shape": [
+              1,
+              14
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -10
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "CI_95_Lower": true,
+              "Mean_Difference": true,
+              "CI_95_Upper": true,
+              "P_Value": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: b-4-4  |  Agent: claude-skills
+Avg similarity: 1.0000
+============================================================
+
+✅ Results saved → claude-skills-claude-judge/b-4-4_claude-skills.json
+✅ Full states saved → claude-skills-claude-judge/b-4-4_claude-skills_full.json
+
+
+
+

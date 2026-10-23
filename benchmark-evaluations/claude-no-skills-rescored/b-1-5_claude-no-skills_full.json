@@ -1,0 +1,228 @@
+{
+  "id": "b-1-5",
+  "question": "Perform the Shapiro-Wilk normality test on each numeric variable. Use alpha=0.05 for significance to determine non-normally distributed variables.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-1-5/ref_answer/shapiro_wilk_normality.csv",
+      "eval_guideline": "W statistic per feature must match the reference within 0.1% relative absolute error; non_normal classification must match exactly; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-1-5/output/shapiro_wilk_normality.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical filenames and matching CSV formats. Both paths correspond to task b-1-5, and the filename directly describes the requested Shapiro-Wilk normality test results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Align features and corresponding columns despite differing row order, column order, or header labels. Compare each feature's Shapiro-Wilk W statistic within 0.1% relative absolute error and require its non_normal classification to match exactly at alpha=0.05."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires feature-level numeric agreement and exact classification agreement while allowing structural differences. Approximate comparison supports this alignment and preserves the specified per-feature requirements.",
+      "strategy_error": null,
+      "similarity": 0.9999847898219154,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "feature": "feature",
+            "statistic": "statistic",
+            "p_value": "p_value",
+            "non_normal": "non_normal"
+          },
+          "id_columns": [
+            "feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "feature",
+          "check_permutation": true,
+          "reasoning": "Both tables contain one row per numeric feature, so no transpose is needed. Map all four reference columns by exact name and exclude the candidate's extra n column. Match and sort rows by feature, which identifies each tested variable. Row and column order do not matter. Compare W statistics using the specified 0.1% relative absolute error tolerance and require exact non_normal classifications at alpha=0.05.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "statistic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Compare each Shapiro-Wilk W statistic within the explicitly required 0.1% relative absolute error."
+            },
+            {
+              "name": "non_normal",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Boolean decisions are categorical outcomes requiring exact equality for every feature, using p_value < 0.05."
+            }
+          ],
+          "overall_reasoning": "Prioritize the explicitly evaluated W statistics and non_normal classifications. Numerical statistics require per-cell relative accuracy rather than correlation; boolean classifications require exact matching. Exclude feature because it is the alignment ID, p_value because its numerical accuracy is not an evaluation requirement, and candidate-only n because it has no reference counterpart. No delimiter or Jaccard threshold is needed.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "feature": "feature",
+              "statistic": "statistic",
+              "p_value": "p_value",
+              "non_normal": "non_normal"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "n"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "feature"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "feature",
+              "non_normal",
+              "statistic",
+              "p_value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "feature": [
+                "str",
+                "str",
+                true
+              ],
+              "non_normal": [
+                "bool",
+                "bool",
+                true
+              ],
+              "statistic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "feature"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['n']",
+            "Sorted both dataframes by ['feature']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "non_normal",
+            "statistic"
+          ],
+          "filtered_columns": [
+            "non_normal",
+            "statistic"
+          ],
+          "overall_similarity": 0.9999847898219154,
+          "per_column_similarities": {
+            "non_normal": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {}
+            },
+            "statistic": {
+              "similarity": 0.9999695796438308,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8,
+            "col_recall": 1.0,
+            "col_f1": 0.888888888888889,
+            "col_jaccard": 0.8,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 4,
+            "alt_cols": 5,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              4
+            ],
+            "alt_shape": [
+              20,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "feature": true,
+              "non_normal": true,
+              "statistic": true,
+              "p_value": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

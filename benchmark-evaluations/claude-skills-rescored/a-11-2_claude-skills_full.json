@@ -1,0 +1,228 @@
+{
+  "id": "a-11-2",
+  "question": "Perform co-expression network analysis on gene expression data using WGCNA and identify hub genes.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-2/ref_answer/hub_genes.csv",
+      "eval_guideline": "The Is_Hub flag per gene must match the reference; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-11-2/output/hub_genes.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and CSV format, and both represent the requested hub-gene output from the WGCNA co-expression analysis.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare hub-gene tables by aligning genes and verifying that the Is_Hub flag matches for every gene; allow differing row order, column order, and header labels."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level matching of the Is_Hub flag per gene while allowing structural differences in the CSV. Approximate comparison supports gene-wise alignment despite reordered rows, columns, or renamed headers.",
+      "strategy_error": null,
+      "similarity": 0.6782511210762332,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene_ID": "Gene_ID",
+            "Module": "Module",
+            "Intramodular_Connectivity": "Intramodular_Connectivity",
+            "Extramodular_Connectivity": "Extramodular_Connectivity",
+            "Total_Connectivity": "Total_Connectivity",
+            "Is_Hub": "Is_Hub"
+          },
+          "id_columns": [
+            "Gene_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene_ID",
+          "check_permutation": true,
+          "reasoning": "Both tables use genes as rows and metrics as columns, so no transpose is needed. Every reference column has an exact candidate match; explicit column alignment is required because the candidate has an additional kME column that should be excluded. Gene_ID is the stable unique identifier for matching genes despite differing row counts, module membership, connectivity rankings, and gene coverage. The task evaluates Is_Hub per gene, so row and column order are not semantically important. Sorting by Gene_ID provides deterministic comparison after matching shared genes.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Is_Hub",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "This is the task's explicitly evaluated output: each aligned gene's hub-gene flag must match the reference exactly. Boolean values are treated as categorical labels, so exact cell-by-cell equality is appropriate."
+            }
+          ],
+          "overall_reasoning": "Gene_ID is used only to align rows and is excluded. The evaluation guideline explicitly states that Is_Hub per gene must match the reference, making it the critical comparison column. Module assignments and connectivity measurements are intermediate WGCNA outputs and may vary across implementations without changing the required hub classification, so they are omitted. The candidate-only kME column is also omitted because it has no aligned reference column. No RAE tolerance, overlap threshold, or delimiter is applicable to exact Boolean comparison.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Gene_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene_ID": "Gene_ID",
+              "Module": "Module",
+              "Intramodular_Connectivity": "Intramodular_Connectivity",
+              "Extramodular_Connectivity": "Extramodular_Connectivity",
+              "Total_Connectivity": "Total_Connectivity",
+              "Is_Hub": "Is_Hub"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "kME"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene_ID"
+            ],
+            "matched_rows": 678,
+            "unmapped_ref_rows": 214,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Is_Hub",
+              "Intramodular_Connectivity",
+              "Gene_ID",
+              "Extramodular_Connectivity",
+              "Total_Connectivity",
+              "Module"
+            ],
+            "converted_columns": [
+              "Is_Hub"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Is_Hub": [
+                "bool",
+                "object",
+                true
+              ],
+              "Intramodular_Connectivity": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "Extramodular_Connectivity": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Total_Connectivity": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Module": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['kME']",
+            "Unmapped reference rows: 214",
+            "Converted 1 column(s) to match reference dtypes",
+            "Sorted both dataframes by ['Gene_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Is_Hub"
+          ],
+          "filtered_columns": [
+            "Is_Hub"
+          ],
+          "overall_similarity": 0.6782511210762332,
+          "per_column_similarities": {
+            "Is_Hub": {
+              "similarity": 0.6782511210762332,
+              "strategy": "exact",
+              "matching_count": 605,
+              "total_count": 892,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8571428571428571,
+            "col_recall": 1.0,
+            "col_f1": 0.923076923076923,
+            "col_jaccard": 0.8571428571428571,
+            "ref_rows": 892,
+            "alt_rows": 892,
+            "row_intersection": 892,
+            "ref_cols": 6,
+            "alt_cols": 7,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              892,
+              6
+            ],
+            "alt_shape": [
+              892,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 0.8333333333333334,
+            "dtype_matches": {
+              "Is_Hub": false,
+              "Intramodular_Connectivity": true,
+              "Gene_ID": true,
+              "Extramodular_Connectivity": true,
+              "Total_Connectivity": true,
+              "Module": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.7600896860986547,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.2399103139013453
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

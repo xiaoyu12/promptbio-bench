@@ -1,0 +1,197 @@
+{
+  "id": "b-4-1",
+  "question": "Identify significantly differentially expressed genes between treated and control groups using the Wilcoxon rank-sum test. Apply Benjamini-Hochberg correction and return genes with FDR < 0.05.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-4-1/ref_answer/significant_genes_fdr.csv",
+      "eval_guideline": "Gene set must match the reference exactly; FDR values must match within +/-0.001; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-4-1/output/significant_genes_fdr.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical filenames and matching CSV formats within the same task directory b-4-1. The name significant_genes_fdr.csv directly corresponds to the requested genes passing FDR < 0.05 after Benjamini-Hochberg correction.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare significant differentially expressed gene tables from Wilcoxon rank-sum testing with Benjamini-Hochberg correction and FDR < 0.05. Require identical gene sets and corresponding FDR values within absolute tolerance 0.001, allowing different row order, column order, and header labels."
+      },
+      "strategy_confidence": 1.0,
+      "strategy_reasoning": "The guideline requires record-level matching with exact gene-set agreement and FDR tolerance of ±0.001 while permitting structural differences. Approximate comparison supports this alignment and numeric tolerance without requiring identical table formatting.",
+      "strategy_error": null,
+      "similarity": 0.9949999999999931,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "FDR": "FDR"
+          },
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene",
+          "check_permutation": true,
+          "reasoning": "Both tables represent genes as rows, so no transpose is needed. Map Gene and FDR directly and exclude the candidate's additional columns. Gene identifies rows; FDR is a measured value rather than an identifier. Match and sort by Gene because the requested significant gene set is unordered. Require identical gene sets and compare corresponding FDR values within an absolute tolerance of 0.001. The previews do not establish agreement for the nine undisplayed rows.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "FDR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "FDR is the only required numerical output. Use cellwise error comparison because correlation alone cannot establish agreement in FDR values. A 0.01 relative tolerance is a reasonable probability-scale approximation, but it does not implement the required absolute tolerance of 0.001."
+            }
+          ],
+          "overall_reasoning": "Compare only FDR; candidate-only summary statistics are outside the evaluation requirements. Exclude Gene from column_configs, but independently require exact equality of the complete gene sets during alignment, with no missing or extra genes. Ignore row order, column order, and header differences after alignment. Require returned FDR values to be below 0.05. The available RAE configuration cannot exactly express the specified absolute error rule: final acceptance must separately require abs(candidate FDR - reference FDR) <= 0.001 for every gene. The preview omits nine rows, so it cannot establish complete agreement.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "FDR": "FDR"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Mean_Treated",
+              "Mean_Control",
+              "Median_Treated",
+              "Median_Control",
+              "log2FC_median",
+              "U_statistic",
+              "pvalue",
+              "Direction"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "matched_rows": 19,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "FDR",
+              "Gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "FDR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Mean_Treated', 'Mean_Control', 'Median_Treated', 'Median_Control', 'log2FC_median', 'U_statistic', 'pvalue', 'Direction']",
+            "Sorted both dataframes by ['Gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "FDR"
+          ],
+          "filtered_columns": [
+            "FDR"
+          ],
+          "overall_similarity": 0.9949999999999931,
+          "per_column_similarities": {
+            "FDR": {
+              "similarity": 0.9949999999999931,
+              "strategy": "rae",
+              "matching_count": 19,
+              "total_count": 19,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2,
+            "col_recall": 1.0,
+            "col_f1": 0.33333333333333337,
+            "col_jaccard": 0.2,
+            "ref_rows": 19,
+            "alt_rows": 19,
+            "row_intersection": 19,
+            "ref_cols": 2,
+            "alt_cols": 10,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              19,
+              2
+            ],
+            "alt_shape": [
+              19,
+              10
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -8
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "FDR": true,
+              "Gene": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

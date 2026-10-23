@@ -1,0 +1,258 @@
+{
+  "id": "a-15-2",
+  "question": "Using the omicwas R package's ctcisQTL function, perform cell-type-specific cis-QTL analysis on methylation data with a 1 Mb cis window, controlling for the provided covariates.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-2/ref_answer/mQTL_results.tsv",
+      "eval_guideline": "All SNP-CpG-celltype combination rows must match the reference; estimate, statistic, and p.value must match within 0.1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-2/output/mQTL_results.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and .tsv tabular format, and both represent the requested cell-type-specific methylation QTL results for task a-15-2.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare all SNP-CpG-celltype rows for equivalence, allowing column/row reordering and header-label differences; require estimate, statistic, and p.value to agree within 0.1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level matching of every SNP-CpG-celltype combination while allowing structural reordering and small numeric variation. The TSV approximate strategy is therefore appropriate; this deterministic QTL analysis produces a full results table rather than a small stochastic summary.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999961,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "term",
+            "response",
+            "celltype"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "term,response,celltype",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same 93-by-6 long-format structure and identical column names, so no transpose or column mapping is needed. Each result row represents one SNP-CpG-cell-type combination, uniquely identified by the composite key term, response, and celltype. Results are an unordered set rather than a ranked list, so rows should be matched by that key; sorting by the same key provides deterministic comparison, and permutation checking should be enabled.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "estimate",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The effect estimate is a critical QTL result. Use cell-wise relative absolute error with a 0.001 tolerance, directly implementing the required maximum 0.1% relative absolute error."
+            },
+            {
+              "name": "statistic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The test statistic is a critical inferential result. Use cell-wise relative absolute error with a 0.001 tolerance, matching the specified 0.1% relative-error requirement."
+            },
+            {
+              "name": "p.value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The p-value is a critical significance result. Use cell-wise relative absolute error with a 0.001 tolerance, matching the specified 0.1% relative-error requirement."
+            }
+          ],
+          "overall_reasoning": "Align rows using term, response, and celltype, but exclude those identifier columns from value comparison. Compare all three reported numerical outputs because the evaluation explicitly requires estimate, statistic, and p.value to match. Cell-wise RAE is appropriate because absolute per-row numerical agreement matters; correlation strategies could incorrectly accept systematically rescaled or shifted results. A tolerance of 0.001 corresponds exactly to 0.1% relative absolute error. No categorical data columns remain, so overlap thresholds and delimiters are not applicable.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "term",
+            "response",
+            "celltype"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "term",
+              "response",
+              "celltype"
+            ],
+            "matched_rows": 93,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "term",
+              "estimate",
+              "p.value",
+              "statistic",
+              "response",
+              "celltype"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "term": [
+                "str",
+                "str",
+                true
+              ],
+              "estimate": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p.value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "statistic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "response": [
+                "str",
+                "str",
+                true
+              ],
+              "celltype": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "term",
+              "response",
+              "celltype"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['term', 'response', 'celltype']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "estimate",
+            "p.value",
+            "statistic"
+          ],
+          "filtered_columns": [
+            "estimate",
+            "p.value",
+            "statistic"
+          ],
+          "overall_similarity": 0.9999999999999961,
+          "per_column_similarities": {
+            "estimate": {
+              "similarity": 0.9999999999999936,
+              "strategy": "rae",
+              "matching_count": 93,
+              "total_count": 93,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "p.value": {
+              "similarity": 0.9999999999999991,
+              "strategy": "rae",
+              "matching_count": 93,
+              "total_count": 93,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "statistic": {
+              "similarity": 0.9999999999999959,
+              "strategy": "rae",
+              "matching_count": 93,
+              "total_count": 93,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 93,
+            "alt_rows": 93,
+            "row_intersection": 93,
+            "ref_cols": 6,
+            "alt_cols": 6,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              93,
+              6
+            ],
+            "alt_shape": [
+              93,
+              6
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "term": true,
+              "estimate": true,
+              "p.value": true,
+              "statistic": true,
+              "response": true,
+              "celltype": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

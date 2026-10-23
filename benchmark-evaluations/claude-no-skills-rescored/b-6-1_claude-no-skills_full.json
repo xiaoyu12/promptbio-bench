@@ -1,0 +1,201 @@
+{
+  "id": "b-6-1",
+  "question": "Apply PCA to a gene expression dataset. Z-score standardize the features before applying PCA. Compute the proportion of variance explained by the first 10 principal components.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-6-1/ref_answer/pca_variance_explained.tsv",
+      "eval_guideline": "Per-PC variance proportions and the total must match the reference within 1% relative absolute error; column labels and whitespace may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-6-1/output/pca_variance_explained.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both files have the identical filename pca_variance_explained.tsv and inferred TSV format. Their names and task paths clearly correspond to the requested variance explained by PCA on the standardized gene expression dataset.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare variance proportions for PCs 1–10 and their total against the reference within 1% relative absolute error, allowing differences in column labels and whitespace."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires value-by-value agreement for a small table of per-PC variance proportions and their total within 1% relative absolute error. Approximate comparison supports label and formatting differences while checking these numeric values.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "PC": "PC",
+            "VarianceExplained": "VarianceExplained"
+          },
+          "id_columns": [
+            "PC"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables represent components as rows, so no transpose is needed. Map the two reference columns directly and ignore the candidate's additional percent and cumulative columns. Normalize candidate identifiers PC1 through PC10 to reference identifiers 1 through 10 before matching by PC. Inspect and normalize the unseen eleventh row's total label consistently, preserving it as a separate row. PC uniquely identifies each component; physical row order does not affect comparison of labeled per-PC proportions and the total. Compare proportions directly without percentage conversion.",
+          "confidence": 0.97
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "VarianceExplained",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "This float64 column contains the required variance proportions. Compare each aligned value, including the total row, using relative absolute error <= 0.01 to enforce the specified 1% relative tolerance."
+            }
+          ],
+          "overall_reasoning": "VarianceExplained is the critical reference data column for the first 10 principal components and their total. Use per-cell RAE because numerical magnitudes must match; correlation alone would not enforce this requirement. The tolerance is 0.01 relative error, not an absolute difference of 0.01 in proportions. Exclude PC because it serves only for alignment, and omit the candidate-only percentage and cumulative columns because they are supplementary representations. Column labels and whitespace do not affect numerical comparison.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "PC"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "PC": "PC",
+              "VarianceExplained": "VarianceExplained"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "VarianceExplained_Percent",
+              "CumulativeVarianceExplained"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "PC"
+            ],
+            "matched_rows": 11,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {
+              "pc2": "2",
+              "pc7": "7",
+              "pc9": "9",
+              "pc4": "4",
+              "pc8": "8",
+              "pc10": "10",
+              "pc6": "6",
+              "pc1": "1",
+              "pc5": "5",
+              "pc3": "3"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Matched each candidate's numeric suffix to the identical reference identifier, removing the common 'pc' prefix.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "PC",
+              "VarianceExplained"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "PC": [
+                "str",
+                "str",
+                true
+              ],
+              "VarianceExplained": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['VarianceExplained_Percent', 'CumulativeVarianceExplained']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "VarianceExplained"
+          ],
+          "filtered_columns": [
+            "VarianceExplained"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "VarianceExplained": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 11,
+              "total_count": 11,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 11,
+            "alt_rows": 11,
+            "row_intersection": 11,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              11,
+              2
+            ],
+            "alt_shape": [
+              11,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "PC": true,
+              "VarianceExplained": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

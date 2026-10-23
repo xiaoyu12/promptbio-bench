@@ -1,0 +1,258 @@
+{
+  "id": "a-4-6",
+  "question": "Perform cell-type-specific association testing on bulk DNA methylation data using cell type composition, disease status, and covariates. Report CpG-level coefficient estimates, test statistics, and p-values for cell-type-specific disease effects and overall covariate effects.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-4-6/ref_answer/dna_methylation_results.tsv",
+      "eval_guideline": "All CpG-celltype-term combination rows must match the reference; estimate, statistic, and p.value must match within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-4-6/output/dna_methylation_results.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical base names and .tsv formats, and the candidate is the sole output for the same task, indicating direct correspondence.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare all CpG-celltype-term rows by aligned identifiers, allowing reordered rows/columns and header-label differences; require estimate, statistic, and p.value to agree within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level matching for every CpG-celltype-term combination with a 1% relative numeric tolerance, while permitting structural reordering and header-label differences. Approximate table comparison is therefore appropriate, rather than distribution-level summary comparison.",
+      "strategy_error": null,
+      "similarity": 0.2725368568870841,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "response",
+            "celltype",
+            "term"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "response,celltype,term",
+          "check_permutation": true,
+          "reasoning": "Both tables already have the same six columns and long-form structure, so no transpose or column mapping is needed. Each result row represents a unique CpG, cell-type, and model-term combination, identified by the composite key response, celltype, and term. Row and column order are not evaluation-sensitive; sorting by the composite key provides deterministic alignment and permutation checking accommodates the differing row order.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "estimate",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Coefficient estimates are required CpG-level outputs and must agree in magnitude and sign. Cell-wise relative absolute error with a 0.01 tolerance directly implements the stated 1% relative-error criterion."
+            },
+            {
+              "name": "statistic",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Test statistics are required for every aligned CpG-celltype-term row. RAE with a 0.01 tolerance checks the required 1% relative agreement while preserving row-level discrepancies that correlation could conceal."
+            },
+            {
+              "name": "p.value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "P-values are critical inferential outputs, including very small values. Cell-wise RAE with a 0.01 tolerance applies the specified 1% relative-error requirement consistently across their varying scales."
+            }
+          ],
+          "overall_reasoning": "The alignment identifiers response, celltype, and term are excluded from scoring as instructed. All three remaining float64 columns are explicitly required by the task and are therefore included. Cell-wise RAE is preferable to Pearson or Spearman correlation because the evaluation requires each CpG-celltype-term value—not merely its pattern or ranking—to match within 1% relative absolute error. Accordingly, a 0.01 tolerance is used for estimate, statistic, and p.value. No categorical comparison, delimiter, or Jaccard threshold is applicable.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "response",
+            "celltype",
+            "term"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "response",
+              "celltype",
+              "term"
+            ],
+            "matched_rows": 380,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "estimate",
+              "response",
+              "celltype",
+              "term",
+              "statistic",
+              "p.value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "estimate": [
+                "float64",
+                "float64",
+                true
+              ],
+              "response": [
+                "str",
+                "str",
+                true
+              ],
+              "celltype": [
+                "str",
+                "str",
+                true
+              ],
+              "term": [
+                "str",
+                "str",
+                true
+              ],
+              "statistic": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p.value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "response",
+              "celltype",
+              "term"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['response', 'celltype', 'term']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "estimate",
+            "p.value",
+            "statistic"
+          ],
+          "filtered_columns": [
+            "estimate",
+            "p.value",
+            "statistic"
+          ],
+          "overall_similarity": 0.2725368568870841,
+          "per_column_similarities": {
+            "estimate": {
+              "similarity": 0.14073249119238673,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "p.value": {
+              "similarity": 0.3593137765897817,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "statistic": {
+              "similarity": 0.31756430287908405,
+              "strategy": "rae",
+              "matching_count": 5,
+              "total_count": 380,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 380,
+            "alt_rows": 380,
+            "row_intersection": 380,
+            "ref_cols": 6,
+            "alt_cols": 6,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              380,
+              6
+            ],
+            "alt_shape": [
+              380,
+              6
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "estimate": true,
+              "response": true,
+              "celltype": true,
+              "term": true,
+              "statistic": true,
+              "p.value": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "id": "b-7-8",
+  "question": "Train two Support Vector Machine (SVM) classifiers to distinguish Alzheimer's vs. control subjects using gene expression data (50 gene features): one with a linear kernel and one with an RBF kernel, using a 70/30 train-test split. Report test accuracy and AUC for both models.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-8/ref_answer/svm_comparison_results.csv",
+      "eval_guideline": "Test accuracy and AUC for each kernel must match within +/-0.05; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-8/output/svm_comparison_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both files have the identical filename svm_comparison_results.csv and CSV format, within the same task b-7-8. The name clearly corresponds to the requested comparison of linear and RBF SVM test accuracy and AUC.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare test accuracy and AUC for the linear and RBF SVM kernels, matching each metric within an absolute tolerance of 0.05 and allowing row and column reordering."
+      },
+      "strategy_confidence": 1.0,
+      "strategy_reasoning": "Although the 70/30 train-test split introduces stochasticity, the output is a small table of four metrics that requires value-by-value comparison. Approximate comparison handles row and column reordering while applying the guideline's ±0.05 tolerance.",
+      "strategy_error": null,
+      "similarity": 0.9971600439254351,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Model": "Model",
+            "Test Accuracy": "Test Accuracy",
+            "AUC": "AUC"
+          },
+          "id_columns": [
+            "Model"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain one row per SVM kernel, so no transpose is needed. Map all reference columns by exact name and exclude the extra candidate Kernel column. Model uniquely identifies each row; normalize its values case-insensitively to match 'Kernel' with 'kernel'. Row and column order do not matter, and key-based matching requires no sorting. Compare Test Accuracy and AUC using the specified absolute tolerance of 0.05; both models satisfy it.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Test Accuracy",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Test accuracy is a required float64 metric for each kernel. Compare individual aligned values using RAE rather than correlation. A 0.05 relative tolerance is a conservative approximation to the required absolute tolerance of 0.05 on this 0–1 scale; both candidate values pass."
+            },
+            {
+              "name": "AUC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "AUC is a required float64 metric for each kernel. RAE checks individual metric agreement. A 0.05 relative tolerance is a conservative approximation to the required absolute tolerance of 0.05 on this 0–1 scale; both candidate values pass."
+            }
+          ],
+          "overall_reasoning": "Compare both required metrics after alignment by Model, allowing row and column reordering. Exclude Model because it is an alignment ID, and omit the candidate-only Kernel column because it is redundant and not a required metric. The schema supports relative error thresholds but cannot exactly encode the guideline's absolute ±0.05 tolerance with one fixed threshold per column when reference values differ. The selected relative thresholds are conservative for these reference values; exact guideline enforcement requires a separate absolute-difference check of <=0.05 for every metric and model. No categorical parsing or Jaccard thresholds apply.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "Model"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Model": "Model",
+              "Test Accuracy": "Test Accuracy",
+              "AUC": "AUC"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Kernel"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Model"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Test Accuracy",
+              "AUC",
+              "Model"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Test Accuracy": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AUC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Model": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Kernel']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AUC",
+            "Test Accuracy"
+          ],
+          "filtered_columns": [
+            "AUC",
+            "Test Accuracy"
+          ],
+          "overall_similarity": 0.9971600439254351,
+          "per_column_similarities": {
+            "AUC": {
+              "similarity": 0.9998001390017655,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Test Accuracy": {
+              "similarity": 0.9945199488491048,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.75,
+            "col_recall": 1.0,
+            "col_f1": 0.8571428571428571,
+            "col_jaccard": 0.75,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 3,
+            "alt_cols": 4,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              3
+            ],
+            "alt_shape": [
+              2,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Test Accuracy": true,
+              "AUC": true,
+              "Model": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

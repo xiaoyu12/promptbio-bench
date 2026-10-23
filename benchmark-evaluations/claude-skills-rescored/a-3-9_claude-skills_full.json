@@ -1,0 +1,200 @@
+{
+  "id": "a-3-9",
+  "question": "Analyze the provided transcriptome assembly FASTA and classify each transcript into broad putative categories (miRNA, lncRNA, mRNA, or unknown) based on sequence length and coding potential estimated from the longest ORF. Report transcript id, sequence length, and predicted type.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-9/ref_answer/transcript_classification.csv",
+      "eval_guideline": "Each transcript's RNA type label must match the reference; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-9/output/transcript_classification.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and CSV format. The candidate path is for the same task and clearly represents the requested transcript classification output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare transcript classification tables by aligning records using transcript ID; require each transcript's RNA type label to match, while allowing row and column reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level RNA type labels to match but explicitly allows row and column order to differ. The CSV approximate strategy supports structural alignment while still comparing each transcript's classification.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "No transpose is needed because both tables represent transcripts as rows and attributes as columns. All reference columns (id, length, type) exist in the candidate with exact names, so explicit column mapping is unnecessary; candidate-only ORF and GC columns should be ignored. Rows should be matched by the unique transcript id. The output is an unordered set of transcript classifications, so row order is not significant and permutation checking is appropriate.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "length",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Sequence length is an explicitly requested output and an exact integer measurement. RAE with zero tolerance requires the candidate length to match the reference exactly."
+            },
+            {
+              "name": "type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Predicted RNA type is the primary evaluated classification and uses meaningful, atomic labels (miRNA, lncRNA, mRNA, or unknown), so exact cell-by-cell equality is appropriate."
+            }
+          ],
+          "overall_reasoning": "The ID column is used only to align transcripts and is excluded. The two reference data columns, length and type, are both critical because the task explicitly requires reporting them. Candidate-only diagnostic columns such as longest ORF, strand, completeness, coverage, and GC content are not comparable because they are absent from the reference and are not required report fields. Length is compared as an exact numerical measurement using RAE with zero tolerance; type is compared using exact categorical equality. No overlap delimiter or Jaccard threshold is applicable because each type cell contains one indivisible class label.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "id"
+            ],
+            "matched_rows": 4,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "type",
+              "id",
+              "length"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "type": [
+                "str",
+                "str",
+                true
+              ],
+              "id": [
+                "str",
+                "str",
+                true
+              ],
+              "length": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "length",
+            "type"
+          ],
+          "filtered_columns": [
+            "length",
+            "type"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "length": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "type": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.3333333333333333,
+            "col_recall": 1.0,
+            "col_f1": 0.5,
+            "col_jaccard": 0.3333333333333333,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 3,
+            "alt_cols": 9,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              3
+            ],
+            "alt_shape": [
+              4,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "type": true,
+              "id": true,
+              "length": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

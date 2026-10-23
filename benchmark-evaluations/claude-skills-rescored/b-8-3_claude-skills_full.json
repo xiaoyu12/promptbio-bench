@@ -1,0 +1,351 @@
+{
+  "id": "b-8-3",
+  "question": "Perform grid search with 5-fold cross-validation to find the best XGBoost regression hyperparameters. Search n_estimators in [50, 100, 150, 200] and max_depth in [3, 5, 7, 9] using R-squared as the scoring metric. Use an 80-20 train-test split with random_state=42 for both the split and the cross-validation folds. Report the best parameters, best cross-validation R-squared, and final test R-squared, RMSE, and MAE.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-3/ref_answer/best_parameters.csv",
+      "eval_guideline": "n_estimators and max_depth must exactly equal the reference values; Best_CV_R2_Score must agree within +/-0.05; row/column label phrasing may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-8-3/output/best_parameters.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both paths indicate CSV format. Both correspond to the best XGBoost hyperparameters from the requested grid search.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Align equivalent row and column labels despite phrasing or ordering differences. Require n_estimators and max_depth to equal the reference values exactly, and Best_CV_R2_Score to agree within an absolute tolerance of 0.05."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The output is a small table of hyperparameters and scores, so the small-results exception calls for value-by-value approximate comparison despite model fitting. This accommodates label differences while enforcing exact hyperparameter values and the specified R-squared tolerance.",
+      "strategy_error": null,
+      "similarity": 0.6300108467152254,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Parameter"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have identical Parameter and Value columns and the same orientation. Match rows using Parameter, which uniquely identifies each hyperparameter or metric; normalize candidate best_cv_r2 to reference Best_CV_R2_Score before key matching. Row order is immaterial, and key matching makes sorting unnecessary. Preserve numerical values: n_estimators differs, and the CV R-squared difference exceeds 0.05. Test metrics are absent from both tables.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Value is float64 and contains all three critical results. RAE compares individual values; correlation would not enforce parameter equality. A zero tolerance enforces the required exact matching for max_depth and n_estimators. The best_cv_r2_score row needs a separate absolute-error check of <= 0.05, which this single column-level tolerance cannot express."
+            }
+          ],
+          "overall_reasoning": "Exclude Parameter because it is used only for alignment. The shared Value column mixes exact-match hyperparameters with a toleranced score, so the schema cannot fully encode the evaluation guideline. Use zero RAE tolerance for the hyperparameters and override the score row with absolute tolerance 0.05 (approximately 0.054252 RAE relative to its reference). Here max_depth matches, n_estimators fails, and the CV R-squared difference of 0.101349 exceeds 0.05. Test metrics are absent from the supplied aligned data and cannot be compared.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "Parameter"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Parameter"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {
+              "best_cv_r2": "best_cv_r2_score"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Both refer to the best cross-validation R² score; the target adds the explicit suffix 'score'.",
+              "confidence": 0.99
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Value",
+              "Parameter"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Parameter": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.6300108467152254,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.6300108467152254,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              2
+            ],
+            "alt_shape": [
+              3,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Value": true,
+              "Parameter": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-3/ref_answer/test_performance.csv",
+      "eval_guideline": "All three metric values (Test_R2, Test_RMSE, Test_MAE) must agree within +/-0.05 of reference; row/column order and label phrasing may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-8-3/output/test_performance.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both paths indicate CSV format. Both correspond to the final test performance metrics requested for the XGBoost regression model.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare Test_R2, Test_RMSE, and Test_MAE individually against the reference with an absolute tolerance of 0.05 for each metric, allowing row/column reordering and equivalent label phrasing."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires value-by-value agreement for three metrics within ±0.05, so the small-results-table exception applies despite model fitting and train-test splitting. Approximate comparison accommodates reordered rows and columns and equivalent metric labels.",
+      "strategy_error": null,
+      "similarity": 0.39066754665726,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Metric",
+          "check_permutation": true,
+          "reasoning": "Both tables have identical Metric and Value columns and the same orientation. Metric uniquely identifies rows, allowing the three reference test metrics to match despite the extra candidate Best_CV_R2 row. Sort by Metric for consistent ordering; row order has no semantic significance. Compare matched Value entries with tolerance ±0.05. All three candidate test metrics differ from the reference beyond this tolerance; structural alignment cannot resolve these numerical discrepancies.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Value is float64 and contains the required regression metrics. Compare numerical errors rather than correlations. A 0.05 relative tolerance is a practical approximation, but cannot exactly encode the required absolute tolerance of 0.05 across different metric scales."
+            }
+          ],
+          "overall_reasoning": "Exclude Metric because it is the alignment ID. All three test metrics are critical and must individually satisfy absolute(candidate-reference) <= 0.05; all three candidate values fail. The schema only supports a shared relative tolerance, so this configuration cannot exactly implement that requirement. Under reference-normalized RAE, exact relative thresholds would be 0.05 divided by each reference magnitude. Exclude the best_cv_r2 row from scoring because its reference is NaN and provides no numerical target. Require all three test metrics to pass rather than accepting partial agreement from averaging. Best hyperparameters are absent from these tables and cannot be assessed.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 1,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Metric"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate rows: 1",
+            "Sorted both dataframes by ['Metric']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.39066754665726,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.39066754665726,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              2
+            ],
+            "alt_shape": [
+              4,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.75,
+            "ref_missing_rate": 0.25,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

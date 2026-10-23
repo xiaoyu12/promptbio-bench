@@ -1,0 +1,295 @@
+{
+  "id": "b-9-4",
+  "question": "Perform Cox regression with LASSO penalization on the provided dataset to select features. Use 5-fold cross-validation to tune the regularization penalty. Identify features with non-zero LASSO coefficients, then refit an unpenalized multivariable Cox model on those features. Report their hazard ratios, 95% CIs, and p-values.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-9-4/ref_answer/cox_lasso_results.tsv",
+      "eval_guideline": "Features with HR clearly deviating from 1.0 in the reference (|HR - 1| > 0.5) must be present with the same directional effect; for features present in both outputs, hazard ratios must match within 20% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-9-4/output/cox_lasso_results.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical basenames and .tsv extensions, indicating matching tab-separated results tables for the Cox LASSO analysis. The Markdown file answer.md is a less suitable match for the reference table.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Align features and equivalent columns despite differing row order, column order, or header labels. Require reference features with |HR - 1| > 0.5 to be present with the same effect direction, and require hazard ratios for shared features to have relative absolute error <= 20%."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires feature-level matching and hazard-ratio comparisons, overriding the stochastic model-fitting default. Approximate comparison supports structural differences and value-by-value evaluation of this small results table.",
+      "strategy_error": null,
+      "similarity": 0.29078137221185746,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "variable": "variable",
+            "logHR": "logHR",
+            "HR": "HR",
+            "p_value": "p_value",
+            "HR_lower_95": "HR_lower_95",
+            "HR_upper_95": "HR_upper_95"
+          },
+          "id_columns": [
+            "variable"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "variable",
+          "check_permutation": true,
+          "reasoning": "Both tables contain one feature per row, so no transpose is needed. All reference columns have exact candidate matches; candidate-only SE, z, and lasso_coef columns are excluded from column comparison. Match rows by the unique feature identifier variable and sort by it for consistent presentation. Row and column order are immaterial. Preserve candidate-only features as unmatched rows; permutation checking does not imply equal feature sets. Structural alignment must not alter numerical values: the five required reference features are present with matching effect directions, but their displayed candidate HRs exceed the allowed 20% relative error.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "HR",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Hazard ratios are the primary evaluation target. Require |candidate - reference| / |reference| <= 0.20 for features present in both outputs."
+            },
+            {
+              "name": "HR_lower_95",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Lower confidence limits are explicitly requested. Use 20% relative tolerance as a practical extension of the HR criterion across varying positive scales."
+            },
+            {
+              "name": "HR_upper_95",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Upper confidence limits are explicitly requested. Use 20% relative tolerance consistently with HR and lower confidence limits."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2,
+              "cell_threshold": null,
+              "confidence": 0.7,
+              "reasoning": "P-values are explicitly requested. A provisional 20% relative tolerance compares their numerical agreement across orders of magnitude; these are probabilities, so a 0.01 relative tolerance is not implied by their scale. Very small or zero reference values require careful denominator handling."
+            }
+          ],
+          "overall_reasoning": "Compare the requested HRs, 95% confidence limits, and p-values as float64 numerical values using relative absolute error; correlations would conceal substantial magnitude differences. Exclude variable because it is an alignment key, logHR because it duplicates HR information, and candidate-only SE, z, and lasso_coef because they are not requested comparison targets. Only the HR tolerance is explicitly mandated; other tolerances are proposed secondary checks. Independently enforce feature presence and direction for every finite reference HR with |HR - 1| > 0.5: the candidate must contain a finite HR on the same side of 1. These mandatory checks cannot be guaranteed by averaged column scores. Treat reference NaNs as unavailable estimates, not zeros; candidate-only selections do not automatically violate the stated guideline. Compare finite shared estimates and flag missing mandatory estimates as failures. Row order, column order, and header spelling do not affect comparison after alignment and column mapping. The preview already shows HR discrepancies exceeding 20% for gene_1 and gene_2. The summary tables cannot verify five-fold cross-validation or the unpenalized refitting procedure.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "variable"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "variable": "variable",
+              "logHR": "logHR",
+              "HR": "HR",
+              "p_value": "p_value",
+              "HR_lower_95": "HR_lower_95",
+              "HR_upper_95": "HR_upper_95"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "SE",
+              "z",
+              "lasso_coef"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "variable"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 26,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "HR_lower_95",
+              "p_value",
+              "HR_upper_95",
+              "HR",
+              "logHR",
+              "variable"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "HR_lower_95": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HR_upper_95": [
+                "float64",
+                "float64",
+                true
+              ],
+              "HR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "logHR": [
+                "float64",
+                "float64",
+                true
+              ],
+              "variable": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "variable"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['SE', 'z', 'lasso_coef']",
+            "Unmapped candidate rows: 26",
+            "Sorted both dataframes by ['variable']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "HR",
+            "HR_lower_95",
+            "HR_upper_95",
+            "p_value"
+          ],
+          "filtered_columns": [
+            "HR",
+            "HR_lower_95",
+            "HR_upper_95",
+            "p_value"
+          ],
+          "overall_similarity": 0.29078137221185746,
+          "per_column_similarities": {
+            "HR": {
+              "similarity": 0.30037549625848736,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.2
+              }
+            },
+            "HR_lower_95": {
+              "similarity": 0.35202714383785505,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.2
+              }
+            },
+            "HR_upper_95": {
+              "similarity": 0.26575246278997366,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.2
+              }
+            },
+            "p_value": {
+              "similarity": 0.24497038596111373,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 0.2
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6666666666666666,
+            "col_recall": 1.0,
+            "col_f1": 0.8,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 31,
+            "alt_rows": 31,
+            "row_intersection": 31,
+            "ref_cols": 6,
+            "alt_cols": 9,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              31,
+              6
+            ],
+            "alt_shape": [
+              31,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -3
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "HR_lower_95": true,
+              "p_value": true,
+              "HR_upper_95": true,
+              "HR": true,
+              "logHR": true,
+              "variable": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.16129032258064516,
+            "ref_missing_rate": 0.8387096774193549,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

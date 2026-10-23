@@ -1,0 +1,249 @@
+{
+  "id": "a-15-9",
+  "question": "Use R and the WGCNA package to identify co-expression modules from combined RNA and protein expression data, and test which modules are associated with disease status (the 'Disease' column in Pheno.csv). Merge the two datasets by row-binding RNA and protein features. Report the Pearson correlation of each module eigengene with Disease and its p-value.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-9/ref_answer/module_trait_correlations.csv",
+      "eval_guideline": "Correlation and Pvalue per module must match the reference within +/-0.05 if the same number of modules is found; if module counts differ, the Spearman rank correlation of ranked absolute correlations (top-N, N = min module count) must be >= 0.6 and the sign of the highest-|correlation| module must match the reference. Row order, module color labels, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-9/output/module_trait_correlations.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both paths indicate CSV tabular output containing the requested module–Disease correlations and p-values.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare module-level Pearson correlations and p-values by value, allowing row, column, header-label, and module-color differences. Require values within +/-0.05 when module counts match; otherwise compare ranked absolute correlations using top-N Spearman >=0.6 and require the strongest module's correlation sign to match."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "This is a small results table of per-module statistics, so it should be compared value by value with approximate alignment rather than distributionally. The guideline explicitly permits structural and label variation while defining numeric and rank-based tolerances.",
+      "strategy_error": null,
+      "similarity": 0.2890275201724086,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Module": "Eigengene",
+            "Correlation": "Correlation",
+            "Pvalue": "Pvalue"
+          },
+          "id_columns": [
+            "Module"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables already use one row per module, so no transpose is needed. Correlation and Pvalue map exactly. The reference Module values use eigengene labels such as MEblue, which match the candidate Eigengene values rather than its color-only Module values, so Module is mapped to Eigengene and used as the unique row identifier. Extra candidate columns are ignored. Module results are unordered, so row order is not significant and permutation-aware matching is appropriate; sorting is unnecessary because rows can be joined directly by module identifier.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Correlation",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.96,
+              "reasoning": "Module–Disease Pearson correlations are primary task outputs and must be compared module by module, including their signs and magnitudes. RAE provides value-level comparison, with a 0.05 tolerance reflecting the stated acceptance margin. Missing candidate values remain meaningful failures rather than being obscured by a summary correlation."
+            },
+            {
+              "name": "Pvalue",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "P-values are required task outputs whose absolute reported values matter for every aligned module. RAE with a 0.05 tolerance provides a strict value-level check consistent with the evaluation margin, while missing values are treated as mismatches."
+            }
+          ],
+          "overall_reasoning": "Module is used only to align rows and is excluded from comparison. Correlation and Pvalue are the two required float64 outputs and are therefore both critical. Candidate-only metadata columns Module_alt and nFeatures are not requested outputs and have no aligned reference counterparts, so they are excluded. Cell-level RAE is preferred over Pearson or Spearman summary comparison because the equal module counts call for matching each module's reported values, not merely preserving an overall trend or ranking. No categorical overlap configuration, delimiter, or Jaccard threshold is applicable.",
+          "overall_confidence": 0.96,
+          "id_columns": [
+            "Module"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Module": "Eigengene",
+              "Correlation": "Correlation",
+              "Pvalue": "Pvalue"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Module",
+              "nFeatures"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Module"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 7,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Pvalue",
+              "Module",
+              "Correlation"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Pvalue": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Module": [
+                "str",
+                "str",
+                true
+              ],
+              "Correlation": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Module', 'nFeatures']",
+            "Unmapped reference rows: 7"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Correlation",
+            "Pvalue"
+          ],
+          "filtered_columns": [
+            "Correlation",
+            "Pvalue"
+          ],
+          "overall_similarity": 0.2890275201724086,
+          "per_column_similarities": {
+            "Correlation": {
+              "similarity": 0.21096976953569357,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Pvalue": {
+              "similarity": 0.36708527080912373,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6,
+            "col_recall": 1.0,
+            "col_f1": 0.7499999999999999,
+            "col_jaccard": 0.6,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 3,
+            "alt_cols": 5,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              3
+            ],
+            "alt_shape": [
+              10,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Pvalue": true,
+              "Module": true,
+              "Correlation": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.3,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.7
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-9/ref_answer/wgcna_module_trait_heatmap.png",
+      "eval_guideline": "Color grid of module-trait correlations with numeric values overlaid in each cell; axis labels, color scheme, and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-9/output/wgcna_module_trait_heatmap.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames and PNG image formats are identical, and both represent the requested WGCNA module–trait heatmap.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline requires the PNG to communicate a color grid of module–Disease correlations with numeric values in each cell, while explicitly allowing visual styling to differ. Semantic comparison is therefore appropriate for assessing the required plot content rather than pixel-level similarity.",
+      "strategy_error": null,
+      "similarity": 0.12,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "not equivalent",
+        "confidence": 0.99,
+        "explanation": "Both images are module–Disease correlation heatmaps with module-color strips, numeric annotations, and diverging red/blue scales, but their scientific results differ substantially. The reference reports 10 modules: MEred (0.21), MEbrown (-0.082), MEblue (0.20), MEyellow (0.34), MEmagenta (0.076), MEpink (0.27), MEblack (-0.21), MEgreen (-0.25), MEturquoise (-0.15), and MEgrey (0.22). The candidate reports only three modules: MEblue (-0.12, p=0.6), MEturquoise (-0.23, p=0.3), and MEgrey (0.045, p=0.9). Thus, seven reference modules are missing, and all three shared modules have different correlations, including a sign reversal for MEblue and substantially different MEgrey and MEturquoise values. Although the candidate adds p-values, which the task requests and the reference does not visibly show, it does not reproduce the reference module structure or correlation results. Consequently, the plots do not convey the same scientific findings."
+      },
+      "comparison_error": null
+    }
+  ]
+}

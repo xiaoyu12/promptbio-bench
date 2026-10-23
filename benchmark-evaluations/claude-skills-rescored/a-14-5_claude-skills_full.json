@@ -1,0 +1,214 @@
+{
+  "id": "a-14-5",
+  "question": "Find all non-overlapping G-quadruplex (G4) motifs in a DNA FASTA file using the pattern G{3+}N{1-7}G{3+}N{1-7}G{3+}N{1-7}G{3+} and report each match.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-14-5/ref_answer/g_quadruplex_motifs.csv",
+      "eval_guideline": "Exact set of 1-based inclusive motif records must match the reference; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-14-5/output/g_quadruplex_motifs.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical filename and CSV format as the reference, and both paths correspond to the same G-quadruplex motif-reporting task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the exact set of 1-based inclusive G-quadruplex motif records; allow row and column reordering and extra columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The task is deterministic and requires record-level set equivalence, while the guideline explicitly permits reordered rows/columns and extra columns. The CSV approximate strategy supports structural alignment without imposing bit-identical formatting.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "sequence_id": "sequence_id",
+            "start": "start",
+            "end": "end",
+            "motif": "motif"
+          },
+          "id_columns": [
+            "sequence_id",
+            "start",
+            "end"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "sequence_id,start,end",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same row-oriented motif-record structure, so no transpose is needed. Every reference column maps exactly to its same-named candidate column; the candidate's extra length column is ignored. The composite key sequence_id, start, and end uniquely identifies each genomic motif record and supports robust matching if rows are reordered. The task evaluates an exact set of motif records, so row and column order are not significant; sorting by the composite location key provides deterministic comparison.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "motif",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The motif is the sole non-ID reference data column and contains a single DNA sequence per record. Exact string equality is required because every nucleotide and the full motif boundary are significant; token overlap, relabeling, and tolerances are inappropriate."
+            }
+          ],
+          "overall_reasoning": "Align records using sequence_id, start, and end, but exclude those ID columns from value comparison as instructed. Compare only motif, the task-critical output value, using exact categorical matching. The candidate-only length column is extra and is not compared because it has no aligned reference counterpart and the evaluation permits extra columns. No delimiter, Jaccard threshold, or numerical tolerance applies.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "sequence_id",
+            "start",
+            "end"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "sequence_id": "sequence_id",
+              "start": "start",
+              "end": "end",
+              "motif": "motif"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "length"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "sequence_id",
+              "start",
+              "end"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "start",
+              "motif",
+              "end",
+              "sequence_id"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "start": [
+                "str",
+                "str",
+                true
+              ],
+              "motif": [
+                "str",
+                "str",
+                true
+              ],
+              "end": [
+                "str",
+                "str",
+                true
+              ],
+              "sequence_id": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "sequence_id",
+              "start",
+              "end"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['length']",
+            "Sorted both dataframes by ['sequence_id', 'start', 'end']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "motif"
+          ],
+          "filtered_columns": [
+            "motif"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "motif": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8,
+            "col_recall": 1.0,
+            "col_f1": 0.888888888888889,
+            "col_jaccard": 0.8,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 4,
+            "alt_cols": 5,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              4
+            ],
+            "alt_shape": [
+              2,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "start": true,
+              "motif": true,
+              "end": true,
+              "sequence_id": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

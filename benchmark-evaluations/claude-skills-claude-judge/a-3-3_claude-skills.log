@@ -1,0 +1,946 @@
+
+Task:    a-3-3
+Question: Perform differential analysis using limma to identify the top 20 markers for each pairwise comparison among the three grades.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-3-3/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-3-3/output  (3 file(s))
+Matched files:
+  Grade2vsGrade1_DE_results.csv → Grade2_vs_Grade1.csv  (conf=0.97)
+    Reasoning: Both files are CSVs for the same Grade2 vs Grade1 comparison. The names differ only by an underscore and the '_DE_results' suffix.
+  Grade3vsGrade1_DE_results.csv → Grade3_vs_Grade1.csv  (conf=0.97)
+    Reasoning: Both files are CSVs for the same Grade3 vs Grade1 comparison, and the names follow the same pattern.
+  Grade3vsGrade2_DE_results.csv → Grade3_vs_Grade2.csv  (conf=0.97)
+    Reasoning: Both files are CSVs for the same Grade3 vs Grade2 comparison, and the names follow the same pattern.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/3: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-3/ref_answer/Grade2vsGrade1_DE_results.csv
+    alt: promptbio-bench-claude-skills/tasks/a-3-3/output/Grade2_vs_Grade1.csv
+
+  File 2/3: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-3/ref_answer/Grade3vsGrade1_DE_results.csv
+    alt: promptbio-bench-claude-skills/tasks/a-3-3/output/Grade3_vs_Grade1.csv
+
+  File 3/3: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-3-3/ref_answer/Grade3vsGrade2_DE_results.csv
+    alt: promptbio-bench-claude-skills/tasks/a-3-3/output/Grade3_vs_Grade2.csv
+
+  File 1/3: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "probe_id": "probe_id",
+            "logFC": "logFC",
+            "AveExpr": "AveExpr",
+            "t": "t",
+            "P.Value": "P.Value",
+            "adj.P.Val": "adj.P.Val",
+            "B": "B"
+          },
+          "id_columns": [
+            "probe_id"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "probe_id",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same column names, so each column maps to itself and no transpose is needed. probe_id is the unique identifier for each limma top-table row, so rows are matched on it. The guideline says row and column order may differ, so the comparison ignores order: rows are sorted by probe_id and checked as a permutation. logFC and adj.P.Val are then compared within a tolerance of 0.001.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "logFC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The guideline requires logFC within \u00b10.001. With magnitudes of about 0.66\u20131.5, an RAE tolerance of 0.001 is about the same as that absolute limit. Sign is kept because it shows the direction of the effect."
+            },
+            {
+              "name": "adj.P.Val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.005,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The guideline requires adj.P.Val within \u00b10.001. Values are about 0.045\u20130.2, so an RAE of 0.005 means at most about 0.001 absolute."
+            },
+            {
+              "name": "AveExpr",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not part of the evaluation criteria."
+            },
+            {
+              "name": "t",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not part of the evaluation criteria."
+            },
+            {
+              "name": "P.Value",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not part of the evaluation criteria; only adj.P.Val is checked."
+            },
+            {
+              "name": "B",
+              "data_type": "numerical",
+              "strategy": "ignore",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Not part of the evaluation criteria."
+            }
+          ],
+          "overall_reasoning": "The task is limma differential analysis for the top 20 markers. The evaluation guideline says probe identity must match, which is handled by aligning on probe_id. Only logFC and adj.P.Val are checked, each within \u00b10.001 absolute. Both use cell-by-cell RAE. Because RAE is relative, each tolerance was set from the value scales so that it roughly matches the \u00b10.001 absolute limit. logFC values are about 0.66\u20131.5, so relative 0.001 equals about 0.0007\u20130.0015 absolute. adj.P.Val values are about 0.045\u20130.2, so relative 0.005 equals about 0.0002\u20130.001 absolute, which stays within \u00b10.001. AveExpr, t, P.Value and B are not part of the evaluation guideline, so they are ignored to avoid penalising differences outside the stated criteria. Sign is kept for logFC because it shows the direction of the effect.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "probe_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "probe_id": "probe_id",
+              "logFC": "logFC",
+              "AveExpr": "AveExpr",
+              "t": "t",
+              "P.Value": "P.Value",
+              "adj.P.Val": "adj.P.Val",
+              "B": "B"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "probe_id"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "logFC",
+              "probe_id",
+              "t",
+              "AveExpr",
+              "adj.P.Val",
+              "P.Value",
+              "B"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "logFC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "probe_id": [
+                "str",
+                "str",
+                true
+              ],
+              "t": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AveExpr": [
+                "float64",
+                "float64",
+                true
+              ],
+              "adj.P.Val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P.Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "B": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "probe_id"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['probe_id']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "AveExpr",
+            "B",
+            "P.Value",
+            "adj.P.Val",
+            "logFC",
+            "t"
+          ],
+          "filtered_columns": [
+            "adj.P.Val",
+            "logFC"
+          ],
+          "overall_similarity": 0.9999999999999953,
+          "per_column_similarities": {
+            "adj.P.Val": {
+              "similarity": 0.9999999999999936,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.005
+              }
+            },
+            "logFC": {
+              "similarity": 0.9999999999999971,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              7
+            ],
+            "alt_shape": [
+              20,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "logFC": true,
+              "probe_id": true,
+              "t": true,
+              "AveExpr": true,
+              "adj.P.Val": true,
+              "P.Value": true,
+              "B": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+  File 2/3: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "probe_id": "probe_id",
+            "logFC": "logFC",
+            "AveExpr": "AveExpr",
+            "t": "t",
+            "P.Value": "P.Value",
+            "adj.P.Val": "adj.P.Val",
+            "B": "B"
+          },
+          "id_columns": [
+            "probe_id"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables are limma topTable outputs with the same 7 column names, so each column maps to itself and no transpose is needed. probe_id is the unique row identifier, so rows are matched on it. The task asks for the top 20 markers, which is a ranked list ordered by significance. That makes row order meaningful, so no pre-sort is applied. The previews look identical in both content and order.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "logFC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.92,
+              "reasoning": "Primary effect size. The sign shows the direction of the contrast, so it should match exactly. Limma output is deterministic, so a 1% tolerance is used."
+            },
+            {
+              "name": "AveExpr",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Mean log expression. It checks that preprocessing is the same, and a tight tolerance is used."
+            },
+            {
+              "name": "t",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Moderated t-statistic. Its sign should match logFC, and a 1% tolerance is used."
+            },
+            {
+              "name": "P.Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Very small values. Relative error allows a modest 5% tolerance to absorb small numerical differences."
+            },
+            {
+              "name": "adj.P.Val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "BH-adjusted p-value. It is sensitive to the size of the full test set, so a 5% relative tolerance is used."
+            },
+            {
+              "name": "B",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Log-odds of differential expression. It depends on the eBayes prior settings, so a slightly looser 5% tolerance is used."
+            }
+          ],
+          "overall_reasoning": "This is limma differential expression output for the top 20 markers, matched on probe_id. The most important columns are logFC (effect size and direction) and the significance statistics t, P.Value and adj.P.Val. These are deterministic results, so a correct candidate should reproduce them almost exactly. Each column uses RAE with a tight tolerance. Signs carry meaning, so compare_abs is false. P-values are very small, but RAE is relative, so a 1% tolerance still works for them. B (log-odds) depends on the prior settings, so it gets a slightly looser tolerance and lower weight. AveExpr is checked with a tight tolerance as a sanity check on normalisation.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "probe_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "probe_id": "probe_id",
+              "logFC": "logFC",
+              "AveExpr": "AveExpr",
+              "t": "t",
+              "P.Value": "P.Value",
+              "adj.P.Val": "adj.P.Val",
+              "B": "B"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "probe_id"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "logFC",
+              "probe_id",
+              "t",
+              "AveExpr",
+              "adj.P.Val",
+              "P.Value",
+              "B"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "logFC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "probe_id": [
+                "str",
+                "str",
+                true
+              ],
+              "t": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AveExpr": [
+                "float64",
+                "float64",
+                true
+              ],
+              "adj.P.Val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P.Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "B": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "AveExpr",
+            "B",
+            "P.Value",
+            "adj.P.Val",
+            "logFC",
+            "t"
+          ],
+          "filtered_columns": [
+            "AveExpr",
+            "B",
+            "P.Value",
+            "adj.P.Val",
+            "logFC",
+            "t"
+          ],
+          "overall_similarity": 0.9999999999999836,
+          "per_column_similarities": {
+            "AveExpr": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "B": {
+              "similarity": 0.9999999999999888,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "P.Value": {
+              "similarity": 0.9999999999999577,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "adj.P.Val": {
+              "similarity": 0.9999999999999589,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "logFC": {
+              "similarity": 0.999999999999998,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "t": {
+              "similarity": 0.999999999999997,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              7
+            ],
+            "alt_shape": [
+              20,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "logFC": true,
+              "probe_id": true,
+              "t": true,
+              "AveExpr": true,
+              "adj.P.Val": true,
+              "P.Value": true,
+              "B": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+  File 3/3: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "probe_id": "probe_id",
+            "logFC": "logFC",
+            "AveExpr": "AveExpr",
+            "t": "t",
+            "P.Value": "P.Value",
+            "adj.P.Val": "adj.P.Val",
+            "B": "B"
+          },
+          "id_columns": [
+            "probe_id"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables have the same limma topTable columns in the same order, so the columns map one-to-one. Nothing needs transposing. probe_id is a unique identifier, so rows are matched on it. The task asks for a top-20 list ranked by significance (P.Value ascending), so row order matters and no re-sorting is done.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "logFC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is the main effect size and its sign matters. limma output is deterministic, so a tight tolerance is used."
+            },
+            {
+              "name": "t",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "The moderated t-statistic drives the ranking, and its sign matters. It should match closely."
+            },
+            {
+              "name": "P.Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "The p-values are small, so a relative tolerance of 1% allows for small numerical differences."
+            },
+            {
+              "name": "adj.P.Val",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "The adjusted p-values are nearly constant at about 0.9995. A relative tolerance of 1% checks that the adjustment matches."
+            },
+            {
+              "name": "B",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The B statistic is the log-odds of differential expression. It is deterministic, and a 1% tolerance is allowed."
+            },
+            {
+              "name": "AveExpr",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Average log expression is a sanity check that the same input data was used. It should match very closely."
+            }
+          ],
+          "overall_reasoning": "The rows are aligned on probe_id, so which markers appear in the top-20 list is already handled by the alignment. limma topTable output is deterministic when the data and design are the same. That means the numeric statistics should match almost exactly, and a tight RAE tolerance is suitable. logFC and t carry the effect size and direction, so they are the most important columns and their sign is kept. P.Value and B are also compared closely. adj.P.Val is nearly constant at about 0.9995, so it gets a small tolerance that allows for differences in how the multiple-testing correction is applied. AveExpr is checked as a sanity check.",
+          "overall_confidence": 0.88,
+          "id_columns": [
+            "probe_id"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "probe_id": "probe_id",
+              "logFC": "logFC",
+              "AveExpr": "AveExpr",
+              "t": "t",
+              "P.Value": "P.Value",
+              "adj.P.Val": "adj.P.Val",
+              "B": "B"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "probe_id"
+            ],
+            "matched_rows": 20,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "logFC",
+              "probe_id",
+              "t",
+              "AveExpr",
+              "adj.P.Val",
+              "P.Value",
+              "B"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "logFC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "probe_id": [
+                "str",
+                "str",
+                true
+              ],
+              "t": [
+                "float64",
+                "float64",
+                true
+              ],
+              "AveExpr": [
+                "float64",
+                "float64",
+                true
+              ],
+              "adj.P.Val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "P.Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "B": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "AveExpr",
+            "B",
+            "P.Value",
+            "adj.P.Val",
+            "logFC",
+            "t"
+          ],
+          "filtered_columns": [
+            "AveExpr",
+            "B",
+            "P.Value",
+            "adj.P.Val",
+            "logFC",
+            "t"
+          ],
+          "overall_similarity": 0.9999999999999926,
+          "per_column_similarities": {
+            "AveExpr": {
+              "similarity": 0.9999999999999994,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "B": {
+              "similarity": 0.9999999999999943,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "P.Value": {
+              "similarity": 0.999999999999968,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "adj.P.Val": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "logFC": {
+              "similarity": 0.9999999999999971,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "t": {
+              "similarity": 0.9999999999999962,
+              "strategy": "rae",
+              "matching_count": 20,
+              "total_count": 20,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 20,
+            "alt_rows": 20,
+            "row_intersection": 20,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              20,
+              7
+            ],
+            "alt_shape": [
+              20,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "logFC": true,
+              "probe_id": true,
+              "t": true,
+              "AveExpr": true,
+              "adj.P.Val": true,
+              "P.Value": true,
+              "B": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: a-3-3  |  Agent: claude-skills
+Avg similarity: 1.0000
+============================================================
+
+✅ Results saved → claude-skills-claude-judge/a-3-3_claude-skills.json
+✅ Full states saved → claude-skills-claude-judge/a-3-3_claude-skills_full.json
+
+
+
+

@@ -1,0 +1,246 @@
+{
+  "id": "b-3-6",
+  "question": "For each drug, compute the Pearson correlation between EGFR gene expression and drug response (IC50) across cell lines. Plot the correlation coefficients as a bar chart and highlight the top 3 positively and top 3 negatively correlated drugs.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-3-6/ref_answer/egfr_drug_correlation.png",
+      "eval_guideline": "Bar chart must show Pearson correlations for all drugs with the top 3 positively and top 3 negatively correlated drugs visually distinguished from the rest; axis labels, color scheme, and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-3-6/output/egfr_drug_correlation.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate PNG images corresponding to the requested EGFR–drug response correlation bar chart.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires a bar chart showing Pearson correlations for all drugs and visually distinguishing the top 3 positive and top 3 negative correlations, while allowing styling differences. Semantic comparison evaluates these visual requirements without requiring pixel-level agreement.",
+      "strategy_error": null,
+      "similarity": 0.99,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.99,
+        "explanation": "Both images show Pearson correlations between EGFR expression and drug IC50 for the same 20 drugs, ordered from highest to lowest correlation. The bar heights agree visually throughout: Afatinib and Gefitinib are approximately 0.86 and Erlotinib approximately 0.84; Lapatinib, Osimertinib, and Cetuximab are approximately -0.83, -0.88, and -0.89, respectively. Both distinguish the three strongest positive correlations in red and the three strongest negative correlations in blue, with all remaining drugs in gray. Intermediate correlations and near-zero values also match. Both have appropriate drug labels, Pearson correlation axes, and zero baselines. The candidate adds a legend, numerical annotations for the highlighted drugs, and a title specifying 80 cell lines. Its wider vertical axis range, solid baseline, bar outlines, and differing label angles are presentation differences that do not change the scientific message. No critical data or required elements are missing."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-3-6/ref_answer/top_egfr_drug_correlations.csv",
+      "eval_guideline": "Correlation values must match the reference within +/-0.01; direction classification must use 'Positive'/'Negative' (not 'TopPositive'/'TopNegative'); row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-3-6/output/top_egfr_drug_correlations.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV tables corresponding to the top positively and negatively correlated drugs.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-drug EGFR–IC50 Pearson correlations within ±0.01, aligning drugs regardless of row order, column order, or header labels. Require direction classifications to be 'Positive' or 'Negative', rejecting 'TopPositive' and 'TopNegative'."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires per-drug numeric agreement within ±0.01 while permitting structural differences, so approximate table comparison is appropriate. Pearson correlation computation is deterministic, and direction labels must satisfy the specified values.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999998,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Drug": "Drug",
+            "Correlation": "Correlation",
+            "Type": "Type"
+          },
+          "id_columns": [
+            "Drug"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have one row per drug, so no transpose is needed. Map the three reference columns by exact name and exclude the candidate's extra P_value and N columns. Drug uniquely identifies each row. The evaluation explicitly permits different row and column orders, so match by Drug and check permutations without sorting. Compare correlations within +/-0.01 and preserve the Positive/Negative Type labels.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Correlation",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Compare individual coefficient values rather than correlation between columns, which could conceal incorrect magnitudes. A relative tolerance of 0.01 is appropriate for coefficients near magnitude 0.85, but is slightly stricter than the required absolute tolerance of 0.01. Exact enforcement of the guideline requires an absolute-error check outside this schema."
+            },
+            {
+              "name": "Type",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Direction labels must exactly match 'Positive' or 'Negative'. They have fixed meanings, so relabelling and delimiter parsing are inappropriate."
+            }
+          ],
+          "overall_reasoning": "Correlation and Type capture the required coefficient magnitudes and direction classifications for the selected drugs. Exclude Drug because it is used only for alignment, and omit candidate-only P_value and N because they are not required. Row order, column order, and header differences are handled by alignment. The schema supports relative rather than absolute numerical tolerance, so the RAE configuration approximates the requested +/-0.01 criterion conservatively for these values. Chart appearance cannot be assessed from these tables.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Drug"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Drug": "Drug",
+              "Correlation": "Correlation",
+              "Type": "Type"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "P_value",
+              "N"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Drug"
+            ],
+            "matched_rows": 6,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Drug",
+              "Correlation",
+              "Type"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Drug": [
+                "str",
+                "str",
+                true
+              ],
+              "Correlation": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Type": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['P_value', 'N']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Correlation",
+            "Type"
+          ],
+          "filtered_columns": [
+            "Correlation",
+            "Type"
+          ],
+          "overall_similarity": 0.9999999999999998,
+          "per_column_similarities": {
+            "Correlation": {
+              "similarity": 0.9999999999999997,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "Type": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6,
+            "col_recall": 1.0,
+            "col_f1": 0.7499999999999999,
+            "col_jaccard": 0.6,
+            "ref_rows": 6,
+            "alt_rows": 6,
+            "row_intersection": 6,
+            "ref_cols": 3,
+            "alt_cols": 5,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              6,
+              3
+            ],
+            "alt_shape": [
+              6,
+              5
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Drug": true,
+              "Correlation": true,
+              "Type": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,505 @@
+{
+  "id": "b-7-2",
+  "question": "Build an SVM classification model to predict the binary outcome label using a 70/30 train-test split. Evaluate performance on both training and test sets and generate an ROC curve with AUC values for both sets.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-2/ref_answer/classification_report.csv",
+      "eval_guideline": "Per-class precision, recall, and F1 must match within +/-0.05; row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-2/output/classification_report.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filenames and CSV formats indicate corresponding classification reports for the SVM model.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Align rows by class and training/test set and columns by metric, allowing row and column reordering. Compare each precision, recall, and F1 value within an absolute tolerance of 0.05."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although SVM fitting with a 70/30 split is stochastic, this classification report is a small metrics table requiring value-by-value comparison. Approximate comparison accommodates reordered rows and columns while applying the guideline's ±0.05 tolerance.",
+      "strategy_error": null,
+      "similarity": 0.7999514073387674,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Class": "Class",
+            "Precision": "Precision",
+            "Recall": "Recall",
+            "F1-Score": "F1-Score",
+            "Support": "Support",
+            "Accuracy": null
+          },
+          "id_columns": [
+            "Class"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain classification-report rows, so no transpose is needed. First filter the candidate to Set = Test: its class supports of 75 and total support of 150 match the reference. Retain Train rows separately; without this filter, Class is duplicated. Match rows by Class and map the five identically named columns directly. Accuracy has no matching candidate column: candidate accuracy is stored in F1-Score on the accuracy row. If preprocessing is available, move that scalar into a derived Accuracy column and clear the accuracy row's F1-Score and Support to match the reference. Row and column order do not matter. Compare per-class precision, recall, and F1 using the specified tolerance of 0.05; structural alignment does not resolve numerical differences. ROC/AUC results are absent from both previews.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Precision",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Precision is explicitly required for each class. Use numerical error rather than correlation. Leave the relative-error threshold unset because the required absolute tolerance of 0.05 cannot be represented exactly by a constant RAE threshold."
+            },
+            {
+              "name": "Recall",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Recall is explicitly required for each class. Compare numerical errors, with a separate absolute-difference check of at most 0.05; a fixed relative-error threshold would impose a different acceptance rule."
+            },
+            {
+              "name": "F1-Score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "F1 is explicitly required for each class. Use numerical error with no fixed RAE threshold, and enforce the required absolute tolerance of 0.05 separately. Reference accuracy rows contain missing F1 values and must not be compared against accuracy values stored here by the candidate."
+            },
+            {
+              "name": "Support",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Support contains exact sample counts despite its float64 dtype. Require exact agreement on comparable nonmissing rows to verify evaluation-set sizes and help detect train/test mismatches."
+            }
+          ],
+          "overall_reasoning": "Compare the four shared, explicitly typed numerical columns; exclude Class because it is an alignment identifier. Precision, recall, and F1 are critical under the stated evaluation guideline, while support checks evaluation sample counts. Row and column ordering is irrelevant, but duplicated Class identifiers leave train/test correspondence ambiguous: the candidate distinguishes Set, whereas the reference does not. Resolve that ambiguity before interpreting paired scores. RAE supplies numerical error summaries, but this schema cannot exactly encode the required absolute +/-0.05 rule with a constant relative-error threshold; apply that absolute check separately to every per-class metric, without allowing averages to hide failures. Treat paired missing values as matching and unexpected missingness as a discrepancy, while handling accuracy rows separately because the two tables encode them differently. Accuracy is reference-only and Set is candidate-only, so neither is included as a comparable column. The previews cannot verify SVM construction, the split procedure, ROC curves, or AUC values.",
+          "overall_confidence": 0.82,
+          "id_columns": [
+            "Class"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Class": "Class",
+              "Precision": "Precision",
+              "Recall": "Recall",
+              "F1-Score": "F1-Score",
+              "Support": "Support"
+            },
+            "unmapped_ref": [
+              "Accuracy"
+            ],
+            "unmapped_alt": [
+              "Set"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Class"
+            ],
+            "matched_rows": 10,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Support",
+              "Class",
+              "Precision",
+              "F1-Score",
+              "Recall"
+            ],
+            "converted_columns": [
+              "Support"
+            ],
+            "failed_columns": [],
+            "conversion_details": {
+              "Support": [
+                "float64",
+                "int64",
+                true
+              ],
+              "Class": [
+                "str",
+                "str",
+                true
+              ],
+              "Precision": [
+                "float64",
+                "float64",
+                true
+              ],
+              "F1-Score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Recall": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference columns: ['Accuracy']",
+            "Unmapped candidate columns: ['Set']",
+            "Converted 1 column(s) to match reference dtypes"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "F1-Score",
+            "Precision",
+            "Recall",
+            "Support"
+          ],
+          "filtered_columns": [
+            "F1-Score",
+            "Precision",
+            "Recall",
+            "Support"
+          ],
+          "overall_similarity": 0.7999514073387674,
+          "per_column_similarities": {
+            "F1-Score": {
+              "similarity": 0.8996992687667812,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Precision": {
+              "similarity": 0.9007031078659712,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Recall": {
+              "similarity": 0.899403252722317,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Support": {
+              "similarity": 0.5,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 8,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8333333333333334,
+            "col_recall": 0.8333333333333334,
+            "col_f1": 0.8333333333333334,
+            "col_jaccard": 0.7142857142857143,
+            "ref_rows": 10,
+            "alt_rows": 10,
+            "row_intersection": 10,
+            "ref_cols": 6,
+            "alt_cols": 6,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              10,
+              6
+            ],
+            "alt_shape": [
+              10,
+              6
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Support": true,
+              "Class": true,
+              "Precision": true,
+              "F1-Score": true,
+              "Recall": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9,
+            "ref_missing_rate": 0.2,
+            "alt_missing_rate": 0.1
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-2/ref_answer/roc_curves.png",
+      "eval_guideline": "ROC curves for both training and test sets with per-curve AUC annotations on TPR vs. FPR axes; colors, fonts, and layout may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-2/output/roc_curves.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filenames and PNG image formats clearly correspond to the requested training and test ROC curves with AUC values.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.95,
+      "strategy_reasoning": "The 70/30 train-test split and SVM model fitting make this a stochastic task, so summary comparison applies regardless of image format. Evaluation should check that both training and test ROC curves have AUC annotations on TPR versus FPR axes, allowing visual styling and run-to-run variation.",
+      "strategy_error": null,
+      "similarity": 0.8,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "partially equivalent",
+        "confidence": 0.99,
+        "explanation": "Both images show training and test ROC curves for SVM binary classification, with true positive rate versus false positive rate, per-curve AUC annotations, and a diagonal chance baseline. Both convey strong discrimination and better overall training than test performance. However, the underlying curves and reported performance differ: reference training/test AUCs are 0.996/0.922, whereas candidate AUCs are 0.977/0.949. The candidate therefore shows weaker training discrimination, stronger test discrimination, and a smaller train-test AUC gap (0.028 versus 0.074), affecting interpretation of generalization. The candidate test curve also exceeds its training curve at some intermediate false positive rates, unlike the reference. The reference identifies cancer versus normal samples; the candidate instead specifies an RBF kernel and C=100 without identifying the outcome classes. Both satisfy the requested ROC presentation, but neither image establishes that a 70/30 split was used. Colors, typography, and dimensions do not affect this assessment. The shared evaluation structure and broad scientific message support substantial equivalence, while the numerical and curve differences prevent full equivalence."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-2/ref_answer/svm_performance_metrics.csv",
+      "eval_guideline": "Training and test accuracy and AUC values must each match within +/-0.05; row and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-2/output/svm_performance_metrics.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filenames and CSV formats indicate matching tables of SVM performance metrics for the training and test sets.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare training and test accuracy and AUC values individually, allowing an absolute difference of up to 0.05 for each metric. Align rows and columns regardless of order."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although the 70/30 train-test split is stochastic, the output is a small metrics table requiring value-by-value comparison, so the small-table exception applies. Approximate comparison accommodates reordered rows and columns while applying the guideline's ±0.05 tolerance.",
+      "strategy_error": null,
+      "similarity": 0.9576014458358895,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Metric": "Metric",
+            "Value": "Value"
+          },
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have metrics as rows, so no transpose is needed. Map Metric and Value directly and exclude the candidate's extra Set column. Normalize candidate metric labels, including Train_Accuracy to Training Accuracy and Train_AUC to Training AUC, and similarly normalize test labels if present. Select the four required accuracy and AUC rows and match by Metric, which uniquely identifies each requested result. Extra candidate metrics are outside the comparison scope. Row and column order do not matter. Compare values with absolute tolerance 0.05; the visible training accuracy difference is 0.054243, exceeding tolerance, while training AUC is within tolerance. Test metrics are not visible in the preview.",
+          "confidence": 0.96
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Value contains the required training and test accuracy and AUC measurements. Use cellwise numerical comparison because individual metric agreement matters. A 0.05 relative-error tolerance is a scale-appropriate approximation for scores near 1, but it does not exactly implement the required absolute tolerance of 0.05."
+            }
+          ],
+          "overall_reasoning": "Align rows by Metric regardless of order, excluding Metric from comparison. Compare Value only; the candidate-only Set column is unnecessary. Restrict evaluation to the four required training/test accuracy and AUC rows, and exclude reference NaNs representing unspecified auxiliary metrics. Each required metric must independently satisfy absolute(candidate - reference) <= 0.05; averaging matches must not allow a failed metric to pass. The schema's RAE threshold cannot express this absolute-error rule exactly, so enforce that rule separately. For example, test accuracy differs by 0.053367 and fails, while test AUC differs by 0.027156 and passes. The preview does not expose training results or ROC curve data, so those cannot be assessed from the supplied values.",
+          "overall_confidence": 0.85,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Metric": "Metric",
+              "Value": "Value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Set"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 4,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 23,
+            "fuzzy_matched_ids": {
+              "train_accuracy": "training accuracy",
+              "test_auc": "test auc",
+              "train_auc": "training auc",
+              "test_accuracy": "test accuracy"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": null,
+              "confidence": null
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Set']",
+            "Unmapped candidate rows: 23"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.9576014458358895,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.9576014458358895,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6666666666666666,
+            "col_recall": 1.0,
+            "col_f1": 0.8,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 27,
+            "alt_rows": 27,
+            "row_intersection": 27,
+            "ref_cols": 2,
+            "alt_cols": 3,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              27,
+              2
+            ],
+            "alt_shape": [
+              27,
+              3
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.14814814814814814,
+            "ref_missing_rate": 0.8518518518518519,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "id": "a-13-5",
+  "question": "Using the grand average of hydropathicity (GRAVY) score and the formula solubility = 1 / (1 + exp(2 * GRAVY)), predict the solubility of the protein sequence below. Suggest the top 3 single-point mutations that most improve solubility by substituting hydrophobic residues with hydrophilic ones. Report the original solubility, the top 3 mutations with solubility gain, and the best mutant sequence and solubility. Sequence: MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-5/ref_answer/summary.txt",
+      "eval_guideline": "Solubility values must match the reference within +/-0.005; sequences must match exactly; label wording and formatting may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-5/output/summary.txt",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate plain-text summary files for the same a-13-5 protein-solubility task.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "txt",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {
+        "question": "Verify that the reported original solubility, top 3 single-point mutations and their solubility gains, and best mutant solubility agree with the reference within +/-0.005, while requiring the best mutant sequence to match exactly; allow different labels and formatting."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The output mixes tolerance-based numeric results with an exact sequence requirement, while wording and formatting may differ. Semantic comparison can evaluate these heterogeneous requirements together, unlike exact, approximate-text, or purely numeric comparison.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.99,
+        "explanation": "The candidate contains every item present in the reference and matches them within the required tolerance. The original sequence matches exactly. Original solubility is 0.726899 versus 0.7269 in the reference (absolute difference 0.000001; ratio approximately 0.999999). The best mutant sequence also matches exactly, corresponding to I3R. Best-mutant solubility is 0.771322 versus 0.7713 (absolute difference 0.000022; ratio approximately 1.000029). The candidate additionally supplies the requested top three single-point mutations (I3R, I13R, and I23R), each with a solubility gain of 0.044422, plus supporting GRAVY values and an optional combined mutant. These additions do not conflict with the reference.",
+        "ref_length": 254,
+        "alt_length": 1269
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-13-5/ref_answer/mutations.tsv",
+      "eval_guideline": "Mutation positions and residue substitutions must match the reference; solubility_gain values must match within +/-0.005; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-13-5/output/mutations.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames and .tsv tabular formats match exactly, clearly corresponding to the requested ranked mutation results for the same task.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare mutation positions and residue substitutions record by record; allow column/header and row reordering, and require solubility_gain values to agree within +/-0.005."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level agreement for mutation positions and substitutions while permitting structural table differences and small numeric variation. The deterministic TSV output is therefore best evaluated with approximate comparison.",
+      "strategy_error": null,
+      "similarity": 0.9995045045045045,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "position": "position",
+            "original": "original",
+            "mutant": "mutant",
+            "solubility_gain": "solubility_gain"
+          },
+          "id_columns": [
+            "position",
+            "original",
+            "mutant"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "The tables share the same row-oriented structure, so no transpose is needed. Each reference column has an exact-name candidate match; explicit mapping is provided because the candidate contains additional columns. The composite key of position, original, and mutant uniquely identifies each mutation and safely aligns rows. Row order is significant because the task requests a ranked top-3 mutation list; the candidate's rank column confirms this ordering. No pre-sort is needed because both previews already appear in the expected rank order, while column order is not semantically important.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "solubility_gain",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.113,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Solubility gain is the sole non-ID reference column and directly measures the task's required mutation improvement. RAE provides value-level accuracy. At the reference scale of 0.0444, the evaluation's ±0.005 absolute allowance corresponds to a relative tolerance of approximately 0.005/0.0444 = 0.1126, rounded to 0.113."
+            }
+          ],
+          "overall_reasoning": "Align rows using position, original, and mutant, but exclude those ID columns from value comparison. Compare only solubility_gain because it is the sole explicitly typed reference data column and the evaluation guideline specifically requires its values to match within ±0.005. Candidate-only supplemental columns are not included because they have no aligned reference counterparts. No categorical overlap configuration or delimiter is applicable.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "position",
+            "original",
+            "mutant"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "position": "position",
+              "original": "original",
+              "mutant": "mutant",
+              "solubility_gain": "solubility_gain"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "rank",
+              "mutation",
+              "mutant_gravy",
+              "mutant_solubility"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "position",
+              "original",
+              "mutant"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "original",
+              "position",
+              "solubility_gain",
+              "mutant"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "original": [
+                "str",
+                "str",
+                true
+              ],
+              "position": [
+                "str",
+                "str",
+                true
+              ],
+              "solubility_gain": [
+                "float64",
+                "float64",
+                true
+              ],
+              "mutant": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['rank', 'mutation', 'mutant_gravy', 'mutant_solubility']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "solubility_gain"
+          ],
+          "filtered_columns": [
+            "solubility_gain"
+          ],
+          "overall_similarity": 0.9995045045045045,
+          "per_column_similarities": {
+            "solubility_gain": {
+              "similarity": 0.9995045045045045,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.113
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 4,
+            "alt_cols": 8,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              4
+            ],
+            "alt_shape": [
+              3,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -4
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "original": true,
+              "position": true,
+              "solubility_gain": true,
+              "mutant": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

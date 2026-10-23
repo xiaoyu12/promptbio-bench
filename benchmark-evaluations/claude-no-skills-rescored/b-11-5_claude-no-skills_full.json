@@ -1,0 +1,133 @@
+{
+  "id": "b-11-5",
+  "question": "Analyze gene expression data from multiple patients across different time points. Build a hierarchical model with patient-level random effects and time-level fixed effects. Use MCMC sampling to estimate parameters and report posterior distributions for the random effects variance. Set the first time point as the reference level (time_effects[0] = 0) for identifiability.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-11-5/ref_answer/hierarchical_model_summary.txt",
+      "eval_guideline": "Posterior mean and credible interval for each time effect and variance parameter must be present; time effects must increase monotonically across time points; sigma_patient and sigma_error posterior means must be within 20% relative absolute error of the reference.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-11-5/output/hierarchical_model_summary.txt",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filenames and .txt formats indicate corresponding text summaries of the hierarchical gene expression model.",
+      "file_format": "text",
+      "signature": {
+        "format": "text",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "txt",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {},
+      "strategy_confidence": 0.8,
+      "strategy_reasoning": "Although MCMC is stochastic, the evaluated output is a small set of posterior parameter summaries, so the small-results exception favors value-by-value approximate comparison. The guideline requires each mean and credible interval, monotonic time effects, and 20% relative error tolerance for sigma_patient and sigma_error; text approximate has no numeric tolerance parameter.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "compare_by": "line",
+        "ignore_whitespace": true,
+        "ignore_case": true,
+        "ref_lines": 20,
+        "alt_lines": 79,
+        "matching_lines": 0
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-11-5/ref_answer/random_effects_variance_posterior.csv",
+      "eval_guideline": "Column means must be within 20% relative absolute error of the reference; sample count may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-11-5/output/random_effects_variance_posterior.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filenames and .csv formats identify corresponding tabular outputs for the posterior distribution of the patient-level random effects variance.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires column means to agree within 20% relative absolute error and allows different sample counts, indicating aggregate comparison of posterior samples. MCMC sampling is stochastic, so summary is appropriate rather than matching individual rows.",
+      "strategy_error": null,
+      "similarity": 0.6868647620478726,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              8000,
+              2
+            ],
+            "alt_shape": [
+              8000,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "row_sim": 1.0,
+          "col_sim": 0.0,
+          "col_jaccard": 0.25,
+          "score": 0.4166666666666667
+        },
+        "missing": {
+          "ref_missing_rate": 0.0,
+          "alt_missing_rate": 0.0,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 0.6439276194769511,
+          "hellinger_distance": 0.3560723805230489,
+          "ref_count": 16000,
+          "alt_count": 64000
+        },
+        "categorical_distribution": null,
+        "component_scores": {
+          "structural": 0.4166666666666667,
+          "missing": 1.0,
+          "numeric": 0.6439276194769511,
+          "categorical": null
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-11-5/ref_answer/trace_plot.png",
+      "eval_guideline": "Trace plot must show MCMC sample paths over iterations for all population-level parameters (intercept, time effects, patient-level SD, and error SD); axis labels, color scheme, and styling may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-11-5/output/trace_plot.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "Identical filenames and .png image formats indicate corresponding MCMC trace plots for the hierarchical model.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.96,
+      "strategy_reasoning": "MCMC sampling is stochastic, so summary comparison applies regardless of the PNG format. Evaluate whether trace paths cover the intercept, time effects with the first fixed at zero, patient-level SD, and error SD, while allowing sampled trajectories and plot styling to vary.",
+      "strategy_error": null,
+      "similarity": 0.97,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.98,
+        "explanation": "Both images show posterior densities and MCMC sample paths for all required population-level parameters: the intercept (called mu in the candidate), time fixed effects, patient-level standard deviation, and residual standard deviation. Their posterior locations and spreads closely agree: the intercept is centered around 4.7–4.8, the four estimated time effects around 0.7, 1.2, 1.8, and 2.2, the patient SD around 1.2–1.3, and the residual SD around 0.8. Both display approximately 2,000 iterations per chain, with stationary, overlapping traces and no obvious sustained drift. The first time effect is fixed at zero in both; the candidate explicitly labels this reference level. The reference shows separate chain density curves, whereas the candidate combines chains into a single density per parameter or component, slightly reducing direct comparison of chain-specific distributions. The candidate additionally includes posterior densities and traces for 30 patient random effects and the squared patient SD, directly presenting the requested random-effects variance. These additions and minor density-shape differences do not change the shared scientific message. Neither image alone establishes convergence quantitatively, but both satisfy the specified visual trace requirements."
+      },
+      "comparison_error": null
+    }
+  ]
+}

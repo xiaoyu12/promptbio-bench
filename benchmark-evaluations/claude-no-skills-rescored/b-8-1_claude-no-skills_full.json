@@ -1,0 +1,179 @@
+{
+  "id": "b-8-1",
+  "question": "Apply LASSO regression (alpha=0.1) to the dataset to perform feature selection. Identify and return the non-zero coefficient features.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-1/ref_answer/lasso_features.csv",
+      "eval_guideline": "All selected feature names must match the reference exactly; coefficient values must match within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-8-1/output/lasso_features.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both files have the identical filename lasso_features.csv and inferred CSV format within the same task b-8-1. The name directly corresponds to the requested non-zero coefficient features selected by LASSO regression.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare LASSO (alpha=0.1) selected features and coefficients. Require exact matching of all selected feature names and coefficient values within 1% relative absolute error; allow differences in row order, column order, and header labels."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level matching of selected features and coefficients, overriding the model-fitting summary default. Approximate comparison supports structural alignment while enforcing exact feature names and the specified coefficient tolerance.",
+      "strategy_error": null,
+      "similarity": 0.9590906673814077,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Feature",
+          "check_permutation": true,
+          "reasoning": "Both tables have identical column names and the same orientation, so no transpose or column mapping is needed. Match rows by Feature, the identifier for each selected feature, and sort by Feature for consistent comparison. Coefficient is a measured value, not part of the row key. Selection order does not matter. Preserve unmatched features because the differing row counts indicate a feature-set discrepancy, and compare matched coefficients using the specified 1% relative tolerance.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Coefficient",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Coefficient is float64 and critical to the LASSO result. Compare each aligned coefficient using absolute difference divided by the absolute reference value, with tolerance 0.01 to enforce the required 1% relative absolute error."
+            }
+          ],
+          "overall_reasoning": "Coefficient is the only data column and requires value-level numerical agreement. Use RAE with the explicitly required 1% tolerance across positive and negative coefficients. Feature is excluded as an alignment ID; exact equality of the selected feature-name sets must be enforced during alignment. Row order, column order, and header differences do not affect comparison after alignment.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 34,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Feature",
+              "Coefficient"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Feature": [
+                "str",
+                "str",
+                true
+              ],
+              "Coefficient": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Feature"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference rows: 1",
+            "Sorted both dataframes by ['Feature']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Coefficient"
+          ],
+          "filtered_columns": [
+            "Coefficient"
+          ],
+          "overall_similarity": 0.9590906673814077,
+          "per_column_similarities": {
+            "Coefficient": {
+              "similarity": 0.9590906673814077,
+              "strategy": "rae",
+              "matching_count": 7,
+              "total_count": 34,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 35,
+            "alt_rows": 35,
+            "row_intersection": 35,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              35,
+              2
+            ],
+            "alt_shape": [
+              35,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Feature": true,
+              "Coefficient": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.9714285714285714,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.02857142857142857
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

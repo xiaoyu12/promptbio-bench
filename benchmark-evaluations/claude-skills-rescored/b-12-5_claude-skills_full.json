@@ -1,0 +1,187 @@
+{
+  "id": "b-12-5",
+  "question": "Evaluate a linear regression model for predicting daily hospital admissions using time series cross-validation with 5 folds. Use the previous 7 days of admissions as features (lag=7). Use an expanding-window split: divide the N samples (after lag windowing) into 6 equal segments of size N//6; for fold i (i=1..5), train on the first i segments and test on segment i+1. Report the mean and standard deviation of RMSE across folds.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-12-5/ref_answer/hospital_admissions_cv_results.csv",
+      "eval_guideline": "Per-fold RMSE values must match the reference within 2% relative absolute error; the Mean row's RMSE must match within 2% relative absolute error and the Std row's RMSE must match within 15% relative absolute error; column order and decimal precision may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-12-5/output/hospital_admissions_cv_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate CSV format. Both belong to task b-12-5 and clearly correspond to hospital admissions cross-validation results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare RMSE values by fold and the Mean and Std row labels, allowing column reordering and decimal precision differences. Require relative absolute error of at most 2% for each fold and the Mean row, and at most 15% for the Std row."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires value-by-value matching of a small RMSE table with explicit row-specific tolerances. Approximate comparison supports structural alignment and numeric variation while preserving these requirements.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999998,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Fold": "Fold",
+            "RMSE": "RMSE"
+          },
+          "id_columns": [
+            "Fold"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use the same row-oriented structure, so no transpose is needed. Map Fold and RMSE by exact name and exclude the candidate's extra Train_Size and Test_Size columns. Fold uniquely identifies each fold and the Mean and Std summary rows. Match rows by Fold; presentation order does not affect the evaluation, and key-based matching requires no sorting.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "RMSE",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.02,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "RMSE is the critical float64 output. Compare absolute relative errors against reference values, allowing 2% for folds 1–5 and the mean. The std row requires a 15% tolerance, which this schema cannot express separately within the same column; apply a row-specific override of 0.15 for Fold='std'."
+            }
+          ],
+          "overall_reasoning": "Compare only RMSE. Exclude Fold because it is an alignment ID, and exclude candidate-only Train_Size and Test_Size because they are not reference outputs. RAE measures agreement in numerical magnitude while allowing differences in decimal precision and column order. Use 0.02 for fold and mean rows and a required external override of 0.15 for the std row. This configuration alone cannot encode both row-specific tolerances or enforce that every row passes; validation must check each row against its applicable tolerance rather than accept an average match score.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Fold"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Fold": "Fold",
+              "RMSE": "RMSE"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Train_Size",
+              "Test_Size"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Fold"
+            ],
+            "matched_rows": 7,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "RMSE",
+              "Fold"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "RMSE": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Fold": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Train_Size', 'Test_Size']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "RMSE"
+          ],
+          "filtered_columns": [
+            "RMSE"
+          ],
+          "overall_similarity": 0.9999999999999998,
+          "per_column_similarities": {
+            "RMSE": {
+              "similarity": 0.9999999999999998,
+              "strategy": "rae",
+              "matching_count": 7,
+              "total_count": 7,
+              "error": null,
+              "details": {
+                "tolerance": 0.02
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 7,
+            "alt_rows": 7,
+            "row_intersection": 7,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              7,
+              2
+            ],
+            "alt_shape": [
+              7,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "RMSE": true,
+              "Fold": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

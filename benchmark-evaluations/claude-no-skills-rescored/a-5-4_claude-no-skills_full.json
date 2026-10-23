@@ -1,0 +1,248 @@
+{
+  "id": "a-5-4",
+  "question": "Identify spatially variable genes (FDR < 0.05) in the provided spatial gene expression data using Moran's I spatial autocorrelation.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-5-4/ref_answer/spatially_variable_genes.csv",
+      "eval_guideline": "Gene records and their Moran's I (I_stat), p-value (pval_norm), and FDR (pval_norm_fdr_bh) values must match the reference within 1% relative absolute error; output must include a gene name column (gene_name); column order and row order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-5-4/output/spatially_variable_genes.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical filename and CSV format as the reference. It directly corresponds to the task output of spatially variable genes identified using Moran's I and filtered by FDR.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare gene records by gene_name and verify I_stat, pval_norm, and pval_norm_fdr_bh within 1% relative absolute error, allowing row and column reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level matching with numeric tolerance while explicitly allowing row and column order differences. The CSV approximate strategy supports structural alignment and tolerant value-by-value comparison.",
+      "strategy_error": null,
+      "similarity": 0.4211557166866124,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "gene_name"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "gene_name",
+          "check_permutation": true,
+          "reasoning": "Both tables already use the same row-oriented schema and have exactly matching column names, so no transpose or column mapping is needed. Rows should be matched by gene_name because each row represents one gene and the tables differ in row count and ordering. The task evaluates the set of significant gene records rather than a ranked list, so row order is not meaningful; sorting by gene_name provides deterministic comparison, and permutation checking is appropriate.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "I_stat",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Moran's I is a required reported measurement, and the evaluation explicitly permits at most 1% relative absolute error."
+            },
+            {
+              "name": "pval_norm",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The normalized p-value is explicitly required and must match numerically within 1% relative absolute error."
+            },
+            {
+              "name": "pval_norm_fdr_bh",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The adjusted p-value determines the FDR < 0.05 result and is explicitly required to match within 1% relative absolute error."
+            }
+          ],
+          "overall_reasoning": "Rows are aligned by gene_name, which is therefore excluded from value comparison. The task and evaluation guideline identify I_stat, pval_norm, and pval_norm_fdr_bh as the required outputs, so all three use dtype-appropriate numerical RAE comparison with a 0.01 tolerance matching the stated 1% relative-error criterion. var_norm is omitted because it is an intermediate variance quantity not required in the requested output or evaluation guideline. Missing values should only match corresponding missing values, and exact zero versus nonzero cases should be treated carefully by the comparison implementation because relative error at a zero reference is undefined. No categorical overlap configuration or delimiter is applicable.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "gene_name"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "gene_name"
+            ],
+            "matched_rows": 4566,
+            "unmapped_ref_rows": 1034,
+            "unmapped_alt_rows": 207,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "No candidate has a confident equivalent in the reference set. Similar-looking identifiers denote distinct genes, transcripts, paralogs, or antisense loci and were not conflated.",
+              "confidence": 0.99
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "pval_norm_fdr_bh",
+              "I_stat",
+              "pval_norm",
+              "gene_name",
+              "var_norm"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "pval_norm_fdr_bh": [
+                "float64",
+                "float64",
+                true
+              ],
+              "I_stat": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pval_norm": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene_name": [
+                "str",
+                "str",
+                true
+              ],
+              "var_norm": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "gene_name"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference rows: 1034",
+            "Unmapped candidate rows: 207",
+            "Sorted both dataframes by ['gene_name']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "I_stat",
+            "pval_norm",
+            "pval_norm_fdr_bh"
+          ],
+          "filtered_columns": [
+            "I_stat",
+            "pval_norm",
+            "pval_norm_fdr_bh"
+          ],
+          "overall_similarity": 0.4211557166866124,
+          "per_column_similarities": {
+            "I_stat": {
+              "similarity": 0.8769222995045415,
+              "strategy": "rae",
+              "matching_count": 271,
+              "total_count": 4566,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "pval_norm": {
+              "similarity": 0.18689720924858522,
+              "strategy": "rae",
+              "matching_count": 275,
+              "total_count": 4595,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "pval_norm_fdr_bh": {
+              "similarity": 0.19964764130671037,
+              "strategy": "rae",
+              "matching_count": 270,
+              "total_count": 4595,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 5807,
+            "alt_rows": 5807,
+            "row_intersection": 5807,
+            "ref_cols": 5,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              5807,
+              5
+            ],
+            "alt_shape": [
+              5807,
+              5
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "pval_norm_fdr_bh": true,
+              "I_stat": true,
+              "pval_norm": true,
+              "gene_name": true,
+              "var_norm": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.7862924057172378,
+            "ref_missing_rate": 0.03564663337351472,
+            "alt_missing_rate": 0.17806096090924747
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

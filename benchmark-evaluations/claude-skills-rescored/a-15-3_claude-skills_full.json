@@ -1,0 +1,178 @@
+{
+  "id": "a-15-3",
+  "question": "I have provided ChIP-seq results for the transcription factor SPT5 and RNA-seq TPM data for wild-type and knock-out samples. Integrate the ChIP-seq and RNA-seq data to identify the transcription factor's target genes and compute log2 fold-change (KO vs WT) for each target gene.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-3/ref_answer/SPT5_target_log2FC.csv",
+      "eval_guideline": "Exact set of target genes must match the reference; log2FC values must match within +/-0.05; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-15-3/output/SPT5_target_log2FC.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical basenames and both are CSV outputs. Their name directly describes the requested SPT5 target-gene log2 fold-change results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare target-gene tables by aligning gene identifiers regardless of row or column order. Require the exact same set of target genes, allow extra columns, and require log2 fold-change (KO vs WT) values to agree within an absolute tolerance of 0.05."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level matching of the exact target-gene set while allowing reordered rows/columns and extra columns, with numeric log2FC tolerance of +/-0.05. The deterministic CSV task therefore fits approximate table comparison.",
+      "strategy_error": null,
+      "similarity": 0.9974521687616654,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene",
+          "check_permutation": true,
+          "reasoning": "No transpose is needed because both tables represent genes as rows and metrics as columns. The reference columns Gene and log2FC already have exact-name matches in the candidate, so explicit column mapping is unnecessary; candidate-only metadata and TPM columns can be ignored. Gene uniquely identifies each target gene and should be used for row matching. The target-gene results are an unordered set rather than a ranked list, so sorting by Gene provides deterministic comparison and permutation checking should be enabled.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "log2FC is the sole non-ID reference output and is explicitly required by the task. A cell-wise RAE comparison evaluates each target gene's reported effect size rather than merely its correlation with the reference. The 0.05 tolerance reflects the evaluation guideline and accommodates rounding differences between the two-decimal reference values and higher-precision candidate values."
+            }
+          ],
+          "overall_reasoning": "Gene is used only to align rows and is excluded from column comparison. Correct target-gene membership is therefore enforced by alignment and the required exact ID set. Only log2FC is compared because it is the sole task-critical data column in the reference; candidate-only TPM and ChIP-seq metadata columns are supporting intermediate outputs and cannot be compared against absent reference columns. Since log2FC is float64 and absolute agreement per gene matters, RAE is more appropriate than Pearson or Spearman correlation. No categorical overlap configuration or delimiter is needed.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Gene"
+            ],
+            "matched_rows": 4,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "log2FC",
+              "Gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "log2FC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "log2FC"
+          ],
+          "filtered_columns": [
+            "log2FC"
+          ],
+          "overall_similarity": 0.9974521687616654,
+          "per_column_similarities": {
+            "log2FC": {
+              "similarity": 0.9974521687616654,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.25,
+            "col_recall": 1.0,
+            "col_f1": 0.4,
+            "col_jaccard": 0.25,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 2,
+            "alt_cols": 8,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              2
+            ],
+            "alt_shape": [
+              4,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -6
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "log2FC": true,
+              "Gene": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

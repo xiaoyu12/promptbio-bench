@@ -1,0 +1,221 @@
+{
+  "id": "a-11-5",
+  "question": "Perform one-way ANOVA on log-transformed expression data across sample types. Report the feature, F-statistic, and p-value for all features.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-5/ref_answer/anova_results.csv",
+      "eval_guideline": "F-statistic and p-value must match the reference within 0.1% relative absolute error per feature; column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-11-5/output/anova_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and CSV format, and both correspond directly to the requested one-way ANOVA results containing features, F-statistics, and p-values.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-feature ANOVA results by aligning features and verifying that F-statistics and p-values match within 0.1% relative absolute error; allow column and row reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The output is a deterministic per-feature CSV results table, and the guideline requires value-by-value numeric agreement while allowing column reordering. Approximate comparison supports structural alignment and tolerance-aware checking.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999983,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "feature": "feature",
+            "f_stat": "f_stat",
+            "p_value": "p_value"
+          },
+          "id_columns": [
+            "feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "feature",
+          "check_permutation": true,
+          "reasoning": "Both tables use features as rows and statistics as columns, so no transpose is needed. The three reference columns have exact candidate matches; explicit mapping excludes the candidate-only p_adj_bh column. Feature uniquely identifies each ANOVA result and should be used to match rows. The candidate appears sorted by significance while the reference uses a different order, so row order is not meaningful; sort by feature and check for a permutation.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "f_stat",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The F-statistic is a required reported result. Cell-wise relative absolute error directly tests numerical agreement; a tolerance of 0.001 represents the specified maximum 0.1% relative error."
+            },
+            {
+              "name": "p_value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The p-value is a required reported result. Cell-wise relative absolute error is appropriate because absolute per-feature numerical accuracy matters; a tolerance of 0.001 enforces the specified 0.1% relative-error limit."
+            }
+          ],
+          "overall_reasoning": "Compare only the two required ANOVA outputs, f_stat and p_value, after alignment by the excluded feature ID. Both are float64 numerical columns and must match per feature within 0.1% relative absolute error, so RAE with cell_tolerance 0.001 is used for each. Correlation strategies would not enforce accurate per-feature values. The candidate-only p_adj_bh column is excluded because it is absent from the reference and not requested by the task.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "feature": "feature",
+              "f_stat": "f_stat",
+              "p_value": "p_value"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "p_adj_bh"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "feature"
+            ],
+            "matched_rows": 500,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "p_value",
+              "f_stat",
+              "feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "p_value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "f_stat": [
+                "float64",
+                "float64",
+                true
+              ],
+              "feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "feature"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['p_adj_bh']",
+            "Sorted both dataframes by ['feature']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "f_stat",
+            "p_value"
+          ],
+          "filtered_columns": [
+            "f_stat",
+            "p_value"
+          ],
+          "overall_similarity": 0.9999999999999983,
+          "per_column_similarities": {
+            "f_stat": {
+              "similarity": 0.9999999999999982,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            },
+            "p_value": {
+              "similarity": 0.9999999999999984,
+              "strategy": "rae",
+              "matching_count": 500,
+              "total_count": 500,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.75,
+            "col_recall": 1.0,
+            "col_f1": 0.8571428571428571,
+            "col_jaccard": 0.75,
+            "ref_rows": 500,
+            "alt_rows": 500,
+            "row_intersection": 500,
+            "ref_cols": 3,
+            "alt_cols": 4,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              500,
+              3
+            ],
+            "alt_shape": [
+              500,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "p_value": true,
+              "f_stat": true,
+              "feature": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

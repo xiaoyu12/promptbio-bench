@@ -1,0 +1,199 @@
+{
+  "id": "a-15-3",
+  "question": "I have provided ChIP-seq results for the transcription factor SPT5 and RNA-seq TPM data for wild-type and knock-out samples. Integrate the ChIP-seq and RNA-seq data to identify the transcription factor's target genes and compute log2 fold-change (KO vs WT) for each target gene.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-15-3/ref_answer/SPT5_target_log2FC.csv",
+      "eval_guideline": "Exact set of target genes must match the reference; log2FC values must match within +/-0.05; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-15-3/output/SPT5_target_log2FC.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the exact same basename and CSV format as the reference, and its name directly describes the requested SPT5 target-gene log2 fold-change output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare target-gene tables for an exact gene-set match and log2 fold-change equivalence within +/-0.05, allowing row and column reordering and extra columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level comparison of the exact target-gene set with a numeric tolerance, while permitting reordered rows/columns and extra columns. The CSV approximate strategy supports structural alignment and tolerant value-by-value comparison.",
+      "strategy_error": null,
+      "similarity": 0.9974521687616654,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Gene": "Gene",
+            "log2FC": "log2FC_no_pseudocount"
+          },
+          "id_columns": [
+            "Gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Gene",
+          "check_permutation": true,
+          "reasoning": "Both tables use genes as rows, so no transpose is needed. Map Gene directly and map reference log2FC to log2FC_no_pseudocount because its values match the reference KO-vs-WT fold changes, whereas the candidate log2FC uses a pseudocount. Gene uniquely identifies each target for row matching. The target-gene result is unordered, so sort by Gene for stable comparison and check for a row permutation; extra candidate columns are ignored.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "log2FC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "log2FC is the sole non-ID reference output and its absolute numeric accuracy is central to the task. Cell-level RAE is more appropriate than correlation because each target gene's reported fold-change must be accurate, not merely follow the same trend. A tolerance of 0.05 reflects the evaluation guideline's stated +/-0.05 acceptance margin and accommodates ordinary rounding differences."
+            }
+          ],
+          "overall_reasoning": "Gene is excluded from column_configs because it is the alignment ID; its exact set determines whether the correct SPT5 target genes were identified. Only log2FC is compared because it is the sole evaluated data column in the reference. Candidate-only provenance, peak, replicate, mean-TPM, and alternative-fold-change columns are not reference outputs and therefore are not included. The numerical log2FC column uses cell-level RAE with a 0.05 tolerance to emphasize per-gene agreement under the stated evaluation tolerance.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Gene": "Gene",
+              "log2FC": "log2FC_no_pseudocount"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "log2FC",
+              "mean_TPM_KO",
+              "mean_TPM_WT",
+              "TPM_SPT5_knock_out_rep_1",
+              "TPM_SPT5_knock_out_rep_2",
+              "TPM_SPT5_wild_type_rep_1",
+              "TPM_SPT5_wild_type_rep_2",
+              "PeakID",
+              "Chr",
+              "Start",
+              "End",
+              "PeakScore",
+              "Annotation",
+              "DistanceToTSS",
+              "GeneType"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "case_insensitive",
+            "id_columns": null,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "log2FC",
+              "Gene"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "log2FC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Gene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['log2FC', 'mean_TPM_KO', 'mean_TPM_WT', 'TPM_SPT5_knock_out_rep_1', 'TPM_SPT5_knock_out_rep_2', 'TPM_SPT5_wild_type_rep_1', 'TPM_SPT5_wild_type_rep_2', 'PeakID', 'Chr', 'Start', 'End', 'PeakScore', 'Annotation', 'DistanceToTSS', 'GeneType']",
+            "Sorted both dataframes by ['Gene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "log2FC"
+          ],
+          "filtered_columns": [
+            "log2FC"
+          ],
+          "overall_similarity": 0.9974521687616654,
+          "per_column_similarities": {
+            "log2FC": {
+              "similarity": 0.9974521687616654,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.11764705882352941,
+            "col_recall": 1.0,
+            "col_f1": 0.21052631578947367,
+            "col_jaccard": 0.11764705882352941,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 2,
+            "alt_cols": 17,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              2
+            ],
+            "alt_shape": [
+              4,
+              17
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -15
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "log2FC": true,
+              "Gene": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

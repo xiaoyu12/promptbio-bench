@@ -1,0 +1,246 @@
+{
+  "id": "a-11-1",
+  "question": "Given a list of differentially expressed genes (DEGs), retrieve their protein-protein interactions from the STRING database and visualize the network.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-1/ref_answer/ppi_network.csv",
+      "eval_guideline": "Interaction records must match the reference in protein pairs and score within 1% relative absolute error; row order and column order may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-11-1/output/ppi_network.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both paths indicate CSV tabular network data, matching the requested STRING protein-protein interaction output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare interaction records by protein-pair identity and require scores to agree within 1% relative absolute error; allow row and column reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level matching of protein pairs with a numeric tolerance, while explicitly allowing row and column order differences. The CSV approximate strategy is therefore appropriate and can align reordered records and assess score variation.",
+      "strategy_error": null,
+      "similarity": 0.9450694969239597,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "preferredName_A": "preferredName_A",
+            "preferredName_B": "preferredName_B",
+            "score": "score"
+          },
+          "id_columns": [
+            "preferredName_A",
+            "preferredName_B"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "preferredName_A,preferredName_B",
+          "check_permutation": true,
+          "reasoning": "The tables have the same row-oriented interaction structure and require no transpose. The three reference columns have exact candidate matches; extra candidate metadata columns should be excluded. Rows represent unordered protein-protein interactions, so the two protein-name columns form the composite identifier; pair endpoints should be canonically ordered before matching to accommodate A/B reversal. Candidate-only interactions should not be positionally paired with reference rows. Sort by the canonicalized protein pair for deterministic comparison, then compare score values using the specified 1% relative absolute tolerance.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The interaction score is the only non-ID reference data column and is explicitly required to match within 1% relative absolute error. RAE directly measures that criterion, so a tolerance of 0.01 is used. Missing values should be compared with consistent null handling."
+            }
+          ],
+          "overall_reasoning": "Align records using preferredName_A and preferredName_B, but exclude those identifier columns from value scoring. Compare only score because it is the sole reference measurement and the evaluation guideline explicitly identifies protein-pair coverage and score accuracy as decisive. Candidate-only metadata and evidence-channel columns are not included because they have no aligned reference counterparts and are not required by the stated evaluation. The float64 score uses cell-wise RAE with a 0.01 threshold, exactly reflecting the allowed 1% relative absolute error.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "preferredName_A",
+            "preferredName_B"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "preferredName_A": "preferredName_A",
+              "preferredName_B": "preferredName_B",
+              "score": "score"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "stringId_A",
+              "stringId_B",
+              "ncbiTaxonId",
+              "nscore",
+              "fscore",
+              "pscore",
+              "ascore",
+              "escore",
+              "dscore",
+              "tscore",
+              "type_A",
+              "type_B"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "preferredName_A",
+              "preferredName_B"
+            ],
+            "matched_rows": 72,
+            "unmapped_ref_rows": 3,
+            "unmapped_alt_rows": 135,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "preferredName_B",
+              "score",
+              "preferredName_A"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "preferredName_B": [
+                "str",
+                "str",
+                true
+              ],
+              "score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "preferredName_A": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "preferredName_A",
+              "preferredName_B"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['stringId_A', 'stringId_B', 'ncbiTaxonId', 'nscore', 'fscore', 'pscore', 'ascore', 'escore', 'dscore', 'tscore', 'type_A', 'type_B']",
+            "Unmapped reference rows: 3",
+            "Unmapped candidate rows: 135",
+            "Sorted both dataframes by ['preferredName_A', 'preferredName_B']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "score"
+          ],
+          "filtered_columns": [
+            "score"
+          ],
+          "overall_similarity": 0.9450694969239597,
+          "per_column_similarities": {
+            "score": {
+              "similarity": 0.9450694969239597,
+              "strategy": "rae",
+              "matching_count": 25,
+              "total_count": 72,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.2,
+            "col_recall": 1.0,
+            "col_f1": 0.33333333333333337,
+            "col_jaccard": 0.2,
+            "ref_rows": 210,
+            "alt_rows": 210,
+            "row_intersection": 210,
+            "ref_cols": 3,
+            "alt_cols": 15,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              210,
+              3
+            ],
+            "alt_shape": [
+              210,
+              15
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -12
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "preferredName_B": true,
+              "score": true,
+              "preferredName_A": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.34285714285714286,
+            "ref_missing_rate": 0.6428571428571429,
+            "alt_missing_rate": 0.014285714285714285
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-1/ref_answer/ppi_network.png",
+      "eval_guideline": "Node-edge network must match the reference; node sizing, layout, and color scheme may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-11-1/output/ppi_network.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical and both are PNG images, clearly corresponding to the requested protein-protein interaction network visualization.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "The guideline requires the node-edge network topology to match while explicitly allowing visual differences in sizing, layout, and colors. A semantic image comparison is therefore appropriate because pixel-level matching would incorrectly penalize acceptable rendering variation.",
+      "strategy_error": null,
+      "similarity": 0.28,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "not equivalent",
+        "confidence": 0.98,
+        "explanation": "Both images depict human protein-protein interaction networks and share 13 prominent DEG nodes: TERT, BRCA1, CDKN2A, PTEN, PIK3CA, APC, TP53, AKT1, EGFR, MYC, RB1, NF1, and KRAS. However, the required node-edge network does not match. The reference contains 14 total nodes and 75 edges, with COL18A1 shown as the sole interacting partner and no VEGFA node. The candidate contains 24 nodes and 207 edges: it adds VEGFA as a red query DEG plus 10 blue STRING partners (PMS2, MDM4, TCHP, RET, CCNE1, CDKN2B, NF2, MLH1, ARID1A, and ROS1), while omitting COL18A1. It also explicitly states that VEGFA is isolated/not present in STRING v12.5, creating a different input-node interpretation. Although both convey a dense PPI network around many of the same cancer-associated genes and differences in layout or styling alone would be acceptable, the substantial differences in node membership and interaction edges materially change the scientific content."
+      },
+      "comparison_error": null
+    }
+  ]
+}

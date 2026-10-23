@@ -1,0 +1,236 @@
+{
+  "id": "a-3-2",
+  "question": "Estimate immune cell proportions in bulk RNA-Seq data using xCell.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-3-2/ref_answer/xCell_results.csv",
+      "eval_guideline": "Enrichment scores must match the reference within 1% relative absolute error; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-3-2/output/xCell_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical base names and both are CSV outputs. Their task paths align, and the candidate is clearly the xCell immune-cell proportion result corresponding to the reference.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare xCell enrichment scores by matching cell-type rows and sample columns regardless of order; require numeric values to agree within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires value-by-value agreement of enrichment scores within 1% relative absolute error while allowing row and column reordering. The CSV approximate strategy supports structural alignment and tolerant numeric comparison.",
+      "strategy_error": null,
+      "similarity": 0.5599541325871056,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "cell_type"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "cell_type",
+          "check_permutation": true,
+          "reasoning": "Both tables already have the same orientation, shape, and exact column names: one cell type per row and one sample per numeric column. No transpose or column mapping is needed. Rows should be matched by the unique cell_type identifier because cell-type order may differ and order is explicitly not relevant. Sorting by cell_type provides deterministic comparison, while sample-column order is not semantically significant.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "GSM5976499",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 column contains xCell enrichment scores and is a required task output. Use cell-wise relative absolute error with a 0.01 tolerance to enforce the specified 1% relative absolute error requirement."
+            },
+            {
+              "name": "GSM5976500",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 column contains xCell enrichment scores and is a required task output. Use cell-wise relative absolute error with a 0.01 tolerance to enforce the specified 1% relative absolute error requirement."
+            },
+            {
+              "name": "GSM5976501",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "This float64 column contains xCell enrichment scores and is a required task output. Use cell-wise relative absolute error with a 0.01 tolerance to enforce the specified 1% relative absolute error requirement."
+            }
+          ],
+          "overall_reasoning": "Align rows by the cell_type identifier and exclude that identifier from scoring. All three sample columns are equally critical because they comprise the xCell enrichment-score output. Their float64 values require absolute agreement in scale, so cell-wise RAE is more appropriate than correlation or rank comparison. A tolerance of 0.01 directly represents the evaluation guideline's maximum 1% relative absolute error. Values numerically near zero may differ because of floating-point noise, but the stated metric and tolerance should govern their treatment. Row order is handled by cell_type alignment, while differing column order is handled by matching columns by name.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "cell_type"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "cell_type"
+            ],
+            "matched_rows": 67,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "cell_type",
+              "GSM5976500",
+              "GSM5976501",
+              "GSM5976499"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "cell_type": [
+                "str",
+                "str",
+                true
+              ],
+              "GSM5976500": [
+                "float64",
+                "float64",
+                true
+              ],
+              "GSM5976501": [
+                "float64",
+                "float64",
+                true
+              ],
+              "GSM5976499": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "cell_type"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['cell_type']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "GSM5976499",
+            "GSM5976500",
+            "GSM5976501"
+          ],
+          "filtered_columns": [
+            "GSM5976499",
+            "GSM5976500",
+            "GSM5976501"
+          ],
+          "overall_similarity": 0.5599541325871056,
+          "per_column_similarities": {
+            "GSM5976499": {
+              "similarity": 0.5857142888387576,
+              "strategy": "rae",
+              "matching_count": 17,
+              "total_count": 67,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "GSM5976500": {
+              "similarity": 0.43643225970526045,
+              "strategy": "rae",
+              "matching_count": 17,
+              "total_count": 67,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "GSM5976501": {
+              "similarity": 0.6577158492172989,
+              "strategy": "rae",
+              "matching_count": 30,
+              "total_count": 67,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 67,
+            "alt_rows": 67,
+            "row_intersection": 67,
+            "ref_cols": 4,
+            "alt_cols": 4,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              67,
+              4
+            ],
+            "alt_shape": [
+              67,
+              4
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "cell_type": true,
+              "GSM5976500": true,
+              "GSM5976501": true,
+              "GSM5976499": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

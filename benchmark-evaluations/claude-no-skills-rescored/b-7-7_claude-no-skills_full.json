@@ -1,0 +1,364 @@
+{
+  "id": "b-7-7",
+  "question": "Build a decision tree classifier to predict drug response (responder vs. non-responder) from patient genetic variants (SNPs) and clinical features using a 70/30 train-test split. Report the top 10 most important features and the test accuracy.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-7/ref_answer/decision_tree_feature_importances.csv",
+      "eval_guideline": "At least 7 of the 10 highest-ranked features by importance must overlap with the reference set; importance scores for overlapping features within +/-0.05; row order and column labels may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-7/output/decision_tree_feature_importances.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV format. The feature importances output corresponds to the requested top 10 most important features from the decision tree classifier.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the top 10 features by importance, allowing different row order and column labels. Require at least 7 feature names to overlap with the reference top 10 and absolute importance-score differences no greater than 0.05 for overlapping features."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although the train-test split and model fitting introduce stochasticity, the guideline explicitly requires feature-level matching in a small results table. Approximate comparison supports structural differences while evaluating the required feature overlap and importance-score tolerance.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature",
+            "Importance": "Importance"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain one feature per row, so no transpose is needed. Map Feature and Importance directly; exclude the additional Rank and CV_Mean_Importance columns. Feature uniquely identifies rows and supports matching despite different ordering or membership. The evaluation explicitly permits row order differences, so compare unordered feature sets. Preserve unmatched features and score differences; Disease_Stage is not equivalent to Disease_Stage_Stage_IV. Test accuracy is absent from both tables and cannot be evaluated here.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Importance",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "Importance is float64 and its magnitudes are explicitly evaluated, so error comparison is preferable to correlation. Leave the relative-error tolerance unset because the required +/-0.05 is an absolute difference, which cannot be represented faithfully by a fixed RAE threshold."
+            }
+          ],
+          "overall_reasoning": "Compare Importance, the only reference data column, using Feature solely for alignment. Exclude candidate-only Rank and CV_Mean_Importance. Independently select each dataframe's top 10 features by descending nonmissing Importance, require at least 7 shared feature IDs, and check absolute importance differences <=0.05 for overlapping features. Missing candidate importance for a reference feature must not silently count as a match. Row order and column labels are immaterial after alignment. The provided schema cannot fully encode top-10 set overlap or absolute-error tolerance, so RAE supplies only a supplementary magnitude comparison. Test accuracy and the 70/30 split cannot be verified from these tables.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature",
+              "Importance": "Importance"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Rank",
+              "CV_Mean_Importance"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 5,
+            "unmapped_ref_rows": 5,
+            "unmapped_alt_rows": 5,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "The SNP identifiers differ, and kidney_function has no matching reference. disease_stage is a general variable, while disease_stage_stage_iv denotes a specific stage, so no confident match exists.",
+              "confidence": null
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Feature",
+              "Importance"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Feature": [
+                "str",
+                "str",
+                true
+              ],
+              "Importance": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Rank', 'CV_Mean_Importance']",
+            "Unmapped reference rows: 5",
+            "Unmapped candidate rows: 5"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Importance"
+          ],
+          "filtered_columns": [
+            "Importance"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "Importance": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 5,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 15,
+            "alt_rows": 15,
+            "row_intersection": 15,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              15,
+              2
+            ],
+            "alt_shape": [
+              15,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Feature": true,
+              "Importance": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.3333333333333333,
+            "ref_missing_rate": 0.3333333333333333,
+            "alt_missing_rate": 0.3333333333333333
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-7/ref_answer/decision_tree_test_accuracy.csv",
+      "eval_guideline": "Test accuracy value must be within +/-0.05 of the reference; column naming and label formatting may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-7-7/output/decision_tree_test_accuracy.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV format. The test accuracy output directly corresponds to the requested classifier performance on the test split.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the reported test accuracy values, allowing an absolute difference of up to 0.05 from the reference. Align equivalent accuracy fields despite differences in column names or label formatting."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although the train-test split is stochastic, this output contains a single accuracy metric, so the small-results-table exception calls for value-by-value approximate comparison. This accommodates naming differences while applying the guideline's absolute tolerance of 0.05.",
+      "strategy_error": null,
+      "similarity": 0.8589230769230769,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have identical columns and orientation. Match rows using Metric, treating 'Test Accuracy' and 'Test_Accuracy' as equivalent labels by normalizing underscores to spaces. The supplied tables contain a single summary metric, so row order is irrelevant and sorting is unnecessary. The accuracy difference is 0.0917, exceeding the allowed tolerance of 0.05; structural alignment should preserve these values.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.07692307692307693,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Test accuracy is the critical float64 measurement. Assuming RAE is absolute error divided by absolute reference value, the required absolute tolerance of 0.05 translates to 0.05/0.65 = 0.07692307692307693. The candidate's absolute error is 0.0917, so it fails the tolerance."
+            }
+          ],
+          "overall_reasoning": "Compare only Value; Metric is excluded because it is an alignment ID. Use numerical RAE with a relative threshold converted from the explicit +/-0.05 accuracy requirement. Correlation is inappropriate for a single scalar. Top-10 feature importance results are absent from the supplied tables and cannot be evaluated.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 1,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {
+              "test_accuracy": "test accuracy"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": null,
+              "confidence": null
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.8589230769230769,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.8589230769230769,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.07692307692307693
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

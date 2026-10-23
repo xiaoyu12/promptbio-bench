@@ -1,0 +1,460 @@
+{
+  "id": "b-2-10",
+  "question": "Implement stratified sampling based on the 'DiagnosisClass' column to create training (70%) and testing (30%) sets while maintaining class distribution.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-10/ref_answer/stratified_sampling_report.csv",
+      "eval_guideline": "Per-class split counts and percentages must match the reference; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-10/output/stratified_sampling_report.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV format. Both correspond to the report for stratified sampling by DiagnosisClass.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare per-class training and testing counts and percentages aligned by DiagnosisClass and split; values must match the reference, while row and column order may differ."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "Although stratified sampling is stochastic, this report contains a small set of per-class counts and percentages that must be compared value by value. Approximate comparison supports that requirement while allowing row and column reordering.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Class"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have the same structure and exact column names, so no transpose or column mapping is needed. Class uniquely identifies each class summary and the total row. Match the total labels case-insensitively (TOTAL versus Total). Row and column order do not matter; compare all per-class counts and percentages after matching rows.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Original_Count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Original class counts establish the distribution baseline. Integer counts must match exactly."
+            },
+            {
+              "name": "Original_Percentage",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Original percentages establish the distribution baseline. Zero tolerance enforces the explicit requirement that percentages match the reference."
+            },
+            {
+              "name": "Test_Count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Per-class testing counts and the testing total directly verify the required split. Integer counts must match exactly."
+            },
+            {
+              "name": "Test_Percentage",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Testing percentages verify the resulting class distribution. Zero tolerance enforces the explicit requirement that percentages match the reference."
+            },
+            {
+              "name": "Train_Count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Per-class training counts and the training total directly verify the required split. Integer counts must match exactly."
+            },
+            {
+              "name": "Train_Percentage",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Training percentages verify the resulting class distribution. Zero tolerance enforces the explicit requirement that percentages match the reference."
+            }
+          ],
+          "overall_reasoning": "Compare all six numerical columns, including total rows, because they establish the original distribution and verify the stratified training and testing splits. Exclude Class because it is used only for alignment; row and column order do not matter. Use cell-by-cell RAE with zero tolerance because the evaluation explicitly requires counts and percentages to match the reference. This stricter requirement takes precedence over the general suggested percentage tolerance of 0.01, which would permit relative discrepancies. Correlation would not enforce matching values. No categorical comparisons or delimiters are needed.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "Class"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Class"
+            ],
+            "matched_rows": 4,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Train_Percentage",
+              "Original_Count",
+              "Class",
+              "Train_Count",
+              "Original_Percentage",
+              "Test_Count",
+              "Test_Percentage"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Train_Percentage": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Original_Count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Class": [
+                "str",
+                "str",
+                true
+              ],
+              "Train_Count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Original_Percentage": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Test_Count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Test_Percentage": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Original_Count",
+            "Original_Percentage",
+            "Test_Count",
+            "Test_Percentage",
+            "Train_Count",
+            "Train_Percentage"
+          ],
+          "filtered_columns": [
+            "Original_Count",
+            "Original_Percentage",
+            "Test_Count",
+            "Test_Percentage",
+            "Train_Count",
+            "Train_Percentage"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Original_Count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Original_Percentage": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Test_Count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Test_Percentage": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Train_Count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Train_Percentage": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 4,
+              "total_count": 4,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 4,
+            "alt_rows": 4,
+            "row_intersection": 4,
+            "ref_cols": 7,
+            "alt_cols": 7,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              4,
+              7
+            ],
+            "alt_shape": [
+              4,
+              7
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Train_Percentage": true,
+              "Original_Count": true,
+              "Class": true,
+              "Train_Count": true,
+              "Original_Percentage": true,
+              "Test_Count": true,
+              "Test_Percentage": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-10/ref_answer/test_set.csv",
+      "eval_guideline": "Must contain 30% of patients with per-class counts matching the reference report; specific patient assignment may differ; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-10/output/test_set.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV format. The name identifies the testing subset requested for the 30% stratified split.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 1.0,
+      "strategy_reasoning": "Stratified random splitting is stochastic, and the guideline explicitly permits different patient assignments. Compare aggregate test-set size (30% of patients) and per-class counts against the reference rather than individual records.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              150,
+              28
+            ],
+            "alt_shape": [
+              150,
+              28
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "row_sim": 1.0,
+          "col_sim": 1.0,
+          "col_jaccard": 1.0,
+          "score": 1.0
+        },
+        "missing": {
+          "ref_missing_rate": 0.032857142857142856,
+          "alt_missing_rate": 0.032857142857142856,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 2712,
+          "alt_count": 2712
+        },
+        "categorical_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 1350,
+          "alt_count": 1350,
+          "ref_unique": 381,
+          "alt_unique": 381
+        },
+        "component_scores": {
+          "structural": 1.0,
+          "missing": 1.0,
+          "numeric": 1.0,
+          "categorical": 1.0
+        }
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-2-10/ref_answer/train_set.csv",
+      "eval_guideline": "Must contain 70% of patients with per-class counts matching the reference report; specific patient assignment may differ; row order, column order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-2-10/output/train_set.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV format. The name identifies the training subset requested for the 70% stratified split.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The stratified 70/30 split is stochastic, and the guideline explicitly allows different patient assignments. Compare aggregate training-set size and per-class counts against the reference rather than individual records.",
+      "strategy_error": null,
+      "similarity": 1.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "structural": {
+          "shape": {
+            "ref_shape": [
+              350,
+              28
+            ],
+            "alt_shape": [
+              350,
+              28
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "row_sim": 1.0,
+          "col_sim": 1.0,
+          "col_jaccard": 1.0,
+          "score": 1.0
+        },
+        "missing": {
+          "ref_missing_rate": 0.030816326530612243,
+          "alt_missing_rate": 0.030816326530612243,
+          "score": 1.0
+        },
+        "numeric_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 6348,
+          "alt_count": 6348
+        },
+        "categorical_distribution": {
+          "score": 1.0,
+          "hellinger_distance": 0.0,
+          "ref_count": 3150,
+          "alt_count": 3150,
+          "ref_unique": 765,
+          "alt_unique": 765
+        },
+        "component_scores": {
+          "structural": 1.0,
+          "missing": 1.0,
+          "numeric": 1.0,
+          "categorical": 1.0
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

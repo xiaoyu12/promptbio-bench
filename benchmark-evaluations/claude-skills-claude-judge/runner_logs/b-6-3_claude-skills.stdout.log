@@ -1,0 +1,3658 @@
+Output directory: claude-skills-claude-judge
+Agents (1):
+  [claude-skills]  promptbio-bench-claude-skills/tasks/b-6-3/output
+
+Task:    b-6-3
+Question: Apply Non-negative Matrix Factorization (n_components=3, init='nndsvda') to log2(x+1)-transformed gene expression data.
+Reference files:
+  nmf_components_W.csv
+    guideline: Each sample's metagene activation scores in the W matrix must match the reference within +/-0.05; column order and label naming may differ.
+  nmf_gene_loadings_H.csv
+    guideline: Each gene's loading value must match the reference within 5% relative absolute error; metagene row and gene column order may differ.
+Input files: ['gene_expression.csv']
+
+============================================================
+Step 2/4: Detecting file formats...  [shared — runs once]
+  nmf_components_W.csv:
+    format:      csv
+    compression: none
+    is_text:     True
+    method:      content
+  nmf_gene_loadings_H.csv:
+    format:      csv
+    compression: none
+    is_text:     True
+    method:      extension
+
+============================================================
+Step 3/4: Recommending comparison strategies...  [shared — runs once]
+Requesting strategy recommendation for 2 eval file(s).
+  csv (promptbio-bench-data/tasks/b-6-3/ref_answer/nmf_components_W.csv): approximate (confidence=0.85)
+  csv (promptbio-bench-data/tasks/b-6-3/ref_answer/nmf_gene_loadings_H.csv): approximate (confidence=0.85)
+    parameters: {'question': "Compare NMF W matrices (samples x 3 metagenes) from NMF(n_components=3, init='nndsvda') on log2(x+1)-transformed gene expression. Each sample's metagene activation scores must match the reference within +/-0.05 absolute; column order and component label naming may differ, so align components by matching value patterns across samples, and align rows by sample ID."}
+    reasoning:  NMF with init='nndsvda' is deterministic, so no random seed is involved. The guideline asks for each sample's values to match within ±0.05 and allows column order and labels to differ, so the approximate strategy fits: it can realign the columns and compare each value against the tolerance.
+    parameters: {'question': "Compare NMF gene loadings (H matrix, n_components=3, init='nndsvda') from log2(x+1)-transformed expression data. Each gene's loading value must match the reference within 5% relative absolute error; metagene row order and gene column order may differ."}
+    reasoning:  NMF with nndsvda initialization is deterministic, and the guideline asks for each loading value to match within 5% relative error, with row and column order allowed to differ. That calls for record-level approximate comparison, not summary.
+
+############################################################
+Agent: claude-skills
+  Result dir: promptbio-bench-claude-skills/tasks/b-6-3/output
+  Log:        claude-skills-claude-judge/b-6-3_claude-skills.log
+  Results:    claude-skills-claude-judge/b-6-3_claude-skills.json
+
+Task:    b-6-3
+Question: Apply Non-negative Matrix Factorization (n_components=3, init='nndsvda') to log2(x+1)-transformed gene expression data.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/b-6-3/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/b-6-3/output  (2 file(s))
+Matched files:
+  nmf_components_W.csv → nmf_components_W.csv  (conf=0.98)
+    Reasoning: Identical filename; both CSV files holding the NMF W matrix (sample components).
+  nmf_gene_loadings_H.csv → nmf_gene_loadings_H.csv  (conf=0.98)
+    Reasoning: Identical filename; both CSV files holding the NMF H matrix (gene loadings).
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/b-6-3/ref_answer/nmf_components_W.csv
+    alt: promptbio-bench-claude-skills/tasks/b-6-3/output/nmf_components_W.csv
+
+  File 2/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/b-6-3/ref_answer/nmf_gene_loadings_H.csv
+    alt: promptbio-bench-claude-skills/tasks/b-6-3/output/nmf_gene_loadings_H.csv
+
+  File 1/2: status=success, similarity=0.9870
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Sample_ID": "Sample_ID",
+            "TumorNormalGroup": "TumorNormalGroup",
+            "Metagene_1": "Metagene_1",
+            "Metagene_2": "Metagene_2",
+            "Metagene_3": "Metagene_3"
+          },
+          "id_columns": [
+            "Sample_ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Sample_ID",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same shape (90x5) and identical column names, with samples as rows, so no transpose is needed. The column mapping is one-to-one by name. The preview values match closely in the same order (for example, S001: 0.169/0.025/0.871 vs 0.169073/0.024655/0.870892), so the metagene components appear to line up and no relabelling is needed. The guideline says metagene order and naming could differ, so the comparison step should still allow for a permuted component order. Sample_ID is a unique, stable identifier copied straight from the input, so rows are matched on it. Each row is one sample's NMF W-matrix scores, which form an unordered set, so row order doesn't matter. Sorting by Sample_ID makes the alignment deterministic.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Metagene_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.15,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "These are NMF W-matrix activation scores (non-negative, about 0 to 0.9) with an absolute \u00b10.05 requirement. The 0.15 relative tolerance comes close to that requirement for typical values and allows for the reference being rounded to 3 decimals."
+            },
+            {
+              "name": "Metagene_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.15,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.75,
+              "reasoning": "Many values are exactly 0 or small (about 0.01 to 0.07). A relative tolerance of 0.15 handles the 3-decimal rounding for most of them, and a 0 in both files counts as a match. Some very small values may fail only because of rounding."
+            },
+            {
+              "name": "Metagene_3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.15,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "Large activation values (about 0.8 to 0.9) for normal samples. A relative tolerance of 0.15 is looser than \u00b10.05 here (about \u00b10.13), but it still catches real mismatches between metagenes."
+            },
+            {
+              "name": "TumorNormalGroup",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "A fixed sample annotation (tumor or normal) passed through from the input, so it should match exactly."
+            }
+          ],
+          "overall_reasoning": "The task asks whether each sample's NMF metagene activation scores (the W matrix) match the reference within an absolute \u00b10.05. The three Metagene columns are the main outputs, so each is compared cell by cell with relative absolute error (RAE). The reference rounds values to 3 decimals while the candidate keeps full precision. The scores range from about 0 to 0.9, and many are exactly 0. A relative tolerance of 0.15 is a compromise. For large values it is looser than \u00b10.05: at 0.87 it allows about \u00b10.13. For values around 0.17 it is tighter, allowing about \u00b10.026. It still absorbs the rounding difference for all but the smallest nonzero values, roughly those below 0.003. Values of exactly 0 in both files match. The task says column order and labels may differ. The preview shows the candidate's metagenes already in the same order as the reference, so the columns are compared by name. TumorNormalGroup is a sample annotation passed through from the input, so it should match exactly.",
+          "overall_confidence": 0.8,
+          "id_columns": [
+            "Sample_ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Sample_ID": "Sample_ID",
+              "TumorNormalGroup": "TumorNormalGroup",
+              "Metagene_1": "Metagene_1",
+              "Metagene_2": "Metagene_2",
+              "Metagene_3": "Metagene_3"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Sample_ID"
+            ],
+            "matched_rows": 90,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "TumorNormalGroup",
+              "Metagene_2",
+              "Metagene_1",
+              "Sample_ID",
+              "Metagene_3"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "TumorNormalGroup": [
+                "str",
+                "str",
+                true
+              ],
+              "Metagene_2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Metagene_1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Sample_ID": [
+                "str",
+                "str",
+                true
+              ],
+              "Metagene_3": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Sample_ID"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Sample_ID']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Metagene_1",
+            "Metagene_2",
+            "Metagene_3",
+            "TumorNormalGroup"
+          ],
+          "filtered_columns": [
+            "Metagene_1",
+            "Metagene_2",
+            "Metagene_3",
+            "TumorNormalGroup"
+          ],
+          "overall_similarity": 0.9869682108700577,
+          "per_column_similarities": {
+            "Metagene_1": {
+              "similarity": 0.9696802350522962,
+              "strategy": "rae",
+              "matching_count": 87,
+              "total_count": 90,
+              "error": null,
+              "details": {
+                "tolerance": 0.15
+              }
+            },
+            "Metagene_2": {
+              "similarity": 0.978491281979226,
+              "strategy": "rae",
+              "matching_count": 87,
+              "total_count": 90,
+              "error": null,
+              "details": {
+                "tolerance": 0.15
+              }
+            },
+            "Metagene_3": {
+              "similarity": 0.9997013264487085,
+              "strategy": "rae",
+              "matching_count": 90,
+              "total_count": 90,
+              "error": null,
+              "details": {
+                "tolerance": 0.15
+              }
+            },
+            "TumorNormalGroup": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 90,
+              "total_count": 90,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 90,
+            "alt_rows": 90,
+            "row_intersection": 90,
+            "ref_cols": 5,
+            "alt_cols": 5,
+            "col_intersection": 5
+          },
+          "shape": {
+            "ref_shape": [
+              90,
+              5
+            ],
+            "alt_shape": [
+              90,
+              5
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "TumorNormalGroup": true,
+              "Metagene_2": true,
+              "Metagene_1": true,
+              "Sample_ID": true,
+              "Metagene_3": true
+            },
+            "common_columns": 5
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+  File 2/2: status=success, similarity=0.9999
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "metagene": "metagene",
+            "Gene_1": "Gene_1",
+            "Gene_2": "Gene_2",
+            "Gene_3": "Gene_3",
+            "Gene_4": "Gene_4",
+            "Gene_5": "Gene_5",
+            "Gene_6": "Gene_6",
+            "Gene_7": "Gene_7",
+            "Gene_8": "Gene_8",
+            "Gene_9": "Gene_9",
+            "Gene_10": "Gene_10",
+            "Gene_11": "Gene_11",
+            "Gene_12": "Gene_12",
+            "Gene_13": "Gene_13",
+            "Gene_14": "Gene_14",
+            "Gene_15": "Gene_15",
+            "Gene_16": "Gene_16",
+            "Gene_17": "Gene_17",
+            "Gene_18": "Gene_18",
+            "Gene_19": "Gene_19",
+            "Gene_20": "Gene_20",
+            "Gene_21": "Gene_21",
+            "Gene_22": "Gene_22",
+            "Gene_23": "Gene_23",
+            "Gene_24": "Gene_24",
+            "Gene_25": "Gene_25",
+            "Gene_26": "Gene_26",
+            "Gene_27": "Gene_27",
+            "Gene_28": "Gene_28",
+            "Gene_29": "Gene_29",
+            "Gene_30": "Gene_30",
+            "Gene_31": "Gene_31",
+            "Gene_32": "Gene_32",
+            "Gene_33": "Gene_33",
+            "Gene_34": "Gene_34",
+            "Gene_35": "Gene_35",
+            "Gene_36": "Gene_36",
+            "Gene_37": "Gene_37",
+            "Gene_38": "Gene_38",
+            "Gene_39": "Gene_39",
+            "Gene_40": "Gene_40",
+            "Gene_41": "Gene_41",
+            "Gene_42": "Gene_42",
+            "Gene_43": "Gene_43",
+            "Gene_44": "Gene_44",
+            "Gene_45": "Gene_45",
+            "Gene_46": "Gene_46",
+            "Gene_47": "Gene_47",
+            "Gene_48": "Gene_48",
+            "Gene_49": "Gene_49",
+            "Gene_50": "Gene_50",
+            "Gene_51": "Gene_51",
+            "Gene_52": "Gene_52",
+            "Gene_53": "Gene_53",
+            "Gene_54": "Gene_54",
+            "Gene_55": "Gene_55",
+            "Gene_56": "Gene_56",
+            "Gene_57": "Gene_57",
+            "Gene_58": "Gene_58",
+            "Gene_59": "Gene_59",
+            "Gene_60": "Gene_60",
+            "Gene_61": "Gene_61",
+            "Gene_62": "Gene_62",
+            "Gene_63": "Gene_63",
+            "Gene_64": "Gene_64",
+            "Gene_65": "Gene_65",
+            "Gene_66": "Gene_66",
+            "Gene_67": "Gene_67",
+            "Gene_68": "Gene_68",
+            "Gene_69": "Gene_69",
+            "Gene_70": "Gene_70",
+            "Gene_71": "Gene_71",
+            "Gene_72": "Gene_72",
+            "Gene_73": "Gene_73",
+            "Gene_74": "Gene_74",
+            "Gene_75": "Gene_75",
+            "Gene_76": "Gene_76",
+            "Gene_77": "Gene_77",
+            "Gene_78": "Gene_78",
+            "Gene_79": "Gene_79",
+            "Gene_80": "Gene_80",
+            "Gene_81": "Gene_81",
+            "Gene_82": "Gene_82",
+            "Gene_83": "Gene_83",
+            "Gene_84": "Gene_84",
+            "Gene_85": "Gene_85",
+            "Gene_86": "Gene_86",
+            "Gene_87": "Gene_87",
+            "Gene_88": "Gene_88",
+            "Gene_89": "Gene_89",
+            "Gene_90": "Gene_90",
+            "Gene_91": "Gene_91",
+            "Gene_92": "Gene_92",
+            "Gene_93": "Gene_93",
+            "Gene_94": "Gene_94",
+            "Gene_95": "Gene_95",
+            "Gene_96": "Gene_96",
+            "Gene_97": "Gene_97",
+            "Gene_98": "Gene_98",
+            "Gene_99": "Gene_99",
+            "Gene_100": "Gene_100"
+          },
+          "id_columns": [
+            "metagene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "metagene",
+          "check_permutation": true,
+          "reasoning": "Both tables have the same layout: 3 metagenes as rows and 100 gene columns plus a 'metagene' label. Every column name matches exactly, so the column mapping is identity and no transpose is needed. The guideline says metagene row order and gene column order may differ, so rows are matched by the 'metagene' label and the comparison ignores order. In the previews, the labeled rows have matching loadings (the reference values are the candidate's rounded to 3 decimals), so keying on the metagene label is safe here. Gene columns are matched by name.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Gene_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; the guideline sets a 5% RAE tolerance per cell."
+            },
+            {
+              "name": "Gene_2",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_3",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_4",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_5",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_6",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_7",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_8",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_9",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_10",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_11",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "NMF loading; 5% RAE. Contains an exact zero, which the candidate also has."
+            },
+            {
+              "name": "Gene_12",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_13",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_14",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_15",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_16",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_17",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_18",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_19",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_20",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_21",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_22",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_23",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_24",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_25",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_26",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_27",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_28",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_29",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_30",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_31",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_32",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_33",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_34",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_35",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_36",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_37",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_38",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_39",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_40",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_41",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_42",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_43",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_44",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_45",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_46",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_47",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_48",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_49",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_50",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_51",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_52",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_53",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_54",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_55",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_56",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_57",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_58",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_59",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "NMF loading; 5% RAE. Contains an exact zero, which the candidate also has."
+            },
+            {
+              "name": "Gene_60",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_61",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_62",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_63",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_64",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_65",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_66",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_67",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_68",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_69",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_70",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_71",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_72",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_73",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_74",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_75",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_76",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_77",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_78",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_79",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_80",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_81",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_82",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_83",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_84",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_85",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_86",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_87",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_88",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_89",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_90",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_91",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_92",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_93",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_94",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_95",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_96",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_97",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_98",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_99",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            },
+            {
+              "name": "Gene_100",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "compare_abs": false,
+              "cell_threshold": null,
+              "confidence": 0.93,
+              "reasoning": "NMF loading; 5% RAE."
+            }
+          ],
+          "overall_reasoning": "The task is NMF (3 components, nndsvda init) on log2(x+1) expression data. The output is a 3 x 100 metagene-by-gene loading matrix (H). The guideline says each gene's loading must be within 5% relative absolute error of the reference. All 100 gene columns are float64 loadings and are equally important, so each one uses RAE with cell_tolerance=0.05. The 'metagene' ID column is used only to align rows. NMF loadings are non-negative, so compare_abs is false. A few reference cells are exactly 0 (Gene_11 and Gene_59 in metagene1), and the candidate matches them exactly. In the preview, candidate values agree with the reference to within rounding (about 1e-3), well inside the 5% tolerance.",
+          "overall_confidence": 0.93,
+          "id_columns": [
+            "metagene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "metagene": "metagene",
+              "Gene_1": "Gene_1",
+              "Gene_2": "Gene_2",
+              "Gene_3": "Gene_3",
+              "Gene_4": "Gene_4",
+              "Gene_5": "Gene_5",
+              "Gene_6": "Gene_6",
+              "Gene_7": "Gene_7",
+              "Gene_8": "Gene_8",
+              "Gene_9": "Gene_9",
+              "Gene_10": "Gene_10",
+              "Gene_11": "Gene_11",
+              "Gene_12": "Gene_12",
+              "Gene_13": "Gene_13",
+              "Gene_14": "Gene_14",
+              "Gene_15": "Gene_15",
+              "Gene_16": "Gene_16",
+              "Gene_17": "Gene_17",
+              "Gene_18": "Gene_18",
+              "Gene_19": "Gene_19",
+              "Gene_20": "Gene_20",
+              "Gene_21": "Gene_21",
+              "Gene_22": "Gene_22",
+              "Gene_23": "Gene_23",
+              "Gene_24": "Gene_24",
+              "Gene_25": "Gene_25",
+              "Gene_26": "Gene_26",
+              "Gene_27": "Gene_27",
+              "Gene_28": "Gene_28",
+              "Gene_29": "Gene_29",
+              "Gene_30": "Gene_30",
+              "Gene_31": "Gene_31",
+              "Gene_32": "Gene_32",
+              "Gene_33": "Gene_33",
+              "Gene_34": "Gene_34",
+              "Gene_35": "Gene_35",
+              "Gene_36": "Gene_36",
+              "Gene_37": "Gene_37",
+              "Gene_38": "Gene_38",
+              "Gene_39": "Gene_39",
+              "Gene_40": "Gene_40",
+              "Gene_41": "Gene_41",
+              "Gene_42": "Gene_42",
+              "Gene_43": "Gene_43",
+              "Gene_44": "Gene_44",
+              "Gene_45": "Gene_45",
+              "Gene_46": "Gene_46",
+              "Gene_47": "Gene_47",
+              "Gene_48": "Gene_48",
+              "Gene_49": "Gene_49",
+              "Gene_50": "Gene_50",
+              "Gene_51": "Gene_51",
+              "Gene_52": "Gene_52",
+              "Gene_53": "Gene_53",
+              "Gene_54": "Gene_54",
+              "Gene_55": "Gene_55",
+              "Gene_56": "Gene_56",
+              "Gene_57": "Gene_57",
+              "Gene_58": "Gene_58",
+              "Gene_59": "Gene_59",
+              "Gene_60": "Gene_60",
+              "Gene_61": "Gene_61",
+              "Gene_62": "Gene_62",
+              "Gene_63": "Gene_63",
+              "Gene_64": "Gene_64",
+              "Gene_65": "Gene_65",
+              "Gene_66": "Gene_66",
+              "Gene_67": "Gene_67",
+              "Gene_68": "Gene_68",
+              "Gene_69": "Gene_69",
+              "Gene_70": "Gene_70",
+              "Gene_71": "Gene_71",
+              "Gene_72": "Gene_72",
+              "Gene_73": "Gene_73",
+              "Gene_74": "Gene_74",
+              "Gene_75": "Gene_75",
+              "Gene_76": "Gene_76",
+              "Gene_77": "Gene_77",
+              "Gene_78": "Gene_78",
+              "Gene_79": "Gene_79",
+              "Gene_80": "Gene_80",
+              "Gene_81": "Gene_81",
+              "Gene_82": "Gene_82",
+              "Gene_83": "Gene_83",
+              "Gene_84": "Gene_84",
+              "Gene_85": "Gene_85",
+              "Gene_86": "Gene_86",
+              "Gene_87": "Gene_87",
+              "Gene_88": "Gene_88",
+              "Gene_89": "Gene_89",
+              "Gene_90": "Gene_90",
+              "Gene_91": "Gene_91",
+              "Gene_92": "Gene_92",
+              "Gene_93": "Gene_93",
+              "Gene_94": "Gene_94",
+              "Gene_95": "Gene_95",
+              "Gene_96": "Gene_96",
+              "Gene_97": "Gene_97",
+              "Gene_98": "Gene_98",
+              "Gene_99": "Gene_99",
+              "Gene_100": "Gene_100"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": []
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "metagene"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "rounded_float_keys": {},
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Gene_100",
+              "Gene_6",
+              "Gene_46",
+              "Gene_79",
+              "metagene",
+              "Gene_9",
+              "Gene_12",
+              "Gene_29",
+              "Gene_69",
+              "Gene_80",
+              "Gene_26",
+              "Gene_33",
+              "Gene_70",
+              "Gene_47",
+              "Gene_84",
+              "Gene_71",
+              "Gene_5",
+              "Gene_32",
+              "Gene_35",
+              "Gene_55",
+              "Gene_40",
+              "Gene_75",
+              "Gene_85",
+              "Gene_21",
+              "Gene_34",
+              "Gene_36",
+              "Gene_53",
+              "Gene_44",
+              "Gene_45",
+              "Gene_56",
+              "Gene_38",
+              "Gene_60",
+              "Gene_37",
+              "Gene_94",
+              "Gene_8",
+              "Gene_89",
+              "Gene_97",
+              "Gene_2",
+              "Gene_74",
+              "Gene_68",
+              "Gene_4",
+              "Gene_86",
+              "Gene_43",
+              "Gene_18",
+              "Gene_11",
+              "Gene_57",
+              "Gene_3",
+              "Gene_62",
+              "Gene_59",
+              "Gene_10",
+              "Gene_72",
+              "Gene_87",
+              "Gene_30",
+              "Gene_17",
+              "Gene_20",
+              "Gene_61",
+              "Gene_50",
+              "Gene_93",
+              "Gene_90",
+              "Gene_92",
+              "Gene_95",
+              "Gene_41",
+              "Gene_51",
+              "Gene_63",
+              "Gene_39",
+              "Gene_76",
+              "Gene_82",
+              "Gene_52",
+              "Gene_16",
+              "Gene_24",
+              "Gene_88",
+              "Gene_58",
+              "Gene_73",
+              "Gene_22",
+              "Gene_98",
+              "Gene_91",
+              "Gene_81",
+              "Gene_83",
+              "Gene_23",
+              "Gene_1",
+              "Gene_48",
+              "Gene_19",
+              "Gene_31",
+              "Gene_66",
+              "Gene_65",
+              "Gene_78",
+              "Gene_25",
+              "Gene_54",
+              "Gene_99",
+              "Gene_28",
+              "Gene_15",
+              "Gene_67",
+              "Gene_42",
+              "Gene_77",
+              "Gene_13",
+              "Gene_96",
+              "Gene_49",
+              "Gene_64",
+              "Gene_14",
+              "Gene_7",
+              "Gene_27"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Gene_100": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_6": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_46": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_79": [
+                "float64",
+                "float64",
+                true
+              ],
+              "metagene": [
+                "str",
+                "str",
+                true
+              ],
+              "Gene_9": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_12": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_29": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_69": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_80": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_26": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_33": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_70": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_47": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_84": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_71": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_5": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_32": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_35": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_55": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_40": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_75": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_85": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_21": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_34": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_36": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_53": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_44": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_45": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_56": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_38": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_60": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_37": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_94": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_8": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_89": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_97": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_2": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_74": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_68": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_4": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_86": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_43": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_18": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_11": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_57": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_3": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_62": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_59": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_10": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_72": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_87": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_30": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_17": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_20": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_61": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_50": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_93": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_90": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_92": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_95": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_41": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_51": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_63": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_39": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_76": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_82": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_52": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_16": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_24": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_88": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_58": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_73": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_22": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_98": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_91": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_81": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_83": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_23": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_48": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_19": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_31": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_66": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_65": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_78": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_25": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_54": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_99": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_28": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_15": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_67": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_42": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_77": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_13": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_96": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_49": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_64": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_14": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_7": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Gene_27": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "metagene"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['metagene']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Gene_1",
+            "Gene_10",
+            "Gene_100",
+            "Gene_11",
+            "Gene_12",
+            "Gene_13",
+            "Gene_14",
+            "Gene_15",
+            "Gene_16",
+            "Gene_17",
+            "Gene_18",
+            "Gene_19",
+            "Gene_2",
+            "Gene_20",
+            "Gene_21",
+            "Gene_22",
+            "Gene_23",
+            "Gene_24",
+            "Gene_25",
+            "Gene_26",
+            "Gene_27",
+            "Gene_28",
+            "Gene_29",
+            "Gene_3",
+            "Gene_30",
+            "Gene_31",
+            "Gene_32",
+            "Gene_33",
+            "Gene_34",
+            "Gene_35",
+            "Gene_36",
+            "Gene_37",
+            "Gene_38",
+            "Gene_39",
+            "Gene_4",
+            "Gene_40",
+            "Gene_41",
+            "Gene_42",
+            "Gene_43",
+            "Gene_44",
+            "Gene_45",
+            "Gene_46",
+            "Gene_47",
+            "Gene_48",
+            "Gene_49",
+            "Gene_5",
+            "Gene_50",
+            "Gene_51",
+            "Gene_52",
+            "Gene_53",
+            "Gene_54",
+            "Gene_55",
+            "Gene_56",
+            "Gene_57",
+            "Gene_58",
+            "Gene_59",
+            "Gene_6",
+            "Gene_60",
+            "Gene_61",
+            "Gene_62",
+            "Gene_63",
+            "Gene_64",
+            "Gene_65",
+            "Gene_66",
+            "Gene_67",
+            "Gene_68",
+            "Gene_69",
+            "Gene_7",
+            "Gene_70",
+            "Gene_71",
+            "Gene_72",
+            "Gene_73",
+            "Gene_74",
+            "Gene_75",
+            "Gene_76",
+            "Gene_77",
+            "Gene_78",
+            "Gene_79",
+            "Gene_8",
+            "Gene_80",
+            "Gene_81",
+            "Gene_82",
+            "Gene_83",
+            "Gene_84",
+            "Gene_85",
+            "Gene_86",
+            "Gene_87",
+            "Gene_88",
+            "Gene_89",
+            "Gene_9",
+            "Gene_90",
+            "Gene_91",
+            "Gene_92",
+            "Gene_93",
+            "Gene_94",
+            "Gene_95",
+            "Gene_96",
+            "Gene_97",
+            "Gene_98",
+            "Gene_99"
+          ],
+          "filtered_columns": [
+            "Gene_1",
+            "Gene_10",
+            "Gene_100",
+            "Gene_11",
+            "Gene_12",
+            "Gene_13",
+            "Gene_14",
+            "Gene_15",
+            "Gene_16",
+            "Gene_17",
+            "Gene_18",
+            "Gene_19",
+            "Gene_2",
+            "Gene_20",
+            "Gene_21",
+            "Gene_22",
+            "Gene_23",
+            "Gene_24",
+            "Gene_25",
+            "Gene_26",
+            "Gene_27",
+            "Gene_28",
+            "Gene_29",
+            "Gene_3",
+            "Gene_30",
+            "Gene_31",
+            "Gene_32",
+            "Gene_33",
+            "Gene_34",
+            "Gene_35",
+            "Gene_36",
+            "Gene_37",
+            "Gene_38",
+            "Gene_39",
+            "Gene_4",
+            "Gene_40",
+            "Gene_41",
+            "Gene_42",
+            "Gene_43",
+            "Gene_44",
+            "Gene_45",
+            "Gene_46",
+            "Gene_47",
+            "Gene_48",
+            "Gene_49",
+            "Gene_5",
+            "Gene_50",
+            "Gene_51",
+            "Gene_52",
+            "Gene_53",
+            "Gene_54",
+            "Gene_55",
+            "Gene_56",
+            "Gene_57",
+            "Gene_58",
+            "Gene_59",
+            "Gene_6",
+            "Gene_60",
+            "Gene_61",
+            "Gene_62",
+            "Gene_63",
+            "Gene_64",
+            "Gene_65",
+            "Gene_66",
+            "Gene_67",
+            "Gene_68",
+            "Gene_69",
+            "Gene_7",
+            "Gene_70",
+            "Gene_71",
+            "Gene_72",
+            "Gene_73",
+            "Gene_74",
+            "Gene_75",
+            "Gene_76",
+            "Gene_77",
+            "Gene_78",
+            "Gene_79",
+            "Gene_8",
+            "Gene_80",
+            "Gene_81",
+            "Gene_82",
+            "Gene_83",
+            "Gene_84",
+            "Gene_85",
+            "Gene_86",
+            "Gene_87",
+            "Gene_88",
+            "Gene_89",
+            "Gene_9",
+            "Gene_90",
+            "Gene_91",
+            "Gene_92",
+            "Gene_93",
+            "Gene_94",
+            "Gene_95",
+            "Gene_96",
+            "Gene_97",
+            "Gene_98",
+            "Gene_99"
+          ],
+          "overall_similarity": 0.9998981017444991,
+          "per_column_similarities": {
+            "Gene_1": {
+              "similarity": 0.9999112438857645,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_10": {
+              "similarity": 0.9998537319608437,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_100": {
+              "similarity": 0.9998896432030967,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_11": {
+              "similarity": 0.9999811707229947,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_12": {
+              "similarity": 0.99989599412576,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_13": {
+              "similarity": 0.9999087805549786,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_14": {
+              "similarity": 0.9999299194785191,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_15": {
+              "similarity": 0.9998537853919868,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_16": {
+              "similarity": 0.9998944241548341,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_17": {
+              "similarity": 0.9998858740507951,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_18": {
+              "similarity": 0.999948313998527,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_19": {
+              "similarity": 0.9999681320241603,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_2": {
+              "similarity": 0.9998952104421459,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_20": {
+              "similarity": 0.9999325059172733,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_21": {
+              "similarity": 0.9998959819834748,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_22": {
+              "similarity": 0.9999431954093153,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_23": {
+              "similarity": 0.9998899697424731,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_24": {
+              "similarity": 0.9999617664297172,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_25": {
+              "similarity": 0.9998865827140421,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_26": {
+              "similarity": 0.9998990468477497,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_27": {
+              "similarity": 0.9997290236801865,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_28": {
+              "similarity": 0.9999365548157796,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_29": {
+              "similarity": 0.9999080567006109,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_3": {
+              "similarity": 0.9999132353788935,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_30": {
+              "similarity": 0.9999764731339799,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_31": {
+              "similarity": 0.9999075042681106,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_32": {
+              "similarity": 0.9998898374777921,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_33": {
+              "similarity": 0.9999206786554214,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_34": {
+              "similarity": 0.9998701227859748,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_35": {
+              "similarity": 0.9998676397661219,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_36": {
+              "similarity": 0.9998845156348176,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_37": {
+              "similarity": 0.9998923320141317,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_38": {
+              "similarity": 0.9999007546581543,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_39": {
+              "similarity": 0.9998571482710474,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_4": {
+              "similarity": 0.99991429308176,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_40": {
+              "similarity": 0.9999170721564562,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_41": {
+              "similarity": 0.9998824209578298,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_42": {
+              "similarity": 0.9999185123140709,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_43": {
+              "similarity": 0.9998885402799965,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_44": {
+              "similarity": 0.9999192381359686,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_45": {
+              "similarity": 0.9999021068614701,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_46": {
+              "similarity": 0.9999201478980747,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_47": {
+              "similarity": 0.9999087477601395,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_48": {
+              "similarity": 0.9999240246582661,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_49": {
+              "similarity": 0.9999172836727718,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_5": {
+              "similarity": 0.999888122466191,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_50": {
+              "similarity": 0.9999723349404072,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_51": {
+              "similarity": 0.9999362898820218,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_52": {
+              "similarity": 0.9999203138199649,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_53": {
+              "similarity": 0.999933884656414,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_54": {
+              "similarity": 0.999940439855481,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_55": {
+              "similarity": 0.9999431676811242,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_56": {
+              "similarity": 0.9999142891281018,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_57": {
+              "similarity": 0.999903195504102,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_58": {
+              "similarity": 0.9998258949883175,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_59": {
+              "similarity": 0.9999333028737984,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_6": {
+              "similarity": 0.9998086780636982,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_60": {
+              "similarity": 0.9999039684786964,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_61": {
+              "similarity": 0.9999028877473956,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_62": {
+              "similarity": 0.9998477799081669,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_63": {
+              "similarity": 0.9998663956957442,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_64": {
+              "similarity": 0.9998313325606268,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_65": {
+              "similarity": 0.9999654148263706,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_66": {
+              "similarity": 0.9999147578573008,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_67": {
+              "similarity": 0.9999017569974349,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_68": {
+              "similarity": 0.9998881891780531,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_69": {
+              "similarity": 0.9998689660658534,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_7": {
+              "similarity": 0.9998156235789746,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_70": {
+              "similarity": 0.9999229109035225,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_71": {
+              "similarity": 0.9999251689682573,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_72": {
+              "similarity": 0.9998194361083801,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_73": {
+              "similarity": 0.9998796745566341,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_74": {
+              "similarity": 0.9999038104756958,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_75": {
+              "similarity": 0.9999645453029977,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_76": {
+              "similarity": 0.9999476582012639,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_77": {
+              "similarity": 0.9999099504851018,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_78": {
+              "similarity": 0.9999426293820938,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_79": {
+              "similarity": 0.9998982789029015,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_8": {
+              "similarity": 0.9998748677146635,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_80": {
+              "similarity": 0.999820227299995,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_81": {
+              "similarity": 0.999887771337884,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_82": {
+              "similarity": 0.9998605948955968,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_83": {
+              "similarity": 0.9999026251154458,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_84": {
+              "similarity": 0.999927485554927,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_85": {
+              "similarity": 0.9999359777144888,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_86": {
+              "similarity": 0.9998224914279893,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_87": {
+              "similarity": 0.9999442336652938,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_88": {
+              "similarity": 0.9998662430585963,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_89": {
+              "similarity": 0.9999503243886189,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_9": {
+              "similarity": 0.9998922852771265,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_90": {
+              "similarity": 0.9999126619088382,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_91": {
+              "similarity": 0.9996679483501945,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_92": {
+              "similarity": 0.9999515077748571,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_93": {
+              "similarity": 0.9999520439088183,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_94": {
+              "similarity": 0.9998604638740948,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_95": {
+              "similarity": 0.9999099214067635,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_96": {
+              "similarity": 0.9999001295298497,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_97": {
+              "similarity": 0.9999717915000144,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_98": {
+              "similarity": 0.99992908518373,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Gene_99": {
+              "similarity": 0.999636905464767,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 101,
+            "alt_cols": 101,
+            "col_intersection": 101
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              101
+            ],
+            "alt_shape": [
+              3,
+              101
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Gene_100": true,
+              "Gene_6": true,
+              "Gene_46": true,
+              "Gene_79": true,
+              "metagene": true,
+              "Gene_9": true,
+              "Gene_12": true,
+              "Gene_29": true,
+              "Gene_69": true,
+              "Gene_80": true,
+              "Gene_26": true,
+              "Gene_33": true,
+              "Gene_70": true,
+              "Gene_47": true,
+              "Gene_84": true,
+              "Gene_71": true,
+              "Gene_5": true,
+              "Gene_32": true,
+              "Gene_35": true,
+              "Gene_55": true,
+              "Gene_40": true,
+              "Gene_75": true,
+              "Gene_85": true,
+              "Gene_21": true,
+              "Gene_34": true,
+              "Gene_36": true,
+              "Gene_53": true,
+              "Gene_44": true,
+              "Gene_45": true,
+              "Gene_56": true,
+              "Gene_38": true,
+              "Gene_60": true,
+              "Gene_37": true,
+              "Gene_94": true,
+              "Gene_8": true,
+              "Gene_89": true,
+              "Gene_97": true,
+              "Gene_2": true,
+              "Gene_74": true,
+              "Gene_68": true,
+              "Gene_4": true,
+              "Gene_86": true,
+              "Gene_43": true,
+              "Gene_18": true,
+              "Gene_11": true,
+              "Gene_57": true,
+              "Gene_3": true,
+              "Gene_62": true,
+              "Gene_59": true,
+              "Gene_10": true,
+              "Gene_72": true,
+              "Gene_87": true,
+              "Gene_30": true,
+              "Gene_17": true,
+              "Gene_20": true,
+              "Gene_61": true,
+              "Gene_50": true,
+              "Gene_93": true,
+              "Gene_90": true,
+              "Gene_92": true,
+              "Gene_95": true,
+              "Gene_41": true,
+              "Gene_51": true,
+              "Gene_63": true,
+              "Gene_39": true,
+              "Gene_76": true,
+              "Gene_82": true,
+              "Gene_52": true,
+              "Gene_16": true,
+              "Gene_24": true,
+              "Gene_88": true,
+              "Gene_58": true,
+              "Gene_73": true,
+              "Gene_22": true,
+              "Gene_98": true,
+              "Gene_91": true,
+              "Gene_81": true,
+              "Gene_83": true,
+              "Gene_23": true,
+              "Gene_1": true,
+              "Gene_48": true,
+              "Gene_19": true,
+              "Gene_31": true,
+              "Gene_66": true,
+              "Gene_65": true,
+              "Gene_78": true,
+              "Gene_25": true,
+              "Gene_54": true,
+              "Gene_99": true,
+              "Gene_28": true,
+              "Gene_15": true,
+              "Gene_67": true,
+              "Gene_42": true,
+              "Gene_77": true,
+              "Gene_13": true,
+              "Gene_96": true,
+              "Gene_49": true,
+              "Gene_64": true,
+              "Gene_14": true,
+              "Gene_7": true,
+              "Gene_27": true
+            },
+            "common_columns": 101
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+============================================================
+RESULTS  —  Task: b-6-3  |  Agent: claude-skills
+Avg similarity: 0.9934
+============================================================
+
+✅ Results saved → claude-skills-claude-judge/b-6-3_claude-skills.json
+✅ Full states saved → claude-skills-claude-judge/b-6-3_claude-skills_full.json
+
+
+
+

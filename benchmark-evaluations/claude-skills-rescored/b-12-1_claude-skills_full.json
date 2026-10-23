@@ -1,0 +1,294 @@
+{
+  "id": "b-12-1",
+  "question": "Perform additive seasonal decomposition (period=12) on the monthly time series data and apply seasonal adjustment.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-12-1/ref_answer/time_series_decomposition.csv",
+      "eval_guideline": "All numeric values must match the reference within +/-0.5; Trend and Residual at boundary rows must be NaN; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-12-1/output/time_series_decomposition.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both paths have the identical filename time_series_decomposition.csv and indicate CSV format for task b-12-1. The name directly corresponds to the requested seasonal decomposition and adjustment of the monthly time series.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare additive seasonal decomposition (period=12) and seasonally adjusted monthly values. Align corresponding columns despite differing header labels and column order; require all numeric values to match within +/-0.5 and Trend and Residual boundary rows to be NaN."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires value-by-value agreement within +/-0.5 and matching boundary NaNs while allowing column order and header labels to differ. Approximate comparison supports this structural alignment for a deterministic decomposition task.",
+      "strategy_error": null,
+      "similarity": 0.9999999999999971,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Date"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Date",
+          "check_permutation": false,
+          "reasoning": "Both tables have the same structure and exact column names, so no transpose or column mapping is needed. Date uniquely identifies each monthly observation and supports row matching. Sort chronologically because seasonal decomposition depends on temporal order. Compare numeric values within +/-0.5 and require Trend and Residual to be NaN in the first and last six chronological rows.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Original",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Compare original observations numerically to verify input preservation. Require absolute error <= 0.5 separately; a fixed relative tolerance cannot express this requirement across varying values."
+            },
+            {
+              "name": "Trend",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Trend is a critical decomposition output. Require absolute error <= 0.5 for finite values and matching NaNs in the first six and last six monthly rows. Evaluate missingness before computing numerical errors."
+            },
+            {
+              "name": "Seasonal",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Seasonal effects are critical to the period-12 decomposition. Require absolute error <= 0.5 separately. Signed values and values near zero make a fixed relative tolerance especially unsuitable."
+            },
+            {
+              "name": "Residual",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Residuals are a critical decomposition output. Require absolute error <= 0.5 for finite values and matching NaNs in the first six and last six rows. Near-zero residuals prevent a stable conversion to one relative tolerance."
+            },
+            {
+              "name": "Seasonally_Adjusted",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "This is the requested seasonal-adjustment result, equal to Original minus Seasonal. Require absolute error <= 0.5 separately; correlation would not enforce agreement in magnitude."
+            }
+          ],
+          "overall_reasoning": "Include all five float64 data columns because the guideline requires all numeric values to match. Exclude Date because it serves only for alignment, and map corresponding columns independently of header labels or order. Use cellwise numerical error comparison rather than correlation. The schema provides relative error but no absolute-error strategy: no fixed RAE tolerance can encode the required +/-0.5 across all reference magnitudes. Therefore leave cell_tolerance null for supplementary RAE scoring and enforce absolute candidate-reference error <= 0.5 as a separate mandatory check on every finite cell. Also require identical missingness, including NaN Trend and Residual in boundary rows 0-5 and 42-47; missing-versus-finite pairs fail. This configuration alone cannot enforce the absolute-error and boundary-missingness requirements without those additional checks. No categorical delimiters or Jaccard thresholds apply.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Date"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Date"
+            ],
+            "matched_rows": 48,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Seasonal",
+              "Trend",
+              "Seasonally_Adjusted",
+              "Residual",
+              "Original",
+              "Date"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Seasonal": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Trend": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Seasonally_Adjusted": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Residual": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Original": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Date": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Date"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Sorted both dataframes by ['Date']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Original",
+            "Residual",
+            "Seasonal",
+            "Seasonally_Adjusted",
+            "Trend"
+          ],
+          "filtered_columns": [
+            "Original",
+            "Residual",
+            "Seasonal",
+            "Seasonally_Adjusted",
+            "Trend"
+          ],
+          "overall_similarity": 0.9999999999999971,
+          "per_column_similarities": {
+            "Original": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 48,
+              "total_count": 48,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Residual": {
+              "similarity": 0.9999999999999871,
+              "strategy": "rae",
+              "matching_count": 36,
+              "total_count": 36,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Seasonal": {
+              "similarity": 0.9999999999999991,
+              "strategy": "rae",
+              "matching_count": 48,
+              "total_count": 48,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Seasonally_Adjusted": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 48,
+              "total_count": 48,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Trend": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 36,
+              "total_count": 36,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 48,
+            "alt_rows": 48,
+            "row_intersection": 48,
+            "ref_cols": 6,
+            "alt_cols": 6,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              48,
+              6
+            ],
+            "alt_shape": [
+              48,
+              6
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Seasonal": true,
+              "Trend": true,
+              "Seasonally_Adjusted": true,
+              "Residual": true,
+              "Original": true,
+              "Date": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.1,
+            "alt_missing_rate": 0.1
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

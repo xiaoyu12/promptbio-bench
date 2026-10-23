@@ -1,0 +1,181 @@
+{
+  "id": "b-7-10",
+  "question": "Implement self-training with SVM to classify cell types. Use a 70/30 train-test split, then treat only 20% of the training set as labeled and the remaining 80% as unlabeled. Iteratively add predictions with confidence >= 0.8 back to the labeled pool and retrain, for up to 10 iterations. Report the initial test accuracy (before self-training) and the final test accuracy.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-10/ref_answer/self_training_results.csv",
+      "eval_guideline": "Initial and final test accuracy must each be within +/-0.05 of the reference; final accuracy should be greater than or equal to the initial accuracy; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-10/output/self_training_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both files have the identical filename self_training_results.csv and CSV format within the same task b-7-10. The name clearly corresponds to the requested initial and final SVM self-training accuracy results.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare initial and final test accuracies by metric identity, allowing row and column reordering. Each accuracy must be within 0.05 absolute of its reference value, and final accuracy must be greater than or equal to initial accuracy."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although the split and model fitting involve stochasticity, the output contains only two metrics, so the small-results-table exception requires value-by-value approximate comparison. This accommodates reordered rows and columns while applying the guideline’s accuracy tolerances and improvement requirement.",
+      "strategy_error": null,
+      "similarity": 0.7498873626179208,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use the same Metric and Value columns and orientation, so no transpose or column mapping is needed. Metric uniquely identifies rows. Before matching, normalize candidate metric labels Initial_Test_Accuracy to Initial_Accuracy and Accuracy_Change to Improvement; match Final_Test_Accuracy directly. Compare the three corresponding reference metrics and exclude extra candidate diagnostics. Row and column order do not matter. Structural alignment must preserve numeric values: the candidate initial accuracy differs from the reference by 0.063333, exceeding the 0.05 tolerance; final accuracy is within tolerance and exceeds initial accuracy.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 0.85,
+              "reasoning": "Value is float64 and contains the required initial and final test accuracies. Use error-based comparison rather than correlation. A 0.05 relative-error tolerance is an approximate configuration; the required absolute tolerance of 0.05 cannot be represented exactly by a single column-wide RAE threshold."
+            }
+          ],
+          "overall_reasoning": "Align by Metric regardless of row or column order, excluding Metric from column_configs. Prioritize initial_accuracy and final_test_accuracy; reference NaNs indicate unspecified values and should be excluded from scoring. Other metrics are ancillary and should not determine acceptance. Independently require absolute error <= 0.05 for each required accuracy and candidate final_test_accuracy >= initial_accuracy, since this schema cannot express row-specific absolute tolerances or cross-row constraints. The candidate initial accuracy fails (absolute error 0.063333), while its final accuracy passes (0.0433); its final accuracy also exceeds its initial accuracy. Therefore, the candidate fails the stated evaluation guideline.",
+          "overall_confidence": 0.9,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 11,
+            "fuzzy_matched_ids": {
+              "initial_test_accuracy": "initial_accuracy",
+              "accuracy_change": "improvement"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Initial test accuracy matches initial accuracy, and accuracy change matches improvement. The remaining candidates have no corresponding reference.",
+              "confidence": 0.99
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Metric",
+              "Value"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Metric": [
+                "str",
+                "str",
+                true
+              ],
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate rows: 11"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.7498873626179208,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.7498873626179208,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 14,
+            "alt_rows": 14,
+            "row_intersection": 14,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              14,
+              2
+            ],
+            "alt_shape": [
+              14,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Metric": true,
+              "Value": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.21428571428571427,
+            "ref_missing_rate": 0.7857142857142857,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

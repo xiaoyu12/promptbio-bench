@@ -1,0 +1,165 @@
+{
+  "id": "b-8-5",
+  "question": "Use an LSTM neural network to predict daily ICU occupancy over the next 7 days using a sliding window of the past 21 days. Normalize the series with MinMaxScaler. Use the first 80% of sliding-window sequences for training and the remaining 20% as the test set. Architecture: two LSTM layers (64 units then 32 units, both ReLU) each followed by Dropout(0.2), then Dense(16, ReLU) and Dense(7) output. Train with Adam optimizer (MSE loss, batch_size=32) for up to 100 epochs using early stopping (patience=10, monitor val_loss) on a 20% internal validation split of training sequences. Report test RMSE.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-5/ref_answer/test_performance.csv",
+      "eval_guideline": "The single Test_RMSE value must be within 25% relative absolute error of the reference; row/column label phrasing may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/b-8-5/output/test_performance.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both files have the identical filename test_performance.csv and infer the same CSV format. This directly corresponds to reporting test performance, including RMSE, for the ICU occupancy prediction task.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the single test RMSE value, allowing row and column label phrasing to differ. Require absolute error divided by the absolute reference RMSE to be at most 0.25."
+      },
+      "strategy_confidence": 1.0,
+      "strategy_reasoning": "Although LSTM training is stochastic, the output contains a single metric, so the small-results-table exception requires value-by-value approximate comparison. This accommodates label differences while applying the guideline's 25% relative absolute error tolerance.",
+      "strategy_error": null,
+      "similarity": 0.9882939967044396,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": false,
+          "column_mapping": null,
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables have identical columns and contain one corresponding metric row, so no transpose, column mapping, sorting, or row rearrangement is needed. Metric is the semantic row identifier; candidate RMSE corresponds to reference Test_RMSE under the allowed label variation. Compare Value numerically using the specified 25% relative absolute error tolerance.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.25,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Value is float64 and contains the required test RMSE. Compare using absolute error divided by the absolute reference value, with tolerance 0.25 to implement the explicit 25% relative error requirement."
+            }
+          ],
+          "overall_reasoning": "The single test RMSE is the critical reported result. Exclude Metric because it is an alignment ID and label phrasing may differ. Use numerical RAE with the explicitly required 25% tolerance; correlation is unsuitable for a single value. No categorical parsing is needed.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "none"
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Value",
+              "Metric"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Metric": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": []
+        },
+        "metrics": {
+          "compared_columns": [
+            "Value"
+          ],
+          "filtered_columns": [
+            "Value"
+          ],
+          "overall_similarity": 0.9882939967044396,
+          "per_column_similarities": {
+            "Value": {
+              "similarity": 0.9882939967044396,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.25
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 1.0,
+            "col_recall": 1.0,
+            "col_f1": 1.0,
+            "col_jaccard": 1.0,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 2,
+            "alt_cols": 2,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              2
+            ],
+            "shape_match": true,
+            "row_diff": 0,
+            "col_diff": 0
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Value": true,
+              "Metric": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

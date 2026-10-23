@@ -1,0 +1,202 @@
+{
+  "id": "b-4-9",
+  "question": "Implement a two-tailed permutation test (10,000 shuffles) to assess whether the difference in median survival between two treatment arms is statistically significant. Use random seed 42 for reproducibility. Return the empirical p-value.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-4-9/ref_answer/permutation_test_results.csv",
+      "eval_guideline": "Empirical p-value must match within +/-0.02; significance call must match the reference; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-4-9/output/permutation_test_results.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "Both paths have the identical filename permutation_test_results.csv and indicate CSV format for the same task, b-4-9. The filename directly corresponds to the requested permutation test results, including the empirical p-value.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the empirical p-values within an absolute tolerance of 0.02 and require the significance call to match the reference. Allow different column orders and header labels."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although permutation testing is stochastic, this output contains only a p-value and significance call, so the small-results-table exception requires value-by-value comparison. Approximate comparison supports header alignment and column reordering while applying the guideline’s p-value tolerance and matching the significance call.",
+      "strategy_error": null,
+      "similarity": 0.9810874704491725,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "Empirical_P_Value": "Empirical_P_Value",
+            "Significant": "Significant"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain one summary row, so positional matching is sufficient; there are no identifying columns and no transpose or sorting is needed. Map the two reference columns by their exact names and exclude the candidate's extra diagnostic columns. The p-values differ by 0.0032, within the allowed tolerance of 0.02, and both significance calls are false.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Empirical_P_Value",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.2364066193853428,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "The empirical p-value is the primary numerical result. Assuming reference-normalized RAE, the required absolute tolerance of 0.02 converts to 0.02 / 0.0846 = 0.2364066193853428. The candidate's absolute error is 0.0032, within tolerance."
+            },
+            {
+              "name": "Significant",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Treat the boolean dtype as a categorical decision requiring exact equality. Both values are false, so the significance call matches."
+            }
+          ],
+          "overall_reasoning": "Compare the two reference output columns because the evaluation explicitly requires p-value agreement within 0.02 and an identical significance call. Exclude candidate-only diagnostic columns. Use reference-normalized RAE with a converted tolerance for the floating-point p-value and exact categorical comparison for the boolean decision. Correlation is inappropriate for a single row; no delimiter parsing is needed.",
+          "overall_confidence": 0.98,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Empirical_P_Value": "Empirical_P_Value",
+              "Significant": "Significant"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Group_1",
+              "Group_2",
+              "Median_Group_1",
+              "Median_Group_2",
+              "Observed_Median_Difference",
+              "N_Permutations",
+              "Random_Seed",
+              "N_Extreme",
+              "Alpha"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Empirical_P_Value",
+              "Significant"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Empirical_P_Value": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Significant": [
+                "bool",
+                "bool",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Group_1', 'Group_2', 'Median_Group_1', 'Median_Group_2', 'Observed_Median_Difference', 'N_Permutations', 'Random_Seed', 'N_Extreme', 'Alpha']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Empirical_P_Value",
+            "Significant"
+          ],
+          "filtered_columns": [
+            "Empirical_P_Value",
+            "Significant"
+          ],
+          "overall_similarity": 0.9810874704491725,
+          "per_column_similarities": {
+            "Empirical_P_Value": {
+              "similarity": 0.9621749408983452,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.2364066193853428
+              }
+            },
+            "Significant": {
+              "similarity": 1.0,
+              "strategy": "exact",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.18181818181818182,
+            "col_recall": 1.0,
+            "col_f1": 0.3076923076923077,
+            "col_jaccard": 0.18181818181818182,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 2,
+            "alt_cols": 11,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              2
+            ],
+            "alt_shape": [
+              1,
+              11
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -9
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Empirical_P_Value": true,
+              "Significant": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

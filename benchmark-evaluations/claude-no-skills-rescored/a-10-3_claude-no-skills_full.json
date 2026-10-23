@@ -1,0 +1,259 @@
+{
+  "id": "a-10-3",
+  "question": "Classify each variant in the provided VCF file as Pathogenic, VUS, or Benign using ACMG evidence-based criteria. The VCF file is pre-annotated with evidence fields in the INFO column: CONSEQUENCE, AF, CLINVAR, SIFT, and POLYPHEN.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-10-3/ref_answer/acmg_classification.tsv",
+      "eval_guideline": "Each variant's CLASS must match the reference; column order and extra columns may differ.",
+      "candidate_file": "promptbio-bench-no-skills/tasks/a-10-3/output/acmg_classification.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the identical basename and TSV format as the reference. Its location in the task output directory and name directly correspond to the requested ACMG variant-classification table.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare variants by their identifiers/coordinates and require each variant's CLASS value to match the reference, while allowing column reordering and extra columns."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires record-level CLASS matching but explicitly allows column-order differences and extra columns. The TSV approximate strategy supports structural alignment while still comparing each variant’s classification value.",
+      "strategy_error": null,
+      "similarity": 0.6666666666666666,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "CHROM": "CHROM",
+            "POS": "POS",
+            "ID": "ID",
+            "GENE": "GENE",
+            "CONSEQUENCE": "CONSEQUENCE",
+            "AF": "AF",
+            "CLINVAR": "CLINVAR",
+            "EVIDENCES": "ACMG_CRITERIA",
+            "NOTES": null,
+            "CLASS": "CLASS"
+          },
+          "id_columns": [
+            "CHROM",
+            "POS",
+            "ID"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables use variants as rows and attributes as columns, so no transpose is needed. Shared fields map exactly; EVIDENCES corresponds semantically to ACMG_CRITERIA, while NOTES has no suitable candidate counterpart. Rows should be matched using the composite variant key CHROM, POS, and ID, which is more robust than position or ID alone. Variant classifications form an unordered set, and the evaluation states that column order and extra candidate columns may differ, so row and column order are not significant.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "CLASS",
+              "data_type": "categorical",
+              "strategy": "exact",
+              "cell_delimiter": null,
+              "cell_tolerance": null,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "CLASS is the required prediction output, and the evaluation guideline explicitly requires each aligned variant's CLASS to match the reference. Exact comparison is appropriate because Pathogenic, VUS, and Benign are meaningful categorical labels."
+            }
+          ],
+          "overall_reasoning": "Compare only CLASS because the task evaluates the final ACMG classification and explicitly states that each variant's CLASS must match the reference. CHROM, POS, and ID are alignment-only columns. GENE, CONSEQUENCE, AF, CLINVAR, and EVIDENCES are supporting inputs or explanatory outputs rather than the required evaluated result, while NOTES is absent from the candidate. Because CLASS is categorical and its labels have fixed clinical meanings, exact equality is required; overlap, partition relabeling, and numerical tolerances are inappropriate.",
+          "overall_confidence": 1.0,
+          "id_columns": [
+            "CHROM",
+            "POS",
+            "ID"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "CHROM": "CHROM",
+              "POS": "POS",
+              "ID": "ID",
+              "GENE": "GENE",
+              "CONSEQUENCE": "CONSEQUENCE",
+              "AF": "AF",
+              "CLINVAR": "CLINVAR",
+              "EVIDENCES": "ACMG_CRITERIA",
+              "CLASS": "CLASS"
+            },
+            "unmapped_ref": [
+              "NOTES"
+            ],
+            "unmapped_alt": [
+              "REF",
+              "ALT",
+              "ACMG_5TIER"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "CHROM",
+              "POS",
+              "ID"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "CLINVAR",
+              "CLASS",
+              "POS",
+              "CONSEQUENCE",
+              "EVIDENCES",
+              "AF",
+              "ID",
+              "CHROM",
+              "GENE"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "CLINVAR": [
+                "str",
+                "str",
+                true
+              ],
+              "CLASS": [
+                "str",
+                "str",
+                true
+              ],
+              "POS": [
+                "str",
+                "str",
+                true
+              ],
+              "CONSEQUENCE": [
+                "str",
+                "str",
+                true
+              ],
+              "EVIDENCES": [
+                "str",
+                "str",
+                true
+              ],
+              "AF": [
+                "float64",
+                "float64",
+                true
+              ],
+              "ID": [
+                "str",
+                "str",
+                true
+              ],
+              "CHROM": [
+                "str",
+                "str",
+                true
+              ],
+              "GENE": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped reference columns: ['NOTES']",
+            "Unmapped candidate columns: ['REF', 'ALT', 'ACMG_5TIER']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "CLASS"
+          ],
+          "filtered_columns": [
+            "CLASS"
+          ],
+          "overall_similarity": 0.6666666666666666,
+          "per_column_similarities": {
+            "CLASS": {
+              "similarity": 0.6666666666666666,
+              "strategy": "exact",
+              "matching_count": 2,
+              "total_count": 3,
+              "error": null,
+              "details": {}
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.75,
+            "col_recall": 0.9,
+            "col_f1": 0.8181818181818182,
+            "col_jaccard": 0.6923076923076923,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 10,
+            "alt_cols": 12,
+            "col_intersection": 9
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              10
+            ],
+            "alt_shape": [
+              3,
+              12
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "CLINVAR": true,
+              "CLASS": true,
+              "POS": true,
+              "CONSEQUENCE": true,
+              "EVIDENCES": true,
+              "AF": true,
+              "ID": true,
+              "CHROM": true,
+              "GENE": true
+            },
+            "common_columns": 9
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

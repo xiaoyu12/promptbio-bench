@@ -1,0 +1,270 @@
+{
+  "id": "a-11-9",
+  "question": "Detect communities in a biological network using the Louvain algorithm, and evaluate community quality with modularity score.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-9/ref_answer/community_network.png",
+      "eval_guideline": "Nodes must be colored by community with gene labels visible; community assignment, color scheme, and layout may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-11-9/output/community_network.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both paths indicate PNG network visualizations consistent with the community-detection task.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "semantic",
+      "parameters": {},
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires visual-semantic properties—community-based node coloring and visible gene labels—while explicitly allowing different assignments, colors, and layouts. A semantic image comparison is therefore appropriate.",
+      "strategy_error": null,
+      "similarity": 0.68,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "partially equivalent",
+        "confidence": 0.96,
+        "explanation": "Both images visualize the same 14-gene protein-protein interaction network, use two colors to show two Louvain communities, keep all gene labels visible, and report a modularity score. The differing layouts, palettes, community numbering, and added candidate annotations for node and edge counts are acceptable presentation differences. However, the actual community assignments differ substantially: for example, PIK3CA, AKT1, KRAS, EGFR, PTEN, NF1, TERT, MYC, TP53, RB1, and BRCA1 are not partitioned the same way between the figures. The reported modularity also differs markedly, with 0.0525 in the reference versus 0.0047 in the candidate. This changes the quantitative assessment of community quality, although both scores indicate weak community structure. The candidate additionally states that STRING scores were used as edge weights, which may explain some divergence if the reference used different weighting or Louvain randomness. Thus, the candidate fulfills the requested visualization and conveys the same broad message, but it does not reproduce the reference partition or modularity result closely enough to be fully equivalent."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-11-9/ref_answer/modularity_score.tsv",
+      "eval_guideline": "Modularity score must match within +/-0.05; community count may differ; column order and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-11-9/output/modularity_score.tsv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames are identical, and both are TSV files intended to report the Louvain community modularity score.",
+      "file_format": "tsv",
+      "signature": {
+        "format": "tsv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "tsv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare modularity scores value by value, accepting differences within +/-0.05; allow community count, column order, and header labels to differ."
+      },
+      "strategy_confidence": 0.98,
+      "strategy_reasoning": "Although Louvain can be stochastic, the output is a small results table with a modularity score, so value-by-value approximate comparison is appropriate. It accommodates the stated numeric tolerance and permitted structural differences.",
+      "strategy_error": null,
+      "similarity": 0.6967641548378901,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": false,
+          "align_columns": true,
+          "column_mapping": {
+            "modularity_score": "modularity_score",
+            "num_communities": "num_communities",
+            "node_count": "node_count",
+            "edge_count": "edge_count"
+          },
+          "id_columns": [],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain one summary row and use the same four evaluation columns, so no transpose, row-key matching, or sorting is needed. The candidate has five additional metadata columns; explicitly mapping each reference column to its exact candidate counterpart restricts comparison to the shared metrics. Column order and labels are not evaluation-sensitive, while the modularity value should be assessed using the stated ±0.05 tolerance.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "modularity_score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.953,
+              "cell_threshold": null,
+              "confidence": 0.9,
+              "reasoning": "This is the primary community-quality metric. The required absolute tolerance of +/-0.05 is represented as an RAE tolerance relative to the reference value 0.052485: 0.05 / 0.052485 is approximately 0.953."
+            },
+            {
+              "name": "node_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "The node count verifies that both results describe the same biological network and should match exactly; zero RAE enforces exact numerical equality."
+            },
+            {
+              "name": "edge_count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "The edge count verifies that both results use the same network topology and should match exactly; zero RAE enforces exact numerical equality."
+            }
+          ],
+          "overall_reasoning": "The modularity score is the critical output and is compared using RAE with a tolerance converted from the explicitly required absolute margin of 0.05. Node and edge counts are included as exact numerical checks to confirm that the same network was analyzed. num_communities is excluded because the evaluation guideline explicitly permits the community count to differ. Candidate-only metadata columns are not comparable because they have no aligned reference counterparts. No ID columns are present, and no categorical overlap configuration is needed.",
+          "overall_confidence": 0.93,
+          "id_columns": []
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "modularity_score": "modularity_score",
+              "num_communities": "num_communities",
+              "node_count": "node_count",
+              "edge_count": "edge_count"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "algorithm",
+              "resolution",
+              "weighted",
+              "seed",
+              "community_sizes"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "none"
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "edge_count",
+              "modularity_score",
+              "num_communities",
+              "node_count"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "edge_count": [
+                "int64",
+                "int64",
+                true
+              ],
+              "modularity_score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "num_communities": [
+                "int64",
+                "int64",
+                true
+              ],
+              "node_count": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['algorithm', 'resolution', 'weighted', 'seed', 'community_sizes']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "edge_count",
+            "modularity_score",
+            "node_count"
+          ],
+          "filtered_columns": [
+            "edge_count",
+            "modularity_score",
+            "node_count"
+          ],
+          "overall_similarity": 0.6967641548378901,
+          "per_column_similarities": {
+            "edge_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "modularity_score": {
+              "similarity": 0.09029246451367057,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 0.953
+              }
+            },
+            "node_count": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 1,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4444444444444444,
+            "col_recall": 1.0,
+            "col_f1": 0.6153846153846153,
+            "col_jaccard": 0.4444444444444444,
+            "ref_rows": 1,
+            "alt_rows": 1,
+            "row_intersection": 1,
+            "ref_cols": 4,
+            "alt_cols": 9,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              1,
+              4
+            ],
+            "alt_shape": [
+              1,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -5
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "edge_count": true,
+              "modularity_score": true,
+              "num_communities": true,
+              "node_count": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

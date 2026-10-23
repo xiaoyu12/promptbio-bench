@@ -1,0 +1,191 @@
+{
+  "id": "b-8-4",
+  "question": "Using Elastic Net regression (alpha=0.1, l1_ratio=0.5), predict age from methylation data and identify the top 10 features by absolute coefficient magnitude with non-zero coefficients. Use an 80-20 train-test split (random_state=42) and fit the model on the training data only.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-8-4/ref_answer/top_10_features.csv",
+      "eval_guideline": "All 10 feature names must match the reference exactly; coefficient values must match within 1% relative absolute error; column order, row order, and header labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-8-4/output/top_10_features.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have the identical basename and CSV format, and both belong to task b-8-4. The candidate clearly corresponds to the requested top-10 Elastic Net feature output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the top 10 Elastic Net features by feature identity and coefficient value, allowing row/column/header reordering and requiring coefficients within 1% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although model fitting and a train-test split are involved, this is a small results table requiring value-by-value comparison, and random_state=42 fixes the split. Approximate comparison supports exact matching of all 10 feature names, the specified 1% coefficient tolerance, and permitted structural differences.",
+      "strategy_error": null,
+      "similarity": 0.0,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Feature": "Feature",
+            "Coefficient": "Coefficient"
+          },
+          "id_columns": [
+            "Feature"
+          ],
+          "row_order_sensitive": true,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": false,
+          "reasoning": "Both tables use the same row-oriented top-10 feature structure, so no transpose is needed. Map the two reference columns to the identically named candidate columns and ignore the candidate-only Abs_Coefficient column. Feature uniquely identifies each result row and should be used for matching. Because this is a ranked top-10 list ordered by absolute coefficient magnitude, row order is semantically significant; preserve the presented ranking rather than sorting by feature ID.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Coefficient",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "Coefficient values are the sole non-ID reference output and must match within 1% relative absolute error, so cell-wise RAE with a 0.01 tolerance directly implements the evaluation requirement. The reference NaN should be handled as a missing-value comparison rather than a numeric match."
+            }
+          ],
+          "overall_reasoning": "Feature is used only to align rows and is excluded from comparison. Coefficient is critical because the task explicitly requires coefficient values within 1% relative absolute error; therefore it is compared using RAE with cell_tolerance 0.01. Candidate-only Abs_Coefficient is not included because it has no aligned reference column and is not a required output. Exact agreement of the 10 required feature names is enforced through alignment/key coverage rather than a column configuration.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "Feature"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Feature": "Feature",
+              "Coefficient": "Coefficient"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "Abs_Coefficient"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Feature"
+            ],
+            "matched_rows": 9,
+            "unmapped_ref_rows": 1,
+            "unmapped_alt_rows": 1,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {
+              "reasoning": "The identifiers differ numerically, with no formatting or naming evidence indicating the same entity.",
+              "confidence": 0.99
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Coefficient",
+              "Feature"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Coefficient": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Feature": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['Abs_Coefficient']",
+            "Unmapped reference rows: 1",
+            "Unmapped candidate rows: 1"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Coefficient"
+          ],
+          "filtered_columns": [
+            "Coefficient"
+          ],
+          "overall_similarity": 0.0,
+          "per_column_similarities": {
+            "Coefficient": {
+              "similarity": 0.0,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 9,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.6666666666666666,
+            "col_recall": 1.0,
+            "col_f1": 0.8,
+            "col_jaccard": 0.6666666666666666,
+            "ref_rows": 11,
+            "alt_rows": 11,
+            "row_intersection": 11,
+            "ref_cols": 2,
+            "alt_cols": 3,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              11,
+              2
+            ],
+            "alt_shape": [
+              11,
+              3
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Coefficient": true,
+              "Feature": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.8181818181818182,
+            "ref_missing_rate": 0.09090909090909091,
+            "alt_missing_rate": 0.09090909090909091
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

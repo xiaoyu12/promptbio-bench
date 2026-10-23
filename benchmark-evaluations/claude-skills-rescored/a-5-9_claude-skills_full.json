@@ -1,0 +1,288 @@
+{
+  "id": "a-5-9",
+  "question": "Given a Seurat object with broad cell type annotations, perform sub-clustering analysis on the T-cell population to investigate T-cell subtypes (e.g., CD4+, CD8+, regulatory T-cells). Find the top marker genes per sub-cluster and save a UMAP plot with cells colored by sub-cluster.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-5-9/ref_answer/tcell_subclusters_umap.png",
+      "eval_guideline": "Plot must show T-cells on a UMAP colored by sub-cluster identity; exact cluster count, colors, fonts, and pixel layout may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-5-9/output/tcell_subclusters_umap.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate PNG images corresponding to the requested UMAP plot colored by T-cell sub-cluster.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.88,
+      "strategy_reasoning": "UMAP and sub-clustering involve stochastic algorithms, so the stochasticity rule favors summary comparison. Assess whether the plot shows T-cells colored by sub-cluster while allowing differences in cluster count, colors, fonts, and layout.",
+      "strategy_error": null,
+      "similarity": 0.9,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.96,
+        "explanation": "Both images satisfy the central evaluation requirement: they display T-cell populations on two UMAP axes with individual cells colored by sub-cluster identity. The reference shows three numbered clusters, with two large adjacent populations and a smaller upper population. The candidate shows five clusters, including a large CD4+ memory population, naive and naive-like populations, and smaller CD8+ effector and GZMK+ KLRB1+ CD8/MAIT-like populations. It additionally provides marker-based annotations, a legend, and clustering parameters. The UMAP geometry and population separation differ substantially, so identical cell coordinates or assignments cannot be established visually. However, the guideline explicitly permits different cluster counts and layouts, and both plots convey the intended scientific message of heterogeneity within the T-cell population. Candidate subtype labels add biological interpretation, although their validity and the requested top-marker gene results cannot be verified from these images alone. These limitations warrant a score below full equivalence without undermining equivalence for the specified plotting requirement."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-5-9/ref_answer/tcell_top_markers_per_cluster.csv",
+      "eval_guideline": "Top marker genes per T-cell sub-cluster must match the reference in gene identity; avg_log2FC and p_val_adj values must match within 1% relative absolute error; column order, row order, and sub-cluster label integers may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-5-9/output/tcell_top_markers_per_cluster.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV tables corresponding to the requested top marker genes per T-cell sub-cluster.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare top marker records per T-cell sub-cluster, aligning sub-clusters by marker gene identity rather than integer labels. Require matching gene identities and avg_log2FC and p_val_adj values within 1% relative absolute error; allow row and column reordering."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline explicitly requires record-level gene identity and numeric agreement, overriding stochasticity from sub-clustering. Approximate comparison supports reordered rows and columns and alignment of equivalent sub-clusters with different integer labels.",
+      "strategy_error": null,
+      "similarity": 0.47564237438640156,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "p_val": "p_val",
+            "avg_log2FC": "avg_log2FC",
+            "pct.1": "pct.1",
+            "pct.2": "pct.2",
+            "p_val_adj": "p_val_adj",
+            "cluster": "cluster",
+            "gene": "gene"
+          },
+          "id_columns": [
+            "cluster",
+            "gene"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain marker genes as rows, so no transpose is needed. Map all reference columns by exact name and exclude the extra candidate cluster_annotation column. Match rows using cluster and gene because a gene may occur in multiple sub-clusters. Before matching, infer a one-to-one correspondence between cluster labels using marker-gene overlap and relabel candidate clusters; integer labels need not agree. The evaluation explicitly permits row and column reordering. Preserve unmatched rows: the 90-versus-42 row discrepancy and observed numerical differences cannot be resolved by structural alignment. Compare avg_log2FC and p_val_adj within the specified 1% relative error after alignment.",
+          "confidence": 0.95
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "avg_log2FC",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The evaluation explicitly requires fold changes to match within 1% relative absolute error."
+            },
+            {
+              "name": "p_val_adj",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "The evaluation explicitly requires adjusted p-values to match within 1% relative absolute error, including very small values."
+            }
+          ],
+          "overall_reasoning": "Compare the two float64 columns explicitly required by the evaluation using RAE <= 0.01. Exclude p_val, pct.1, and pct.2 because they are not required evaluation targets, and exclude the candidate-only cluster_annotation. Gene identity and sub-cluster membership must be checked through alignment, allowing a one-to-one relabeling of cluster integers and ignoring row and column order; cluster and gene remain excluded from column_configs. One-sided missing values must count as mismatches, including rows representing missing or extra marker genes. Relative error for nonzero references should use the reference magnitude without an absolute tolerance that would mask differences in tiny p-values; zero references require exact zero matches. The UMAP artifact cannot be assessed from these tables.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "cluster",
+            "gene"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "p_val": "p_val",
+              "avg_log2FC": "avg_log2FC",
+              "pct.1": "pct.1",
+              "pct.2": "pct.2",
+              "p_val_adj": "p_val_adj",
+              "cluster": "cluster",
+              "gene": "gene"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "cluster_annotation"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "cluster",
+              "gene"
+            ],
+            "matched_rows": 17,
+            "unmapped_ref_rows": 73,
+            "unmapped_alt_rows": 25,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "p_val_adj",
+              "pct.1",
+              "p_val",
+              "gene",
+              "avg_log2FC",
+              "cluster",
+              "pct.2"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "p_val_adj": [
+                "float64",
+                "float64",
+                true
+              ],
+              "pct.1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "p_val": [
+                "float64",
+                "float64",
+                true
+              ],
+              "gene": [
+                "str",
+                "str",
+                true
+              ],
+              "avg_log2FC": [
+                "float64",
+                "float64",
+                true
+              ],
+              "cluster": [
+                "str",
+                "str",
+                true
+              ],
+              "pct.2": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['cluster_annotation']",
+            "Unmapped reference rows: 73",
+            "Unmapped candidate rows: 25"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "avg_log2FC",
+            "p_val_adj"
+          ],
+          "filtered_columns": [
+            "avg_log2FC",
+            "p_val_adj"
+          ],
+          "overall_similarity": 0.47564237438640156,
+          "per_column_similarities": {
+            "avg_log2FC": {
+              "similarity": 0.8792398961532013,
+              "strategy": "rae",
+              "matching_count": 1,
+              "total_count": 17,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            },
+            "p_val_adj": {
+              "similarity": 0.07204485261960185,
+              "strategy": "rae",
+              "matching_count": 0,
+              "total_count": 17,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.875,
+            "col_recall": 1.0,
+            "col_f1": 0.9333333333333333,
+            "col_jaccard": 0.875,
+            "ref_rows": 115,
+            "alt_rows": 115,
+            "row_intersection": 115,
+            "ref_cols": 7,
+            "alt_cols": 8,
+            "col_intersection": 7
+          },
+          "shape": {
+            "ref_shape": [
+              115,
+              7
+            ],
+            "alt_shape": [
+              115,
+              8
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "p_val_adj": true,
+              "pct.1": true,
+              "p_val": true,
+              "gene": true,
+              "avg_log2FC": true,
+              "cluster": true,
+              "pct.2": true
+            },
+            "common_columns": 7
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.14782608695652175,
+            "ref_missing_rate": 0.21739130434782608,
+            "alt_missing_rate": 0.6347826086956522
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

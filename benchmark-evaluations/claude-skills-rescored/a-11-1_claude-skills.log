@@ -1,0 +1,230 @@
+
+Task:    a-11-1
+Question: Given a list of differentially expressed genes (DEGs), retrieve their protein-protein interactions from the STRING database and visualize the network.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/a-11-1/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/a-11-1/output  (2 file(s))
+Matched files:
+  ppi_network.csv → ppi_network.csv  (conf=1.00)
+    Reasoning: The identical base filename and CSV extension indicate a direct match for the tabular protein-protein interaction network output.
+  ppi_network.png → ppi_network.png  (conf=1.00)
+    Reasoning: The identical base filename and PNG extension indicate a direct match for the visualized protein-protein interaction network.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/a-11-1/ref_answer/ppi_network.csv
+    alt: promptbio-bench-claude-skills/tasks/a-11-1/output/ppi_network.csv
+
+  File 2/2: png, strategy=semantic
+    ref: promptbio-bench-data/tasks/a-11-1/ref_answer/ppi_network.png
+    alt: promptbio-bench-claude-skills/tasks/a-11-1/output/ppi_network.png
+
+  File 1/2: status=success, similarity=0.9983
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "preferredName_A": "preferredName_A",
+            "preferredName_B": "preferredName_B",
+            "score": "score"
+          },
+          "id_columns": [
+            "preferredName_A",
+            "preferredName_B"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "preferredName_A,preferredName_B",
+          "check_permutation": true,
+          "reasoning": "The candidate contains the same three result fields as the reference plus extra STRING metadata, so no transpose is needed. Map the three exact-name columns and ignore candidate-only columns. Each interaction row is identified by the composite protein pair (preferredName_A, preferredName_B); score is a measured value and must not be part of the key because it is compared with 1% relative tolerance. Interaction records are unordered, so align and sort by the protein-pair key and check for permutation while detecting candidate-only or missing pairs.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "score",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.01,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The STRING interaction confidence score is the only non-ID reference data column and is explicitly required to agree within 1% relative absolute error. Cell-wise RAE with a 0.01 tolerance directly implements that requirement; missing versus present scores should not be treated as equivalent."
+            }
+          ],
+          "overall_reasoning": "Align interaction records using preferredName_A and preferredName_B, but exclude those identifiers from value comparison. Compare only score because it is the sole reference measurement and the evaluation explicitly identifies protein-pair coverage and score accuracy as critical. Candidate-only STRING metadata and evidence-channel columns are outside the reference schema and are therefore excluded. Because score is float64 and absolute per-interaction accuracy matters, use RAE rather than correlation, with the specified 1% tolerance. Row and column order are irrelevant after ID-based alignment.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "preferredName_A",
+            "preferredName_B"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "preferredName_A": "preferredName_A",
+              "preferredName_B": "preferredName_B",
+              "score": "score"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "stringId_A",
+              "stringId_B",
+              "ncbiTaxonId",
+              "nscore",
+              "fscore",
+              "pscore",
+              "ascore",
+              "escore",
+              "dscore",
+              "tscore",
+              "string_version"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "preferredName_A",
+              "preferredName_B"
+            ],
+            "matched_rows": 6,
+            "unmapped_ref_rows": 69,
+            "unmapped_alt_rows": 130,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "preferredName_A",
+              "score",
+              "preferredName_B"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "preferredName_A": [
+                "str",
+                "str",
+                true
+              ],
+              "score": [
+                "float64",
+                "float64",
+                true
+              ],
+              "preferredName_B": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "preferredName_A",
+              "preferredName_B"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['stringId_A', 'stringId_B', 'ncbiTaxonId', 'nscore', 'fscore', 'pscore', 'ascore', 'escore', 'dscore', 'tscore', 'string_version']",
+            "Unmapped reference rows: 69",
+            "Unmapped candidate rows: 130",
+            "Sorted both dataframes by ['preferredName_A', 'preferredName_B']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "score"
+          ],
+          "filtered_columns": [
+            "score"
+          ],
+          "overall_similarity": 0.9983269735497965,
+          "per_column_similarities": {
+            "score": {
+              "similarity": 0.9983269735497965,
+              "strategy": "rae",
+              "matching_count": 6,
+              "total_count": 6,
+              "error": null,
+              "details": {
+                "tolerance": 0.01
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.21428571428571427,
+            "col_recall": 1.0,
+            "col_f1": 0.35294117647058826,
+            "col_jaccard": 0.21428571428571427,
+            "ref_rows": 205,
+            "alt_rows": 205,
+            "row_intersection": 205,
+            "ref_cols": 3,
+            "alt_cols": 14,
+            "col_intersection": 3
+          },
+          "shape": {
+            "ref_shape": [
+              205,
+              3
+            ],
+            "alt_shape": [
+              205,
+              14
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -11
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "preferredName_A": true,
+              "score": true,
+              "preferredName_B": true
+            },
+            "common_columns": 3
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.02926829268292683,
+            "ref_missing_rate": 0.6341463414634146,
+            "alt_missing_rate": 0.33658536585365856
+          }
+        }
+      }
+
+  File 2/2: status=success, similarity=0.1800
+    details:
+      {
+        "recommendation": "not equivalent",
+        "confidence": 0.98,
+        "explanation": "The reference is a compact network with 14 nodes and 75 edges, showing a densely interconnected core containing TERT, BRCA1, CDKN2A, PTEN, PIK3CA, APC, TP53, AKT1, EGFR, MYC, RB1, NF1, KRAS, and COL18A1. The candidate instead contains 120 nodes and 136 edges: 14 red query genes plus 106 light-blue STRING partners, largely organized as partner-centered clusters. Although many query genes overlap and both figures represent STRING protein-protein interactions, the node and edge sets do not match. The candidate adds 106 proteins absent from the reference, includes VEGFA as a query node where the reference shows COL18A1, and depicts far fewer direct connections among the shared query genes. These are substantive data-content differences rather than permissible variations in layout, sizing, or color, so the scientific networks are not equivalent."
+      }
+
+============================================================
+RESULTS  —  Task: a-11-1  |  Agent: claude-skills
+Avg similarity: 0.5892
+============================================================
+
+✅ Results saved → claude-skills-rescored/a-11-1_claude-skills.json
+✅ Full states saved → claude-skills-rescored/a-11-1_claude-skills_full.json
+
+
+
+

@@ -1,0 +1,244 @@
+{
+  "id": "a-4-7",
+  "question": "Compute count profiles for ChIP-seq reads, considering both full read length and read end positions, and generate a summary table.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/a-4-7/ref_answer/aligned_reads_summary.csv",
+      "eval_guideline": "Each genomic window's read count under both 'each' and 'end' counting modes must match the reference exactly; row order, column order, and extra columns may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/a-4-7/output/aligned_reads_summary.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The candidate has the exact same basename and CSV format as the reference. Its output-task path and summary-table name clearly correspond to the requested ChIP-seq aligned-read summary.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "content",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare each genomic window's read counts under both 'each' and 'end' counting modes, allowing row/column reordering and extra columns while requiring the corresponding count values to match exactly."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires deterministic record-level count matching but explicitly permits reordered rows, reordered columns, and extra columns. The CSV approximate strategy supports this structural alignment, whereas exact would incorrectly reject valid reordered output.",
+      "strategy_error": null,
+      "similarity": 0.9943647540983607,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "bases.counted": "bases.counted",
+            "experiment": "experiment",
+            "chrom": "chrom",
+            "chromStart": "chromStart",
+            "chromEnd": "chromEnd",
+            "count": "count"
+          },
+          "id_columns": [
+            "bases.counted",
+            "experiment",
+            "chrom",
+            "chromStart",
+            "chromEnd"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "bases.counted,experiment,chrom,chromStart,chromEnd",
+          "check_permutation": true,
+          "reasoning": "The tables use the same long-form schema and do not require transposition. All six reference columns map exactly to candidate columns; the candidate-only 'bin.i' column should be ignored. Rows represent genomic windows under a counting mode and experiment, so the composite key of bases.counted, experiment, chrom, chromStart, and chromEnd identifies corresponding rows, while count is the value to compare. Row and column order are not material under the evaluation guideline, so sorting by the composite key and checking permutations is appropriate. The substantial row-count difference likely reflects extra or differently segmented candidate windows and should not trigger positional alignment.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "count",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 0.99,
+              "reasoning": "The read count is the sole non-ID reference data column and the task requires every genomic window's count in both counting modes to match exactly. RAE provides cell-level numerical comparison; a zero tolerance enforces exact equality, including the aligned missing-value pattern under the evaluator's null-handling rules."
+            }
+          ],
+          "overall_reasoning": "Alignment is determined exclusively by bases.counted, experiment, chrom, chromStart, and chromEnd, so those ID columns are excluded. Only count is critical because it contains the requested ChIP-seq count profile. Candidate-only bin.i is an extra column and is not compared. Since the evaluation explicitly requires exact per-window counts rather than merely correlated or similarly ranked profiles, count uses numerical RAE with cell_tolerance 0.0. No categorical overlap configuration or delimiter is applicable.",
+          "overall_confidence": 0.99,
+          "id_columns": [
+            "bases.counted",
+            "experiment",
+            "chrom",
+            "chromStart",
+            "chromEnd"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "bases.counted": "bases.counted",
+              "experiment": "experiment",
+              "chrom": "chrom",
+              "chromStart": "chromStart",
+              "chromEnd": "chromEnd",
+              "count": "count"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "bin.i"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "bases.counted",
+              "experiment",
+              "chrom",
+              "chromStart",
+              "chromEnd"
+            ],
+            "matched_rows": 35136,
+            "unmapped_ref_rows": 39709,
+            "unmapped_alt_rows": 89487,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "bases.counted",
+              "count",
+              "chrom",
+              "chromEnd",
+              "experiment",
+              "chromStart"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "bases.counted": [
+                "str",
+                "str",
+                true
+              ],
+              "count": [
+                "float64",
+                "float64",
+                true
+              ],
+              "chrom": [
+                "str",
+                "str",
+                true
+              ],
+              "chromEnd": [
+                "str",
+                "str",
+                true
+              ],
+              "experiment": [
+                "str",
+                "str",
+                true
+              ],
+              "chromStart": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "bases.counted",
+              "experiment",
+              "chrom",
+              "chromStart",
+              "chromEnd"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['bin.i']",
+            "Unmapped reference rows: 39709",
+            "Unmapped candidate rows: 89487",
+            "Sorted both dataframes by ['bases.counted', 'experiment', 'chrom', 'chromStart', 'chromEnd']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "count"
+          ],
+          "filtered_columns": [
+            "count"
+          ],
+          "overall_similarity": 0.9943647540983607,
+          "per_column_similarities": {
+            "count": {
+              "similarity": 0.9943647540983607,
+              "strategy": "rae",
+              "matching_count": 34938,
+              "total_count": 35136,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8571428571428571,
+            "col_recall": 1.0,
+            "col_f1": 0.923076923076923,
+            "col_jaccard": 0.8571428571428571,
+            "ref_rows": 164332,
+            "alt_rows": 164332,
+            "row_intersection": 164332,
+            "ref_cols": 6,
+            "alt_cols": 7,
+            "col_intersection": 6
+          },
+          "shape": {
+            "ref_shape": [
+              164332,
+              6
+            ],
+            "alt_shape": [
+              164332,
+              7
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "bases.counted": true,
+              "count": true,
+              "chrom": true,
+              "chromEnd": true,
+              "experiment": true,
+              "chromStart": true
+            },
+            "common_columns": 6
+          },
+          "missing": {
+            "missing_pattern_similarity": 0.21381106540418177,
+            "ref_missing_rate": 0.5445500572012755,
+            "alt_missing_rate": 0.24163887739454276
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

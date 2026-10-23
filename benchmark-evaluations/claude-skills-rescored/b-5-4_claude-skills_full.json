@@ -1,0 +1,402 @@
+{
+  "id": "b-5-4",
+  "question": "Fit a Gaussian Mixture Model with 3 components (random_state=42) to the dataset. Visualize the clusters with scatter plots and overlay ellipses representing the Gaussian components. Report the mixing weights, means, and covariances for each component.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-4/ref_answer/gmm_cluster_plot.png",
+      "eval_guideline": "Plot must show scatter points colored by GMM component with covariance ellipses overlaid; axis labels, colors, and styling may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-5-4/output/gmm_cluster_plot.png",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate PNG images corresponding to the requested cluster scatter plot with Gaussian component ellipses.",
+      "file_format": "png",
+      "signature": {
+        "format": "png",
+        "compression": "none",
+        "is_text": false,
+        "method": "content",
+        "status": "success",
+        "extension": "png",
+        "note": null
+      },
+      "strategy": "summary",
+      "parameters": {},
+      "strategy_confidence": 0.94,
+      "strategy_reasoning": "GMM fitting involves model fitting, so the stochasticity rule requires summary comparison even with random_state=42, since the guideline does not require exact matching. Evaluate the overall cluster structure and covariance ellipses while allowing differences in labels, colors, and styling.",
+      "strategy_error": null,
+      "similarity": 0.97,
+      "comparison_status": "success",
+      "comparison_details": {
+        "recommendation": "equivalent",
+        "confidence": 0.98,
+        "explanation": "Both images show the same apparent dataset partitioned into three Gaussian components: a blue cluster at lower left, an orange cluster at upper right, and a green cluster at lower right. Scatter positions, component assignments, and ellipse centers and orientations closely agree. Both label the axes feature_1 and feature_2 and overlay covariance ellipses. The reference shows one ellipse per component, while the candidate explicitly shows nested 1, 2, and 3 standard deviation ellipses; its innermost ellipses closely match the reference ellipses. Larger outer ellipses cause expanded axis limits and overlap, but do not indicate different data or a different fit. The candidate adds red component-mean markers and legend entries reporting mixing weights of 0.334, 0.350, and 0.317, with respective cluster counts of 40, 42, and 38. These additions preserve and clarify the scientific message. Neither image prints numerical mean vectors or covariance matrices, so the full reporting requirement cannot be verified from these plots alone. Overall, the images are scientifically equivalent despite differences in ellipse levels and presentation."
+      },
+      "comparison_error": null
+    },
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-5-4/ref_answer/gmm_parameters.csv",
+      "eval_guideline": "Each component's mixing weights must match within +/-0.05; mean coordinates and covariance values must match within 5% relative absolute error; component order and column labels may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-5-4/output/gmm_parameters.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The filenames match exactly, and both paths indicate CSV tables corresponding to the requested Gaussian mixture weights, means, and covariances.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare Gaussian mixture parameters for three components, aligning components by their means and covariances regardless of component order or column labels. Require each mixing weight to agree within 0.05 absolute error and each mean coordinate and covariance value within 5% relative absolute error."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "The guideline requires value-by-value comparison of a small component parameter table, so approximate applies despite stochastic model fitting. It supports component and column alignment while applying the specified numeric tolerances.",
+      "strategy_error": null,
+      "similarity": 0.998613419761858,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Component": "Component",
+            "Weight": "Weight",
+            "Mean_0": "Mean_0",
+            "Mean_1": "Mean_1",
+            "Cov_0_0": "Cov_0_0",
+            "Cov_0_1": "Cov_0_1",
+            "Cov_1_0": "Cov_1_0",
+            "Cov_1_1": "Cov_1_1"
+          },
+          "id_columns": [
+            "Component"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": false,
+          "sort_by": null,
+          "check_permutation": true,
+          "reasoning": "Both tables contain one Gaussian component per row, so no transpose is needed. Map all reference columns by exact name and exclude the candidate-only N_assigned column. Component uniquely identifies rows and its labels correspond in these previews, as confirmed by the matching means and covariances. Component order is irrelevant. If labels are reassigned, match components by their numerical parameters rather than requiring equal Component labels. Compare weights within 0.05 absolute error and means and covariances within 5% relative absolute error.",
+          "confidence": 0.99
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Cov_0_0",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Required Gaussian covariance entry; compare absolute error divided by the absolute reference value against 5%."
+            },
+            {
+              "name": "Cov_0_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Required off-diagonal covariance entry. Apply the specified 5% relative tolerance even to small values, using the absolute reference magnitude."
+            },
+            {
+              "name": "Cov_1_0",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Required off-diagonal covariance entry; apply 5% relative tolerance using the absolute reference magnitude."
+            },
+            {
+              "name": "Cov_1_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Required Gaussian covariance entry; the evaluation specifies 5% relative absolute error."
+            },
+            {
+              "name": "Mean_0",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Required component mean coordinate; apply 5% relative absolute error using the absolute reference magnitude for negative coordinates."
+            },
+            {
+              "name": "Mean_1",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.05,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Required component mean coordinate; apply the specified 5% relative absolute error."
+            },
+            {
+              "name": "Weight",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.1429388221841052,
+              "cell_threshold": null,
+              "confidence": 0.8,
+              "reasoning": "The required tolerance is absolute error <= 0.05, which a single column-level RAE threshold cannot exactly express. Use 0.05 / 0.3498, the largest reference weight, as a conservative threshold ensuring every accepted weight meets the absolute bound. Exact evaluation requires row-specific RAE thresholds of 0.05 / abs(reference weight)."
+            }
+          ],
+          "overall_reasoning": "Compare all seven required numerical model parameters. Exclude Component because it is an alignment identifier, and omit candidate-only N_assigned because assignment counts are not requested. Match components with one consistent one-to-one permutation before comparing parameters; component labels and order have no intrinsic meaning. Resolve equivalent column labels during alignment. Use RAE with 0.05 tolerance for means and covariances, including small and negative entries. The Weight threshold conservatively approximates the absolute +/-0.05 requirement; exact compliance requires an absolute-error check or row-specific relative thresholds. All supplied candidate values satisfy the specified bounds. No categorical parsing is needed. These parameter tables cannot verify the fitting random state or the requested scatter plots and ellipses.",
+          "overall_confidence": 0.95,
+          "id_columns": [
+            "Component"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Component": "Component",
+              "Weight": "Weight",
+              "Mean_0": "Mean_0",
+              "Mean_1": "Mean_1",
+              "Cov_0_0": "Cov_0_0",
+              "Cov_0_1": "Cov_0_1",
+              "Cov_1_0": "Cov_1_0",
+              "Cov_1_1": "Cov_1_1"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "N_assigned"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Component"
+            ],
+            "matched_rows": 3,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Cov_1_0",
+              "Weight",
+              "Mean_0",
+              "Cov_0_0",
+              "Component",
+              "Mean_1",
+              "Cov_0_1",
+              "Cov_1_1"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Cov_1_0": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Weight": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Mean_0": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Cov_0_0": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Component": [
+                "str",
+                "str",
+                true
+              ],
+              "Mean_1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Cov_0_1": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Cov_1_1": [
+                "float64",
+                "float64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "applied": false
+          },
+          "notes": [
+            "Unmapped candidate columns: ['N_assigned']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Cov_0_0",
+            "Cov_0_1",
+            "Cov_1_0",
+            "Cov_1_1",
+            "Mean_0",
+            "Mean_1",
+            "Weight"
+          ],
+          "filtered_columns": [
+            "Cov_0_0",
+            "Cov_0_1",
+            "Cov_1_0",
+            "Cov_1_1",
+            "Mean_0",
+            "Mean_1",
+            "Weight"
+          ],
+          "overall_similarity": 0.998613419761858,
+          "per_column_similarities": {
+            "Cov_0_0": {
+              "similarity": 0.9998442345868757,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Cov_0_1": {
+              "similarity": 0.9953996579948496,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Cov_1_0": {
+              "similarity": 0.9953996579948496,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Cov_1_1": {
+              "similarity": 0.9998314010654509,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Mean_0": {
+              "similarity": 0.9999626091794785,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Mean_1": {
+              "similarity": 0.9999542529583257,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.05
+              }
+            },
+            "Weight": {
+              "similarity": 0.9999021245531751,
+              "strategy": "rae",
+              "matching_count": 3,
+              "total_count": 3,
+              "error": null,
+              "details": {
+                "tolerance": 0.1429388221841052
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.8888888888888888,
+            "col_recall": 1.0,
+            "col_f1": 0.9411764705882353,
+            "col_jaccard": 0.8888888888888888,
+            "ref_rows": 3,
+            "alt_rows": 3,
+            "row_intersection": 3,
+            "ref_cols": 8,
+            "alt_cols": 9,
+            "col_intersection": 8
+          },
+          "shape": {
+            "ref_shape": [
+              3,
+              8
+            ],
+            "alt_shape": [
+              3,
+              9
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -1
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Cov_1_0": true,
+              "Weight": true,
+              "Mean_0": true,
+              "Cov_0_0": true,
+              "Component": true,
+              "Mean_1": true,
+              "Cov_0_1": true,
+              "Cov_1_1": true
+            },
+            "common_columns": 8
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "id": "b-7-5",
+  "question": "Using the provided dataset, train K-Nearest Neighbors (KNN) classifiers with k=5 using both Euclidean and Manhattan distance metrics. Evaluate each model on a 30% held-out test set. Report the test accuracy for each metric.",
+  "files": [
+    {
+      "reference_file": "promptbio-bench-data/tasks/b-7-5/ref_answer/knn_accuracy_comparison.csv",
+      "eval_guideline": "Test accuracy for each distance metric must match within +/-0.05; row and column order may differ.",
+      "candidate_file": "promptbio-bench-claude-skills/tasks/b-7-5/output/knn_accuracy_comparison.csv",
+      "match_confidence": 1.0,
+      "match_reasoning": "The files have identical base names and CSV formats, and both belong to task b-7-5. The candidate clearly corresponds to the requested KNN accuracy comparison output.",
+      "file_format": "csv",
+      "signature": {
+        "format": "csv",
+        "compression": "none",
+        "is_text": true,
+        "method": "extension",
+        "status": "success",
+        "extension": "csv",
+        "note": null
+      },
+      "strategy": "approximate",
+      "parameters": {
+        "question": "Compare the Euclidean and Manhattan KNN test accuracies by metric, allowing row/column reordering and numeric differences up to +/-0.05."
+      },
+      "strategy_confidence": 0.99,
+      "strategy_reasoning": "Although the held-out split makes model evaluation stochastic, the output is a small results table containing only two accuracy values. The guideline explicitly requires value-by-value agreement within +/-0.05 and permits row and column reordering, making approximate comparison appropriate.",
+      "strategy_error": null,
+      "similarity": 0.9817160133444537,
+      "comparison_status": "success",
+      "comparison_details": {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Metric": "Metric",
+            "Test Accuracy": "Test Accuracy"
+          },
+          "id_columns": [
+            "Metric"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Metric",
+          "check_permutation": true,
+          "reasoning": "Both tables use metrics as rows and measurements as columns, so no transpose is needed. The two reference columns exactly match candidate columns and are mapped directly; extra candidate metadata columns ('k' and 'Test Size') are excluded. 'Metric' uniquely identifies each model result, with candidate labels corresponding semantically to the reference labels after removing the 'KNN (...)' wrapper. Results are unordered, so rows should be matched or sorted by Metric and permutation checking enabled.",
+          "confidence": 0.98
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Test Accuracy",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.07,
+              "cell_threshold": null,
+              "confidence": 0.98,
+              "reasoning": "Test Accuracy is the sole reported outcome required by the task and is a float64 numerical measurement, so cell-by-cell RAE comparison is appropriate. The required absolute tolerance is ±0.05; at the observed accuracy scale of approximately 0.73, this corresponds to a relative error of about 0.05/0.73 = 0.0685, rounded to 0.07."
+            }
+          ],
+          "overall_reasoning": "Metric is used only to align the Euclidean and Manhattan result rows and is excluded from comparison. Test Accuracy is the only critical reference data column because the task asks for accuracy under each metric. Candidate-only columns k and Test Size are not included because they have no aligned reference columns and the requested output comparison focuses on reported accuracies. RAE with a 0.07 cell tolerance implements the stated ±0.05 absolute-accuracy allowance at the values' approximately 0.73 scale. No categorical overlap strategy or delimiter is needed.",
+          "overall_confidence": 0.98,
+          "id_columns": [
+            "Metric"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Metric": "Metric",
+              "Test Accuracy": "Test Accuracy"
+            },
+            "unmapped_ref": [],
+            "unmapped_alt": [
+              "k",
+              "Test Size"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Metric"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {
+              "euclidean": "knn (euclidean)",
+              "manhattan": "knn (manhattan)"
+            },
+            "fuzzy_match_metadata": {
+              "reasoning": "Each candidate exactly matches the distance metric named in one unique reference identifier.",
+              "confidence": 1.0
+            }
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Test Accuracy",
+              "Metric"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Test Accuracy": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Metric": [
+                "str",
+                "str",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Metric"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped candidate columns: ['k', 'Test Size']",
+            "Sorted both dataframes by ['Metric']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Test Accuracy"
+          ],
+          "filtered_columns": [
+            "Test Accuracy"
+          ],
+          "overall_similarity": 0.9817160133444537,
+          "per_column_similarities": {
+            "Test Accuracy": {
+              "similarity": 0.9817160133444537,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.07
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.5,
+            "col_recall": 1.0,
+            "col_f1": 0.6666666666666666,
+            "col_jaccard": 0.5,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 2,
+            "alt_cols": 4,
+            "col_intersection": 2
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              2
+            ],
+            "alt_shape": [
+              2,
+              4
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -2
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Test Accuracy": true,
+              "Metric": true
+            },
+            "common_columns": 2
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      },
+      "comparison_error": null
+    }
+  ]
+}

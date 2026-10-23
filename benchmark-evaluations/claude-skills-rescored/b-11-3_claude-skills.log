@@ -1,0 +1,279 @@
+
+Task:    b-11-3
+Question: Two monoclonal antibodies are tested for binding efficiency. Monoclonal antibody X shows positive binding in 41 out of 60 trials, while monoclonal antibody Y shows positive binding in 33 out of 60 trials. Using Beta(1,1) priors for both antibodies, compute and report the posterior Beta parameters and mean binding probability for each antibody. Then simulate 10,000 draws from each posterior distribution and compute the fraction of simulations where antibody X's binding probability exceeds antibody Y's binding probability.
+Label:   claude-skills
+Result dir: promptbio-bench-claude-skills/tasks/b-11-3/output
+
+============================================================
+Step 1/4: Matching output files...
+Searching in: promptbio-bench-claude-skills/tasks/b-11-3/output  (2 file(s))
+Matched files:
+  posterior_parameters.csv → posterior_parameters.csv  (conf=1.00)
+    Reasoning: The filenames match exactly and both paths indicate CSV format, consistent with reporting posterior Beta parameters and mean binding probabilities for the two antibodies.
+  simulation_results.txt → simulation_results.txt  (conf=1.00)
+    Reasoning: The filenames match exactly and both paths indicate plain-text format, consistent with reporting the fraction of 10,000 posterior simulations where antibody X's binding probability exceeds antibody Y's.
+
+============================================================
+Step 4/4: Comparing files...
+
+  File 1/2: csv, strategy=approximate
+    ref: promptbio-bench-data/tasks/b-11-3/ref_answer/posterior_parameters.csv
+    alt: promptbio-bench-claude-skills/tasks/b-11-3/output/posterior_parameters.csv
+
+  File 2/2: text, strategy=approximate
+    ref: promptbio-bench-data/tasks/b-11-3/ref_answer/simulation_results.txt
+    alt: promptbio-bench-claude-skills/tasks/b-11-3/output/simulation_results.txt
+
+  File 1/2: status=success, similarity=1.0000
+    details:
+      {
+        "align_plan": {
+          "needs_transpose": false,
+          "align_rows": true,
+          "align_columns": true,
+          "column_mapping": {
+            "Antibody": "Antibody",
+            "Posterior_Alpha": "Posterior_Alpha",
+            "Posterior_Beta": "Posterior_Beta",
+            "Posterior_Mean_Binding_Probability": "Posterior_Mean_Binding_Probability",
+            "Observed_Efficiency": null
+          },
+          "id_columns": [
+            "Antibody"
+          ],
+          "row_order_sensitive": false,
+          "column_order_sensitive": false,
+          "pre_sort": true,
+          "sort_by": "Antibody",
+          "check_permutation": true,
+          "reasoning": "Both tables contain one row per antibody, so no transpose is needed. Map the four shared columns by exact name and match rows using the unique Antibody identifier. Observed_Efficiency has no matching candidate column; it could be derived from Successes divided by Trials, but a direct column mapping cannot express that calculation. Extra candidate columns have no reference counterparts. Antibody order has no semantic significance; sorting by Antibody provides consistent ordering.",
+          "confidence": 1.0
+        },
+        "comparison_plan": {
+          "column_configs": [
+            {
+              "name": "Posterior_Alpha",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Posterior alpha is a critical integer parameter. Require exact equality: 42 for X and 34 for Y. For integers, this implements the stated absolute tolerance of 0.001."
+            },
+            {
+              "name": "Posterior_Beta",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.0,
+              "cell_threshold": null,
+              "confidence": 1.0,
+              "reasoning": "Posterior beta is a critical integer parameter. Require exact equality: 20 for X and 28 for Y. For integers, this implements the stated absolute tolerance of 0.001."
+            },
+            {
+              "name": "Posterior_Mean_Binding_Probability",
+              "data_type": "numerical",
+              "strategy": "rae",
+              "cell_delimiter": null,
+              "cell_tolerance": 0.001,
+              "cell_threshold": null,
+              "confidence": 0.95,
+              "reasoning": "Compare individual posterior means using relative absolute error. A relative tolerance of 0.001 conservatively limits absolute errors to approximately 0.000677 for X and 0.000548 for Y, within the required 0.001. This is stricter than the requested absolute tolerance."
+            }
+          ],
+          "overall_reasoning": "Compare the three explicitly typed posterior output columns, which directly implement the evaluation guideline. Use cellwise numerical comparisons because correlation cannot establish numerical correctness. Exclude Antibody because it is only an alignment key. Exclude observed efficiency and candidate-only auxiliary columns because they are not required posterior outputs. The schema supports relative rather than absolute error thresholds, so the mean comparison conservatively approximates the requested absolute tolerance; exact enforcement would require an absolute-error check. The requested fraction from 10,000 posterior simulations is absent from both tables and cannot be evaluated through these columns.",
+          "overall_confidence": 0.96,
+          "id_columns": [
+            "Antibody"
+          ]
+        },
+        "alignment": {
+          "column_alignment": {
+            "alignment_method": "plan_mapping",
+            "column_mapping": {
+              "Antibody": "Antibody",
+              "Posterior_Alpha": "Posterior_Alpha",
+              "Posterior_Beta": "Posterior_Beta",
+              "Posterior_Mean_Binding_Probability": "Posterior_Mean_Binding_Probability"
+            },
+            "unmapped_ref": [
+              "Observed_Efficiency"
+            ],
+            "unmapped_alt": [
+              "Prior_Alpha",
+              "Prior_Beta",
+              "Successes",
+              "Trials",
+              "CI95_Lower",
+              "CI95_Upper"
+            ]
+          },
+          "row_alignment": {
+            "alignment_method": "id_column_merge",
+            "id_columns": [
+              "Antibody"
+            ],
+            "matched_rows": 2,
+            "unmapped_ref_rows": 0,
+            "unmapped_alt_rows": 0,
+            "fuzzy_matched_ids": {},
+            "fuzzy_match_metadata": {}
+          },
+          "dtype_alignment": {
+            "shared_columns": [
+              "Posterior_Mean_Binding_Probability",
+              "Antibody",
+              "Posterior_Alpha",
+              "Posterior_Beta"
+            ],
+            "converted_columns": [],
+            "failed_columns": [],
+            "conversion_details": {
+              "Posterior_Mean_Binding_Probability": [
+                "float64",
+                "float64",
+                true
+              ],
+              "Antibody": [
+                "str",
+                "str",
+                true
+              ],
+              "Posterior_Alpha": [
+                "int64",
+                "int64",
+                true
+              ],
+              "Posterior_Beta": [
+                "int64",
+                "int64",
+                true
+              ]
+            }
+          },
+          "sorting": {
+            "columns": [
+              "Antibody"
+            ],
+            "applied": true
+          },
+          "notes": [
+            "Unmapped reference columns: ['Observed_Efficiency']",
+            "Unmapped candidate columns: ['Prior_Alpha', 'Prior_Beta', 'Successes', 'Trials', 'CI95_Lower', 'CI95_Upper']",
+            "Sorted both dataframes by ['Antibody']"
+          ]
+        },
+        "metrics": {
+          "compared_columns": [
+            "Posterior_Alpha",
+            "Posterior_Beta",
+            "Posterior_Mean_Binding_Probability"
+          ],
+          "filtered_columns": [
+            "Posterior_Alpha",
+            "Posterior_Beta",
+            "Posterior_Mean_Binding_Probability"
+          ],
+          "overall_similarity": 1.0,
+          "per_column_similarities": {
+            "Posterior_Alpha": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Posterior_Beta": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 1e-06
+              }
+            },
+            "Posterior_Mean_Binding_Probability": {
+              "similarity": 1.0,
+              "strategy": "rae",
+              "matching_count": 2,
+              "total_count": 2,
+              "error": null,
+              "details": {
+                "tolerance": 0.001
+              }
+            }
+          },
+          "overlap": {
+            "row_precision": 1.0,
+            "row_recall": 1.0,
+            "row_f1": 1.0,
+            "row_jaccard": 1.0,
+            "col_precision": 0.4,
+            "col_recall": 0.8,
+            "col_f1": 0.5333333333333333,
+            "col_jaccard": 0.36363636363636365,
+            "ref_rows": 2,
+            "alt_rows": 2,
+            "row_intersection": 2,
+            "ref_cols": 5,
+            "alt_cols": 10,
+            "col_intersection": 4
+          },
+          "shape": {
+            "ref_shape": [
+              2,
+              5
+            ],
+            "alt_shape": [
+              2,
+              10
+            ],
+            "shape_match": false,
+            "row_diff": 0,
+            "col_diff": -5
+          },
+          "dtypes": {
+            "dtype_match_rate": 1.0,
+            "dtype_matches": {
+              "Posterior_Mean_Binding_Probability": true,
+              "Antibody": true,
+              "Posterior_Alpha": true,
+              "Posterior_Beta": true
+            },
+            "common_columns": 4
+          },
+          "missing": {
+            "missing_pattern_similarity": 1.0,
+            "ref_missing_rate": 0.0,
+            "alt_missing_rate": 0.0
+          }
+        }
+      }
+
+  File 2/2: status=success, similarity=0.0000
+    details:
+      {
+        "compare_by": "line",
+        "ignore_whitespace": true,
+        "ignore_case": true,
+        "ref_lines": 11,
+        "alt_lines": 14,
+        "matching_lines": 0
+      }
+
+============================================================
+RESULTS  —  Task: b-11-3  |  Agent: claude-skills
+Avg similarity: 0.5000
+============================================================
+
+✅ Results saved → claude-skills-rescored/b-11-3_claude-skills.json
+✅ Full states saved → claude-skills-rescored/b-11-3_claude-skills_full.json
+
+
+
+
