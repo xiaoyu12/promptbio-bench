@@ -1,0 +1,1 @@
+TP53 (exact match, gene-TP53 on NC_000017.11) has 26 transcripts in the GFF. Total non-overlapping exon lengths (merged exon intervals) are in TP53_transcript_exon_lengths.tsv; they range from 2003 nt (NM_001126115.2 / NM_001276697.3) to 2658 nt (NM_001407270.1 / NM_001407271.1). Canonical NM_000546.6 = 2512 nt.

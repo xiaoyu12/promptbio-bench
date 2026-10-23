@@ -1,0 +1,3 @@
+# UMAP of single-cell RNA-seq data (b-6-6)
+Counts (500 cells x 200 genes) were library-size normalized, log1p-transformed, z-scored per gene, reduced to 30 PCs, and embedded with UMAP (n_components=2, random_state=42; umap-learn 0.5.12, defaults otherwise). The plot `umap_embedding.png` shows UMAP1 (x) vs UMAP2 (y) colored by cell type.
+The 5 cell types (CellType_1-5, 100 cells each) form 5 distinct, well-separated clusters (silhouette score by cell type in UMAP space = 0.89), indicating strong transcriptional heterogeneity between types; only one CellType_4 cell lies adjacent to the CellType_1 cluster.

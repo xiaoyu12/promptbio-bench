@@ -1,0 +1,3 @@
+Visium spots (1302 after QC) were clustered with the standard Scanpy workflow (log-normalization, 2000 HVGs, PCA, kNN graph, Leiden res 0.5) into 8 clusters.
+Cluster assignments are in spatial_clusters.csv (barcode, spatial_clusters, array/pixel coordinates) and visualized on the tissue in spatial_clusters_he.png and spatial_clusters_scatter.png.
+Clusters correspond to skin compartments: 0 suprabasal/differentiated epidermis (KRT1/KRT10), 1 dermal fibroblasts (SFRP2, COL1A2, DCN), 2 KRT16/KRT17 epidermis, 3 basal keratinocytes/hair follicle (KRT5, KRT6), 4 vascular/perivascular (IGFBP7, TAGLN), 5 granular/cornified epidermis (SPRR4, SPINK5), 6 glandular epithelium (KRT7, KRT19, DCD), 7 sebaceous (FADS2, APOC1, FASN).

@@ -1,0 +1,1 @@
+Two-tailed permutation test (10,000 shuffles, seed 42) on the difference in median survival (Arm_B - Arm_A = 11.36 - 6.875 = 4.485 months): empirical p-value = 0.0846 (846/10000). Not significant at alpha = 0.05.

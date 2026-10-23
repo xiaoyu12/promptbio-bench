@@ -1,0 +1,4 @@
+# BSA2_F1 peptide identification (Comet)
+I searched BSA2_F1.mzML with Comet 2026.01 against the 18-protein target-decoy FASTA. Settings: trypsin with up to 2 missed cleavages, 10 ppm precursor tolerance (isotope error 0/+1), fixed carbamidomethyl C, variable oxidised M, and low-resolution ion-trap fragment settings.
+- `BSA2_F1_comet_psm.tsv` has all 421 rank-1 PSMs (221 target, 200 decoy). Each row carries an E-value, XCorr, `is_decoy`, a target-decoy `q_value` and `pass_fdr_1pct`.
+- At 1% PSM FDR there are 30 target PSMs (23 unique peptides); they are also in `BSA2_F1_comet_psm_fdr1pct_targets.tsv`. 20 of these PSMs come from bovine serum albumin (P02769), which fits a BSA sample. The rest come from porcine trypsin, keratin, transthyretin and GAPDH, plus 3 Sorangium proteins near the score threshold.
